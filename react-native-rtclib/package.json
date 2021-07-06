@@ -1,18 +1,31 @@
-
 {
   "name": "rc-react-native-rtclib",
   "version": "1.0.0",
-  "description": "",
+  "description": "RongCloud RTC Lib For React Native",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "rongcloud",
+    "chat",
+    "meeting",
+    "live",
+    "audio",
+    "video"
   ],
-  "author": "",
-  "license": "",
-  "peerDependencies": {
+  "author": "GP-Moon <panmingda@rongcloud.cn> (https://github.com/GP-Moon)",
+  "license": "MIT",
+  "repository": "https://www.rongcloud.cn",
+  "homepage": "https://www.rongcloud.cn",
+  "bugs": {
+    "url": "https://www.rongcloud.cn"
+  },
+  "devDependencies": {
     "react-native": "^0.41.2"
+  },
+  "peerDependencies": {
+    "react-native": "*"
   }
 }
