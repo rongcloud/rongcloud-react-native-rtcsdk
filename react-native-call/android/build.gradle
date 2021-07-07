@@ -44,4 +44,6 @@ repositories {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'cn.rongcloud.sdk:call_lib:5.1.2'
+    implementation 'cn.rongcloud.sdk:im_kit:5.1.2'
+    implementation 'cn.rongcloud.sdk:im_lib:5.1.2'
 }
