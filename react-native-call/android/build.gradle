@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    google()
+    maven {
+        url "http://maven.rongcloud.cn/repository/maven-releases/"
+        allowInsecureProtocol true
+    }
+    maven {
+        // All of React Native (JS, Android binaries) is installed from npm
+        url "$projectDir/../../../../../node_modules/react-native/android"
+    }
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'cn.rongcloud.sdk:call_lib:5.1.2'
+}
