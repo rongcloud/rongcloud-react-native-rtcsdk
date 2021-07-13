@@ -27,7 +27,7 @@ public class RCReactNativeRtcPackage implements ReactPackage {
 
     @Override
     @NonNull
-    @SuppressWarnings("all")
+    @SuppressWarnings("rawtypes")
     public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
         List<ViewManager> list = new ArrayList<>();
         list.add(new RCReactNativeRtcViewManager());
