@@ -1,6 +1,8 @@
 
 package cn.rongcloud.rn.rtc;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,6 +15,9 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.uimanager.NativeViewHierarchyManager;
+import com.facebook.react.uimanager.UIBlock;
+import com.facebook.react.uimanager.UIManagerModule;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.rongcloud.rtc.wrapper.RCRTCIWEngine;
+import cn.rongcloud.rtc.wrapper.RCRTCIWView;
 import cn.rongcloud.rtc.wrapper.constants.RCRTCIWCamera;
 import cn.rongcloud.rtc.wrapper.constants.RCRTCIWLocalAudioStats;
 import cn.rongcloud.rtc.wrapper.constants.RCRTCIWLocalVideoStats;
@@ -293,7 +299,23 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
         promise.resolve(code);
     }
 
-    // TODO setLocalView
+    @ReactMethod
+    public void setLocalView(ReadableMap view, final Promise promise) {
+        final int id = view.getInt("id");
+        UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
+        assert manager != null;
+        manager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+                int code = -1;
+                View nativeView = nativeViewHierarchyManager.resolveView(id);
+                if (engine != null) {
+                    code = engine.setLocalView((RCRTCIWView) nativeView);
+                }
+                promise.resolve(code);
+            }
+        });
+    }
 
     @ReactMethod
     public void removeLocalView(Promise promise) {
@@ -304,7 +326,23 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
         promise.resolve(code);
     }
 
-    // TODO setRemoteView
+    @ReactMethod
+    public void setRemoteView(final String id, ReadableMap view, final Promise promise) {
+        final int viewId = view.getInt("id");
+        UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
+        assert manager != null;
+        manager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+                int code = -1;
+                View nativeView = nativeViewHierarchyManager.resolveView(viewId);
+                if (engine != null) {
+                    code = engine.setRemoteView(id, (RCRTCIWView) nativeView);
+                }
+                promise.resolve(code);
+            }
+        });
+    }
 
     @ReactMethod
     public void removeRemoteView(String id, Promise promise) {
@@ -315,7 +353,23 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
         promise.resolve(code);
     }
 
-    // TODO setLiveMixView
+    @ReactMethod
+    public void setLiveMixView(ReadableMap view, final Promise promise) {
+        final int id = view.getInt("id");
+        UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
+        assert manager != null;
+        manager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+                int code = -1;
+                View nativeView = nativeViewHierarchyManager.resolveView(id);
+                if (engine != null) {
+                    code = engine.setLiveMixView((RCRTCIWView) nativeView);
+                }
+                promise.resolve(code);
+            }
+        });
+    }
 
     @ReactMethod
     public void removeLiveMixView(Promise promise) {

@@ -1,6 +1,7 @@
-
 #import "RCReactNativeRtc.h"
 #import <RongRTCLibWrapper/RongRTCLibWrapper.h>
+#import <React/RCTConvert.h>
+#import <React/RCTUIManager.h>
 
 #import "ArgumentAdapter.h"
 
@@ -26,7 +27,7 @@
     hasListener = NO;
 }
 
-RCT_EXPORT_MODULE()
+RCT_EXPORT_MODULE(@"RCReactNativeRtc")
 
 RCT_EXPORT_METHOD(init:(NSDictionary *)setup
                   resolve:(RCTPromiseResolveBlock)resolve
@@ -290,7 +291,17 @@ RCT_EXPORT_METHOD(setCameraCaptureOrientation:(int)orientation
     resolve(@(code));
 }
 
-// TODO setLocalView
+RCT_EXPORT_METHOD(setLocalView:(NSDictionary *)view
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSInteger code = -1;
+    if (engine) {
+        NSNumber *viewId = [RCTConvert NSNumber:view[@"id"]];
+        UIView *uiView = [self.bridge.uiManager viewForReactTag:viewId];
+        [engine setLocalView:(RCRTCIWView *) uiView];
+    }
+    resolve(@(code));
+}
 
 RCT_EXPORT_METHOD(removeLocalView:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
@@ -301,7 +312,18 @@ RCT_EXPORT_METHOD(removeLocalView:(RCTPromiseResolveBlock)resolve
     resolve(@(code));
 }
 
-// TODO setRemoteView
+RCT_EXPORT_METHOD(setRemoteView:(NSDictionary *)view
+                  userId:(NSString *)userId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSInteger code = -1;
+    if (engine) {
+        NSNumber *viewId = [RCTConvert NSNumber:view[@"id"]];
+        UIView *uiView = [self.bridge.uiManager viewForReactTag:viewId];
+        [engine setRemoteView:(RCRTCIWView *)uiView userId:userId];
+    }
+    resolve(@(code));
+}
 
 RCT_EXPORT_METHOD(removeRemoteView:(NSString *)userId
                   resolve:(RCTPromiseResolveBlock)resolve
@@ -313,7 +335,17 @@ RCT_EXPORT_METHOD(removeRemoteView:(NSString *)userId
     resolve(@(code));
 }
 
-// TODO setLiveMixView
+RCT_EXPORT_METHOD(setLiveMixView:(NSDictionary *)view
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    NSInteger code = -1;
+    if (engine) {
+        NSNumber *viewId = [RCTConvert NSNumber:view[@"id"]];
+        UIView *uiView = [self.bridge.uiManager viewForReactTag:viewId];
+        [engine setLiveMixView:(RCRTCIWView *) uiView];
+    }
+    resolve(@(code));
+}
 
 RCT_EXPORT_METHOD(removeLiveMixView:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
@@ -1082,6 +1114,8 @@ RCT_EXPORT_METHOD(getSessionId:(RCTPromiseResolveBlock)resolve
 
 - (void)onMessageReceived:(RCMessage *)message {
     // TODO onMessageReceived
+    // IM RN Message
+    
 }
 
 - (void)onNetworkStats:(RCRTCIWNetworkStats *)stats {
