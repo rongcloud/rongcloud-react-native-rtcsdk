@@ -1115,7 +1115,6 @@ RCT_EXPORT_METHOD(getSessionId:(RCTPromiseResolveBlock)resolve
 - (void)onMessageReceived:(RCMessage *)message {
     // TODO onMessageReceived
     // IM RN Message
-    
 }
 
 - (void)onNetworkStats:(RCRTCIWNetworkStats *)stats {
@@ -1151,6 +1150,54 @@ RCT_EXPORT_METHOD(getSessionId:(RCTPromiseResolveBlock)resolve
     if (hasListener) {
         [self sendEventWithName:@"Stats:OnRemoteVideoStats" body:argument];
     };
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+    return @[
+        @"Engine:OnError",
+        @"Engine:OnKicked",
+        @"Engine:OnRoomJoined",
+        @"Engine:OnRoomLeft",
+        @"Engine:OnPublished",
+        @"Engine:OnUnpublished",
+        @"Engine:OnSubscribed",
+        @"Engine:OnUnsubscribed",
+        @"Engine:OnLiveMixSubscribed",
+        @"Engine:OnLiveMixUnsubscribed",
+        @"Engine:OnEnableCamera",
+        @"Engine:OnSwitchCamera",
+        @"Engine:OnLiveCdnAdded",
+        @"Engine:OnLiveCdnRemoved",
+        @"Engine:OnLiveMixLayoutModeSet",
+        @"Engine:OnLiveMixRenderModeSet",
+        @"Engine:OnLiveMixCustomAudiosSet",
+        @"Engine:OnLiveMixCustomLayoutsSet",
+        @"Engine:OnLiveMixAudioBitrateSet",
+        @"Engine:OnLiveMixVideoBitrateSet",
+        @"Engine:OnLiveMixVideoResolutionSet",
+        @"Engine:OnLiveMixVideoFpsSet",
+        @"Engine:OnAudioEffectCreated",
+        @"Engine:OnAudioEffectFinished",
+        @"Engine:OnAudioMixingStarted",
+        @"Engine:OnAudioMixingPaused",
+        @"Engine:OnAudioMixingStopped",
+        @"Engine:OnAudioMixingFinished",
+        @"Engine:OnUserJoined",
+        @"Engine:OnUserOffline",
+        @"Engine:OnUserLeft",
+        @"Engine:OnRemotePublished",
+        @"Engine:OnRemoteUnpublished",
+        @"Engine:OnRemoteLiveMixPublished",
+        @"Engine:OnRemoteLiveMixUnpublished",
+        @"Engine:OnRemoteStateChanged",
+        @"Engine:OnRemoteFirstFrame",
+        @"Engine:OnRemoteLiveMixFirstFrame",
+        @"Stats:OnNetworkStats",
+        @"Stats:OnLocalAudioStats",
+        @"Stats:OnLocalVideoStats",
+        @"Stats:OnRemoteAudioStats",
+        @"Stats:OnRemoteVideoStats"
+    ];
 }
 
 @end
