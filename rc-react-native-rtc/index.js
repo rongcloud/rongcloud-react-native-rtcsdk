@@ -5,4 +5,7 @@ const { RCReactNativeRtc } = NativeModules;
 
 const { RCReactNativeRtcView } = requireNativeComponent('RCReactNativeRtcView');
 
-export default RCReactNativeRtc, RCReactNativeRtcView;
+export default RCReactNativeRtc;
+export {
+    RCReactNativeRtcView
+};

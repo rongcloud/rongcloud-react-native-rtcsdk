@@ -10,9 +10,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "install": "^0.13.0",
+    "rc-react-native-rtc": "file:../rc-react-native-rtc",
     "react": "17.0.1",
-    "react-native": "0.64.2",
-    "rc-react-native-rtc": "1.0.0"
+    "react-native": "0.64.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

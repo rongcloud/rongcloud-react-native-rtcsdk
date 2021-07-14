@@ -26,6 +26,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import {
+  RCReactNativeRtc,
+  RCReactNativeRtcView,
+} from 'rc-react-native-rtc/index.js'
+
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -58,6 +63,8 @@ const App: () => Node = () => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  RCReactNativeRtc.init();
 
   return (
     <SafeAreaView style={backgroundStyle}>
