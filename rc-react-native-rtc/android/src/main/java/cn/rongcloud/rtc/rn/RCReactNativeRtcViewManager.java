@@ -1,4 +1,4 @@
-package cn.rongcloud.rn.rtc;
+package cn.rongcloud.rtc.rn;
 
 import androidx.annotation.NonNull;
 
