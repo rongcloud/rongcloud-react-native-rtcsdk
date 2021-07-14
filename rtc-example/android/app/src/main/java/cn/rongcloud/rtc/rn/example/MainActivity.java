@@ -1,4 +1,4 @@
-package cn.rongcloud.rn.rtc.example;
+package cn.rongcloud.rtc.rn.example;
 
 import com.facebook.react.ReactActivity;
 

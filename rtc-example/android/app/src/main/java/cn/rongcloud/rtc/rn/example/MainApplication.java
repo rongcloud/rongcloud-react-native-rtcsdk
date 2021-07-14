@@ -1,4 +1,4 @@
-package cn.rongcloud.rn.rtc.example;
+package cn.rongcloud.rtc.rn.example;
 
 import android.app.Application;
 import android.content.Context;
@@ -64,7 +64,7 @@ public class MainApplication extends Application implements ReactApplication {
                  We use reflection here to pick up the class that initializes Flipper,
                 since Flipper library is not available in release mode
                 */
-                Class<?> aClass = Class.forName("cn.rongcloud.rn.rtc.example.ReactNativeFlipper");
+                Class<?> aClass = Class.forName("cn.rongcloud.rtc.rn.example.ReactNativeFlipper");
                 aClass.getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
                         .invoke(null, context, reactInstanceManager);
             } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

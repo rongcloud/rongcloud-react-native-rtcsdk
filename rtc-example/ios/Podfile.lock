@@ -59,6 +59,10 @@ PODS:
   - glog (0.3.5)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.180)
+  - RCReactNativeRtc (1.0.0):
+    - React
+    - RongCloudIM/IMLib (= 5.1.3.1)
+    - RongCloudRTC/RongRTCLib (= 5.1.4)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -316,6 +320,26 @@ PODS:
     - React-cxxreact (= 0.64.2)
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
+  - RongCloudIM/ChatRoom (5.1.3.1):
+    - RongCloudIM/IMLibCore
+  - RongCloudIM/CustomerService (5.1.3.1):
+    - RongCloudIM/IMLibCore
+  - RongCloudIM/Discussion (5.1.3.1):
+    - RongCloudIM/IMLibCore
+  - RongCloudIM/IMLib (5.1.3.1):
+    - RongCloudIM/ChatRoom
+    - RongCloudIM/CustomerService
+    - RongCloudIM/Discussion
+    - RongCloudIM/IMLibCore
+    - RongCloudIM/Location
+    - RongCloudIM/PublicService
+  - RongCloudIM/IMLibCore (5.1.3.1)
+  - RongCloudIM/Location (5.1.3.1):
+    - RongCloudIM/IMLibCore
+  - RongCloudIM/PublicService (5.1.3.1):
+    - RongCloudIM/IMLibCore
+  - RongCloudRTC/RongRTCLib (5.1.4):
+    - RongCloudIM/IMLibCore (>= 5.1.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -344,6 +368,7 @@ DEPENDENCIES:
   - FlipperKit/FlipperKitUserDefaultsPlugin (~> 0.75.1)
   - FlipperKit/SKIOSNetworkPlugin (~> 0.75.1)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - RCReactNativeRtc (from `../../rc-react-native-rtc/ios`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -384,6 +409,8 @@ SPEC REPOS:
     - FlipperKit
     - libevent
     - OpenSSL-Universal
+    - RongCloudIM
+    - RongCloudRTC
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -395,6 +422,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  RCReactNativeRtc:
+    :path: "../../rc-react-native-rtc/ios"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -460,6 +489,7 @@ SPEC CHECKSUMS:
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
+  RCReactNativeRtc: b4b394cd75b8798a1b980907b32131f0df15d1d7
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
   RCTTypeSafety: c1f31d19349c6b53085766359caac425926fafaa
@@ -483,6 +513,8 @@ SPEC CHECKSUMS:
   React-RCTVibration: 24600e3b1aaa77126989bc58b6747509a1ba14f3
   React-runtimeexecutor: a9904c6d0218fb9f8b19d6dd88607225927668f9
   ReactCommon: 149906e01aa51142707a10665185db879898e966
+  RongCloudIM: 68186cbc17e695d49dc953612ccf80a6cc160ebf
+  RongCloudRTC: b6f30e9dce6641a01b8d9861d39a3df9fe7e0067
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
