@@ -439,13 +439,13 @@ NS_ASSUME_NONNULL_BEGIN
  远端用户开关麦克风或摄像头操作回调
  @param userId 远端用户UserId
  @param type 媒体类型
- @param mute 是否关闭, YES: 关闭, NO: 打开
+ @param disabled 是否关闭, YES: 关闭, NO: 打开
  @discussion
  远端用户开关麦克风操作回调
  */
 - (void)onRemoteStateChanged:(NSString *)userId
                         type:(RCRTCIWMediaType)type
-                        mute:(BOOL)mute;
+                    disabled:(BOOL)disabled;
 
 @end
 

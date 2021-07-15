@@ -1087,11 +1087,11 @@ RCT_EXPORT_METHOD(getSessionId:(RCTPromiseResolveBlock)resolve
     };
 }
 
-- (void)onRemoteStateChanged:(NSString *)userId type:(RCRTCIWMediaType)type mute:(BOOL)mute {
+- (void)onRemoteStateChanged:(NSString *)userId type:(RCRTCIWMediaType)type disabled:(BOOL)disabled {
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setObject:userId forKey:@"id"];
     [arguments setObject:@((int) type) forKey:@"type"];
-    [arguments setObject:@(mute) forKey:@"mute"];
+    [arguments setObject:@(disabled) forKey:@"disabled"];
     if (hasListener) {
         [self sendEventWithName:@"Engine:OnRemoteStateChanged" body:arguments];
     };

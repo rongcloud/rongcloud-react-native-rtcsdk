@@ -1035,11 +1035,11 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
         }
 
         @Override
-        public void onRemoteStateChanged(String id, RCRTCIWMediaType type, boolean muted) {
+        public void onRemoteStateChanged(String id, RCRTCIWMediaType type, boolean disabled) {
             WritableMap arguments = Arguments.createMap();
             arguments.putString("id", id);
             arguments.putInt("type", type.ordinal());
-            arguments.putBoolean("mute", muted);
+            arguments.putBoolean("disabled", disabled);
             sendEvent("Engine:OnRemoteStateChanged", arguments);
         }
 
