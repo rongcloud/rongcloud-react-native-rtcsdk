@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  码率
  */
-@property (nonatomic, assign) CGFloat bitrate;
+@property (nonatomic, assign) NSInteger bitrate;
 
 /*!
  帧率

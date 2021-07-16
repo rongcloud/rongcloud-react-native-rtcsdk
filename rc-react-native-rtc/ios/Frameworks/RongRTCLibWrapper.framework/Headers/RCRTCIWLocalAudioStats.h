@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  码率
  */
-@property (nonatomic, assign) CGFloat bitrate;
+@property (nonatomic, assign) NSInteger bitrate;
 
 /*!
  音量, 0 ~ 9 表示音量高低

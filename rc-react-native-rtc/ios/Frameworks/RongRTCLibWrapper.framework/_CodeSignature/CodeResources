@@ -42,11 +42,11 @@
 		</data>
 		<key>Headers/RCRTCIWLocalAudioStats.h</key>
 		<data>
-		hgZoaklGS30Q/NA21pBOF6z5gAY=
+		5oPDpkC3WHBcDplPGbLFDRwS9eE=
 		</data>
 		<key>Headers/RCRTCIWLocalVideoStats.h</key>
 		<data>
-		YttIWzN+vZmKgKcRuTtNiLAlfJ0=
+		i8EXBEvDxBVDhyYtpRMs7Wspb38=
 		</data>
 		<key>Headers/RCRTCIWNetworkStats.h</key>
 		<data>
@@ -202,22 +202,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			hgZoaklGS30Q/NA21pBOF6z5gAY=
+			5oPDpkC3WHBcDplPGbLFDRwS9eE=
 			</data>
 			<key>hash2</key>
 			<data>
-			0JveNkWe0mm113F2ZoU32ulkn8HSXBZhi0CwBgCUNuM=
+			HNc2hPRsAmrw/JobbpRyCwnp6yg2IU2/wHdGHMg7eM0=
 			</data>
 		</dict>
 		<key>Headers/RCRTCIWLocalVideoStats.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			YttIWzN+vZmKgKcRuTtNiLAlfJ0=
+			i8EXBEvDxBVDhyYtpRMs7Wspb38=
 			</data>
 			<key>hash2</key>
 			<data>
-			TeqRbSvSjgNDUfd2xfb7uxBnjq4/YzYpSksCPRUhDpw=
+			D//j86IVc1z64cJhPYI5VAdscy9oFLHE9RtBerLcw6A=
 			</data>
 		</dict>
 		<key>Headers/RCRTCIWNetworkStats.h</key>
