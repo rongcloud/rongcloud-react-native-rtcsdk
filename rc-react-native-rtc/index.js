@@ -1,11 +1,9 @@
 
 import { NativeModules, requireNativeComponent } from 'react-native';
 
-const { RCReactNativeRtc } = NativeModules;
+const { RCReactNativeRtc, RCReactNativeRtcView } = NativeModules;
 
-const { RCReactNativeRtcView } = requireNativeComponent('RCReactNativeRtcView');
-
-export default RCReactNativeRtc;
-export {
+module.exports = {
+	RCReactNativeRtc,
     RCReactNativeRtcView
 };

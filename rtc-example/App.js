@@ -64,7 +64,7 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  RCReactNativeRtc.init();
+  RCReactNativeRtc.init({});
 
   return (
     <SafeAreaView style={backgroundStyle}>
