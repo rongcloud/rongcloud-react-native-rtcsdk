@@ -10,7 +10,7 @@
 
 @implementation RCReactNativeRtcViewManager
 
-RCT_EXPORT_MODULE(@"RCReactNativeRtcView")
+RCT_EXPORT_MODULE(RCReactNativeRtcView)
 
 RCT_EXPORT_VIEW_PROPERTY(fitType, RCRTCIWViewFitType);
 

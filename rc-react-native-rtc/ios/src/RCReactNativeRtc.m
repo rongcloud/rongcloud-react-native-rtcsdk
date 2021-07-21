@@ -27,7 +27,7 @@
     hasListener = NO;
 }
 
-RCT_EXPORT_MODULE(@"RCReactNativeRtc")
+RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(init:(NSDictionary *)setup
                   resolve:(RCTPromiseResolveBlock)resolve

@@ -29,7 +29,7 @@ import {
 import {
   RCReactNativeRtc,
   RCReactNativeRtcView,
-} from 'rc-react-native-rtc/index.js'
+} from 'rc-react-native-rtc'
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
