@@ -8,68 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1F5E469426A82F1000D45567 /* RCReactNativeCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5E469226A82F1000D45567 /* RCReactNativeCall.m */; };
-		1F5E469F26A83FC600D45567 /* RongCallWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5E469E26A83FC600D45567 /* RongCallWrapper.framework */; };
-		1F5E46BB26A8402500D45567 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5E46AC26A8401A00D45567 /* libReact.a */; };
+		1F5E46F126A9724300D45567 /* RongCallWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5E46F026A9724300D45567 /* RongCallWrapper.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		1F5E46AB26A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
-			remoteInfo = React;
-		};
-		1F5E46AD26A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2D2A28131D9B038B00D4039D;
-			remoteInfo = "React-tvOS";
-		};
-		1F5E46AF26A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D3C059A1DE3340900C268FA;
-			remoteInfo = yoga;
-		};
-		1F5E46B126A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D3C06751DE3340C00C268FA;
-			remoteInfo = "yoga-tvOS";
-		};
-		1F5E46B326A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D3CD9251DE5FBEC00167DC4;
-			remoteInfo = cxxreact;
-		};
-		1F5E46B526A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D3CD9321DE5FBEE00167DC4;
-			remoteInfo = "cxxreact-tvOS";
-		};
-		1F5E46B726A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D3CD90B1DE5FBD600167DC4;
-			remoteInfo = jschelpers;
-		};
-		1F5E46B926A8401A00D45567 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D3CD9181DE5FBD800167DC4;
-			remoteInfo = "jschelpers-tvOS";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		58B511D91A9E6C8500147676 /* CopyFiles */ = {
@@ -87,8 +27,7 @@
 		134814201AA4EA6300B7C361 /* libRCReactNativeCall.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCReactNativeCall.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F5E469226A82F1000D45567 /* RCReactNativeCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCReactNativeCall.m; path = src/RCReactNativeCall.m; sourceTree = "<group>"; };
 		1F5E469326A82F1000D45567 /* RCReactNativeCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCReactNativeCall.h; path = src/RCReactNativeCall.h; sourceTree = "<group>"; };
-		1F5E469E26A83FC600D45567 /* RongCallWrapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RongCallWrapper.framework; path = Framework/RongCallWrapper.framework; sourceTree = "<group>"; };
-		1F5E46A026A8401A00D45567 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		1F5E46F026A9724300D45567 /* RongCallWrapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RongCallWrapper.framework; path = Framework/RongCallWrapper.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,8 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F5E46BB26A8402500D45567 /* libReact.a in Frameworks */,
-				1F5E469F26A83FC600D45567 /* RongCallWrapper.framework in Frameworks */,
+				1F5E46F126A9724300D45567 /* RongCallWrapper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,25 +53,9 @@
 		1F5E469D26A83FC600D45567 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1F5E46A026A8401A00D45567 /* React.xcodeproj */,
-				1F5E469E26A83FC600D45567 /* RongCallWrapper.framework */,
+				1F5E46F026A9724300D45567 /* RongCallWrapper.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		1F5E46A126A8401A00D45567 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1F5E46AC26A8401A00D45567 /* libReact.a */,
-				1F5E46AE26A8401A00D45567 /* libReact.a */,
-				1F5E46B026A8401A00D45567 /* libyoga.a */,
-				1F5E46B226A8401A00D45567 /* libyoga.a */,
-				1F5E46B426A8401A00D45567 /* libcxxreact.a */,
-				1F5E46B626A8401A00D45567 /* libcxxreact.a */,
-				1F5E46B826A8401A00D45567 /* libjschelpers.a */,
-				1F5E46BA26A8401A00D45567 /* libjschelpers.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		58B511D21A9E6C8500147676 = {
@@ -192,77 +114,12 @@
 			mainGroup = 58B511D21A9E6C8500147676;
 			productRefGroup = 58B511D21A9E6C8500147676;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 1F5E46A126A8401A00D45567 /* Products */;
-					ProjectRef = 1F5E46A026A8401A00D45567 /* React.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				58B511DA1A9E6C8500147676 /* RCReactNativeCall */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		1F5E46AC26A8401A00D45567 /* libReact.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReact.a;
-			remoteRef = 1F5E46AB26A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46AE26A8401A00D45567 /* libReact.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReact.a;
-			remoteRef = 1F5E46AD26A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46B026A8401A00D45567 /* libyoga.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libyoga.a;
-			remoteRef = 1F5E46AF26A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46B226A8401A00D45567 /* libyoga.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libyoga.a;
-			remoteRef = 1F5E46B126A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46B426A8401A00D45567 /* libcxxreact.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libcxxreact.a;
-			remoteRef = 1F5E46B326A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46B626A8401A00D45567 /* libcxxreact.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libcxxreact.a;
-			remoteRef = 1F5E46B526A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46B826A8401A00D45567 /* libjschelpers.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libjschelpers.a;
-			remoteRef = 1F5E46B726A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F5E46BA26A8401A00D45567 /* libjschelpers.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libjschelpers.a;
-			remoteRef = 1F5E46B926A8401A00D45567 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		1F5E469526A82F1600D45567 /* ShellScript */ = {
@@ -385,11 +242,9 @@
 					"$(PROJECT_DIR)/Framework",
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
@@ -406,11 +261,9 @@
 					"$(PROJECT_DIR)/Framework",
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../../React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";

@@ -5,7 +5,7 @@
 //  Created by joyoki on 2021/7/14.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <RongCallWrapper/RCCallIWUserProfile.h>
 #import <RongCallWrapper/RCCallIWDefine.h>
 

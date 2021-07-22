@@ -5,7 +5,7 @@
 //  Created by joyoki on 2021/7/14.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <RongCallWrapper/RCCallIWDefine.h>
 
 @class RCCallIWEngineConfig;
@@ -95,14 +95,26 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isEnableSpeaker;
 
 /// 摄像头控制
-// 此方法在iOS原有calllib中是同步返回结果，平铺需dispatch_async到主线程执行didEnableCamera代理方法。
  - (void)enableCamera:(BOOL)enable;
- // 此方法在iOS原有calllib中是同步返回结果，平铺需dispatch_async到主线程执行didEnableCamera代理方法。
  - (void)enableCamera:(BOOL)enable camera:(RCCallIWCamera)camera;
  - (BOOL)isEnableCamera;
  - (RCCallIWCamera)currentCamera;
- // 此方法在iOS原有calllib中是同步返回结果，平铺需dispatch_async到主线程执行didSwitchCamera代理方法。
  - (void)switchCamera;
+
+/// 设置预览窗口
+- (void)setVideoView:(NSString *)userId
+                view:(UIView *)view;
+- (void)setVideoView:(NSString *)userId
+                view:(UIView *)view
+                 fit:(RCCallIWViewFitType)fit;
+
+/// 修改通话类型
+- (void)changeMediaType:(RCCallIWMediaType)type;
+
+/// 邀请用户
+- (void)inviteUsers:(NSArray<NSString *> *)userIds;
+- (void)inviteUsers:(NSArray<NSString *> *)userIds
+    observerUserIds:(NSArray<NSString *> *)observerUserIds;
 
 @end
 
@@ -139,7 +151,6 @@ NS_ASSUME_NONNULL_BEGIN
                  enable:(BOOL)enable;
 - (void)didSwitchCamera:(RCCallIWCamera)camera;
 - (void)callDidError:(int)code;
-// 此代理方法在iOS原有calllib中并不存在，所以需要在调用startCall时通过dispatch_async到主线程执行此代理方法。
 - (void)callDidMake;
 - (void)remoteUserDidRing:(NSString *)userId;
 - (void)remoteUserDidInvite:(NSString *)userId

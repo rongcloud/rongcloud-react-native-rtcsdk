@@ -2,7 +2,7 @@
 
 pwd
 
-FRAMEWROK_DIR="Framework"
+FRAMEWROK_DIR="Frameworks"
 TARGET_NAME="RongCallWrapper"
 
 if [ ! -d "$FRAMEWROK_DIR" ]; then

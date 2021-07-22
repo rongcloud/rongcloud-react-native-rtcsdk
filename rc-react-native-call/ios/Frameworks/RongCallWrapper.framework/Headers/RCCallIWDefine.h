@@ -43,6 +43,14 @@ typedef NS_ENUM(NSInteger, RCCallIWNetworkQuality) {
     RCCallIWNetworkQualityTerrible    = 5,
 };
 
+
+typedef NS_ENUM(NSInteger, RCCallIWViewFitType) {
+    RCCallIWViewFitTypeFill           = 0,
+    RCCallIWViewFitTypeCover          = 1,
+    RCCallIWViewFitTypeCenter         = 2,
+};
+
+
 /*!
  通话视频参数
  */

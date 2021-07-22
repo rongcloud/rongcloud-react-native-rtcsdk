@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/author/RCReactNativeCall.git", :tag => "master" }
   
   s.source_files  = "src/**/*.{h,m}"
+  s.vendored_frameworks = 'Frameworks/*.framework'
 
   s.dependency "React"
   s.dependency "RongCloudIM/IMLibCore", "5.1.2"
