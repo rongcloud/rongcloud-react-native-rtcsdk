@@ -1,5 +1,6 @@
 #import "RCReactNativeCall.h"
-#import <RongCallLib/RongCallLib.h>
+#import <UIKit/UIKit.h>
+#import <RongCallWrapper/RongCallWrapper.h>
 
 @implementation RCReactNativeCall
 
@@ -7,21 +8,13 @@
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_MODULE()
+RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(startCall:(NSDictionary *)arguments resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    int type = [arguments[@"type"] intValue];
-    NSString *target = arguments[@"target"];
-    NSArray *users = @[target];
-    int media = [arguments[@"media"] intValue];
-    NSString *extra = arguments[@"extra"];
-    RCCallSession *session = [[RCCallClient sharedRCCallClient] startCall:(RCConversationType)type
-                                                                 targetId:target
-                                                                       to:users
-                                                                mediaType:(RCCallMediaType)media
-                                                          sessionDelegate:nil
-                                                                    extra:extra];
-    resolve(session);
+RCT_EXPORT_METHOD(test)
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"测试" message:@"测试测试" preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 @end
