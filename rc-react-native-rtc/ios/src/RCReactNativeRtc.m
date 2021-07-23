@@ -291,13 +291,12 @@ RCT_EXPORT_METHOD(setCameraCaptureOrientation:(int)orientation
     resolve(@(code));
 }
 
-RCT_EXPORT_METHOD(setLocalView:(NSDictionary *)view
+RCT_EXPORT_METHOD(setLocalView:(NSNumber * _Nonnull)tag
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
     NSInteger code = -1;
     if (engine) {
-        NSNumber *viewId = [RCTConvert NSNumber:view[@"id"]];
-        UIView *uiView = [self.bridge.uiManager viewForReactTag:viewId];
+        UIView *uiView = [self.bridge.uiManager viewForReactTag:tag];
         [engine setLocalView:(RCRTCIWView *) uiView];
     }
     resolve(@(code));
@@ -312,14 +311,13 @@ RCT_EXPORT_METHOD(removeLocalView:(RCTPromiseResolveBlock)resolve
     resolve(@(code));
 }
 
-RCT_EXPORT_METHOD(setRemoteView:(NSDictionary *)view
+RCT_EXPORT_METHOD(setRemoteView:(NSNumber * _Nonnull)tag
                   userId:(NSString *)userId
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
     NSInteger code = -1;
     if (engine) {
-        NSNumber *viewId = [RCTConvert NSNumber:view[@"id"]];
-        UIView *uiView = [self.bridge.uiManager viewForReactTag:viewId];
+        UIView *uiView = [self.bridge.uiManager viewForReactTag:tag];
         [engine setRemoteView:(RCRTCIWView *)uiView userId:userId];
     }
     resolve(@(code));
@@ -335,13 +333,12 @@ RCT_EXPORT_METHOD(removeRemoteView:(NSString *)userId
     resolve(@(code));
 }
 
-RCT_EXPORT_METHOD(setLiveMixView:(NSDictionary *)view
+RCT_EXPORT_METHOD(setLiveMixView:(NSNumber * _Nonnull)tag
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
     NSInteger code = -1;
     if (engine) {
-        NSNumber *viewId = [RCTConvert NSNumber:view[@"id"]];
-        UIView *uiView = [self.bridge.uiManager viewForReactTag:viewId];
+        UIView *uiView = [self.bridge.uiManager viewForReactTag:tag];
         [engine setLiveMixView:(RCRTCIWView *) uiView];
     }
     resolve(@(code));
