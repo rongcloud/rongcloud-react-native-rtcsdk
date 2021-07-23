@@ -1,6 +1,10 @@
 
-import { NativeModules } from 'react-native';
+import { NativeModules, requireNativeComponent } from 'react-native';
 
 const { RCReactNativeCall } = NativeModules;
+const RCReactNativeCallVideoView = requireNativeComponent('RCReactNativeCallVideoView');
 
-export default RCReactNativeCall;
+module.exports = {
+    RCReactNativeCall,
+    RCReactNativeCallVideoView
+};
