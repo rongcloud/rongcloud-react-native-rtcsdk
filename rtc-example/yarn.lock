@@ -5070,6 +5070,9 @@ range-parser@~1.2.1:
   resolved "https://registry.npmjs.org/range-parser/-/range-parser-1.2.1.tgz"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
+"rc-react-native-im@file:../rc-react-native-im":
+  version "1.0.0"
+
 "rc-react-native-rtc@file:../rc-react-native-rtc":
   version "1.0.0"
 

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "install": "^0.13.0",
+    "rc-react-native-im": "file:../rc-react-native-im",
+    "rc-react-native-rtc": "file:../rc-react-native-rtc",
     "react": "17.0.1",
     "react-native": "0.64.2"
   },
@@ -23,6 +25,7 @@
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.64.0",
     "rc-react-native-rtc": "file:../rc-react-native-rtc",
+    "rc-react-native-im": "file:../rc-react-native-im",
     "react-test-renderer": "17.0.1"
   },
   "jest": {

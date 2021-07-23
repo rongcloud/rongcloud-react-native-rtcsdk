@@ -1,0 +1,28 @@
+{
+  "name": "rc-react-native-im",
+  "version": "1.0.0",
+  "description": "RongCloud IM Lib For React Native",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native",
+    "rongcloud",
+    "im",
+    "chat"
+  ],
+  "author": "GP-Moon <panmingda@rongcloud.cn> (https://github.com/GP-Moon)",
+  "license": "MIT",
+  "repository": "https://www.rongcloud.cn",
+  "homepage": "https://www.rongcloud.cn",
+  "bugs": {
+    "url": "https://www.rongcloud.cn"
+  },
+  "devDependencies": {
+    "react-native": "^0.60.0"
+  },
+  "peerDependencies": {
+    "react-native": "*"
+  }
+}
