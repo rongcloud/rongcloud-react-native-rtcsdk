@@ -41,12 +41,15 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  RCReactNativeIm.disconnect();
+
   RCReactNativeIm.init('z3v5yqkbv8v30');
 
   const token1 = 'Y5w0rF/AzBlxIl9Y3g76L44CQnLiYgwfq7+si4yGEz7VKxkdiQPSQw==@emx6.cn.rongnav.com;emx6.cn.rongcfg.com';
   const token2 = 'Y5w0rF/AzBkfo1b6Ob6ftejuqf63nNFYq7+si4yGEz4UrVx7Gi7Bkw==@emx6.cn.rongnav.com;emx6.cn.rongcfg.com';
 
-  RCReactNativeIm.connect(token1, (event) => {
+  RCReactNativeIm.connect(token1).then(function(event) {
+    console.log(event);
     RCReactNativeRtc.init({});
   });
 
