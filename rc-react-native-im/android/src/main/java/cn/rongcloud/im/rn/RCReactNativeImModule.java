@@ -57,5 +57,11 @@ public class RCReactNativeImModule extends ReactContextBaseJavaModule {
         });
     }
 
+    @ReactMethod
+    public void disconnect(Promise promise) {
+        RongIMClient.getInstance().disconnect();
+        promise.resolve(null);
+    }
+
 
 }

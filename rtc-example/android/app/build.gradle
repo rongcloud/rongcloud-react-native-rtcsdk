@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "cn.rongcloud.rn.rtc.example"
+        applicationId "cn.rongcloud.rtc.rn.example"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

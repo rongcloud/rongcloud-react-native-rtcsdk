@@ -34,5 +34,11 @@ RCT_EXPORT_METHOD(connect:(NSString *)token
     }];
 }
 
+RCT_EXPORT_METHOD(disconnect:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    [[RCIMClient sharedRCIMClient] disconnect];
+    resolve(nil);
+}
+
 @end
   
