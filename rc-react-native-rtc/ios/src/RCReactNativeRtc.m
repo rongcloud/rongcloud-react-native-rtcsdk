@@ -243,7 +243,7 @@ RCT_EXPORT_METHOD(whichCamera:(RCTPromiseResolveBlock)resolve
 
 RCT_EXPORT_METHOD(isCameraFocusSupported:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    BOOL code = -1;
+    BOOL code = false;
     if (engine) {
         code = [engine isCameraFocusSupported];
     }
@@ -252,7 +252,7 @@ RCT_EXPORT_METHOD(isCameraFocusSupported:(RCTPromiseResolveBlock)resolve
 
 RCT_EXPORT_METHOD(isCameraExposurePositionSupported:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    BOOL code = -1;
+    BOOL code = false;
     if (engine) {
         code = [engine isCameraExposurePositionSupported];
     }
@@ -304,7 +304,7 @@ RCT_EXPORT_METHOD(setLocalView:(NSNumber * _Nonnull)tag
 
 RCT_EXPORT_METHOD(removeLocalView:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    BOOL code = -1;
+    BOOL code = false;
     if (engine) {
         code = [engine removeLocalView];
     }
@@ -346,7 +346,7 @@ RCT_EXPORT_METHOD(setLiveMixView:(NSNumber * _Nonnull)tag
 
 RCT_EXPORT_METHOD(removeLiveMixView:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    BOOL code = -1;
+    BOOL code = false;
     if (engine) {
         code = [engine removeLiveMixView];
     }
