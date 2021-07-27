@@ -9,13 +9,4 @@
 
 @implementation RCReactNativeCallVideoView
 
-RCT_EXPORT_MODULE();
-
-- (UIView *)view {
-    UIView *view = [[UIView alloc] init];
-    return view;
-}
-
-
-
 @end

@@ -10,6 +10,10 @@
 		1F5E469426A82F1000D45567 /* RCReactNativeCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5E469226A82F1000D45567 /* RCReactNativeCall.m */; };
 		1F5E46F126A9724300D45567 /* RongCallWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5E46F026A9724300D45567 /* RongCallWrapper.framework */; };
 		1F77007526AA9EDF0023A510 /* RCReactNativeCallVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F77007326AA9EDF0023A510 /* RCReactNativeCallVideoView.m */; };
+		1F77009926AEC36E0023A510 /* NSArray+RCRNCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F77009226AEC36D0023A510 /* NSArray+RCRNCall.m */; };
+		1F77009A26AEC36E0023A510 /* NSDictionary+RCRNCall.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F77009326AEC36D0023A510 /* NSDictionary+RCRNCall.m */; };
+		1F77009B26AEC36E0023A510 /* RCReactNativeCallVideoViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F77009526AEC36E0023A510 /* RCReactNativeCallVideoViewManager.m */; };
+		1F77009C26AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F77009626AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +35,14 @@
 		1F5E46F026A9724300D45567 /* RongCallWrapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RongCallWrapper.framework; path = Framework/RongCallWrapper.framework; sourceTree = "<group>"; };
 		1F77007326AA9EDF0023A510 /* RCReactNativeCallVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCReactNativeCallVideoView.m; path = src/RCReactNativeCallVideoView.m; sourceTree = "<group>"; };
 		1F77007426AA9EDF0023A510 /* RCReactNativeCallVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCReactNativeCallVideoView.h; path = src/RCReactNativeCallVideoView.h; sourceTree = "<group>"; };
+		1F77009126AEC36D0023A510 /* RCReactNativeCallVideoViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCReactNativeCallVideoViewManager.h; path = src/RCReactNativeCallVideoViewManager.h; sourceTree = "<group>"; };
+		1F77009226AEC36D0023A510 /* NSArray+RCRNCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+RCRNCall.m"; path = "src/NSArray+RCRNCall.m"; sourceTree = "<group>"; };
+		1F77009326AEC36D0023A510 /* NSDictionary+RCRNCall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+RCRNCall.m"; path = "src/NSDictionary+RCRNCall.m"; sourceTree = "<group>"; };
+		1F77009426AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCReactNativeCallArgumentAdapter.h; path = src/RCReactNativeCallArgumentAdapter.h; sourceTree = "<group>"; };
+		1F77009526AEC36E0023A510 /* RCReactNativeCallVideoViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCReactNativeCallVideoViewManager.m; path = src/RCReactNativeCallVideoViewManager.m; sourceTree = "<group>"; };
+		1F77009626AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCReactNativeCallArgumentAdapter.m; path = src/RCReactNativeCallArgumentAdapter.m; sourceTree = "<group>"; };
+		1F77009726AEC36E0023A510 /* NSDictionary+RCRNCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+RCRNCall.h"; path = "src/NSDictionary+RCRNCall.h"; sourceTree = "<group>"; };
+		1F77009826AEC36E0023A510 /* NSArray+RCRNCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+RCRNCall.h"; path = "src/NSArray+RCRNCall.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +80,14 @@
 				1F5E469226A82F1000D45567 /* RCReactNativeCall.m */,
 				1F77007426AA9EDF0023A510 /* RCReactNativeCallVideoView.h */,
 				1F77007326AA9EDF0023A510 /* RCReactNativeCallVideoView.m */,
+				1F77009826AEC36E0023A510 /* NSArray+RCRNCall.h */,
+				1F77009226AEC36D0023A510 /* NSArray+RCRNCall.m */,
+				1F77009726AEC36E0023A510 /* NSDictionary+RCRNCall.h */,
+				1F77009326AEC36D0023A510 /* NSDictionary+RCRNCall.m */,
+				1F77009426AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.h */,
+				1F77009626AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.m */,
+				1F77009126AEC36D0023A510 /* RCReactNativeCallVideoViewManager.h */,
+				1F77009526AEC36E0023A510 /* RCReactNativeCallVideoViewManager.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				1F5E469D26A83FC600D45567 /* Frameworks */,
 			);
@@ -80,7 +100,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RCReactNativeCall" */;
 			buildPhases = (
-				1F5E469526A82F1600D45567 /* ShellScript */,
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
 				58B511D91A9E6C8500147676 /* CopyFiles */,
@@ -126,31 +145,15 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		1F5E469526A82F1600D45567 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sh before_build.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		58B511D71A9E6C8500147676 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F77009C26AEC36E0023A510 /* RCReactNativeCallArgumentAdapter.m in Sources */,
+				1F77009926AEC36E0023A510 /* NSArray+RCRNCall.m in Sources */,
+				1F77009B26AEC36E0023A510 /* RCReactNativeCallVideoViewManager.m in Sources */,
+				1F77009A26AEC36E0023A510 /* NSDictionary+RCRNCall.m in Sources */,
 				1F77007526AA9EDF0023A510 /* RCReactNativeCallVideoView.m in Sources */,
 				1F5E469426A82F1000D45567 /* RCReactNativeCall.m in Sources */,
 			);

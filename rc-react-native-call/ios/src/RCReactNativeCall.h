@@ -5,7 +5,13 @@
 #import <React/RCTBridgeModule.h>
 #endif
 
-@interface RCReactNativeCall : NSObject <RCTBridgeModule>
+#if __has_include("RCTEventEmitter.h")
+#import "RCTEventEmitter.h"
+#else
+#import <React/RCTEventEmitter.h>
+#endif
+
+@interface RCReactNativeCall : RCTEventEmitter <RCTBridgeModule>
 
 @end
   

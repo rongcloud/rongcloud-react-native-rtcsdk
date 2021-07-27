@@ -17,8 +17,8 @@ typedef NS_ENUM(NSInteger, RCCallIWUserType) {
 
 
 typedef NS_ENUM(NSInteger, RCCallIWCallType) {
-    RCCallIWMediaTypeSingle           = 0,
-    RCCallIWMediaTypeGroup            = 1
+    RCCallIWCallTypeSingle           = 0,
+    RCCallIWCallTypeGroup            = 1
 };
 
 typedef NS_ENUM(NSInteger, RCCallIWMediaType) {
@@ -45,8 +45,17 @@ typedef NS_ENUM(NSInteger, RCCallIWNetworkQuality) {
 
 
 typedef NS_ENUM(NSInteger, RCCallIWViewFitType) {
+    /*!
+     拉伸全屏
+     */
     RCCallIWViewFitTypeFill           = 0,
+    /*!
+     满屏显示， 等比例填充， 直到填充满整个试图区域，其中一个维度的部分区域会被裁剪
+     */
     RCCallIWViewFitTypeCover          = 1,
+    /*!
+     完整显示， 填充黑边， 等比例填充，直达一个维度到达区域边界
+     */
     RCCallIWViewFitTypeCenter         = 2,
 };
 

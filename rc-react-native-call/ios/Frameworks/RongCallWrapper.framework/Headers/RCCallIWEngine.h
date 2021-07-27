@@ -25,57 +25,60 @@ NS_ASSUME_NONNULL_BEGIN
 + (RCCallIWEngine *)sharedInstance;
 
 /// 引擎配置
-- (void)setEngineConfig:(RCCallIWEngineConfig *)config;
+- (void)setEngineConfig:(nullable RCCallIWEngineConfig *)config;
 
 /// 推送配置
-- (void)setPushConfig:(RCCallIWPushConfig *)callPushConfig
-     hangupPushConfig:(RCCallIWPushConfig *)hangupPushConfig;
+- (void)setPushConfig:(nullable RCCallIWPushConfig *)callPushConfig
+     hangupPushConfig:(nullable RCCallIWPushConfig *)hangupPushConfig;
 
-- (void)setPushConfig:(RCCallIWPushConfig *)callPushConfig
-     hangupPushConfig:(RCCallIWPushConfig *)hangupPushConfig
+- (void)setPushConfig:(nullable RCCallIWPushConfig *)callPushConfig
+     hangupPushConfig:(nullable RCCallIWPushConfig *)hangupPushConfig
    enableApplePushKit:(BOOL)enableApplePushKit;
 
 /// 音频配置
-- (void)setAudioConfig:(RCCallIWAudioConfig *)config;
+- (void)setAudioConfig:(nullable RCCallIWAudioConfig *)config;
 
 /// 视频配置
-- (void)setVideoConfig:(RCCallIWVideoConfig *)config;
+- (void)setVideoConfig:(nullable RCCallIWVideoConfig *)config;
 
 /// 监听设置
-- (void)setEngineDelegate:(NSObject<RCCallIWEngineDelegate> *)delegate;
+- (void)setEngineDelegate:(nullable NSObject<RCCallIWEngineDelegate> *)delegate;
 
 /* 拨打电话-单聊
  * 如果type为音视频，直接打开默认（前置）摄像头。
  */
-- (RCCallIWCallSession *)startCall:(NSString *)userId
-                              type:(RCCallIWMediaType)type;
+- (void)startCall:(NSString *)userId
+             type:(RCCallIWMediaType)type;
 
-- (RCCallIWCallSession *)startCall:(NSString *)userId
-                              type:(RCCallIWMediaType)type
-                             extra:(nullable NSString *)extra;
+- (void)startCall:(NSString *)userId
+             type:(RCCallIWMediaType)type
+            extra:(nullable NSString *)extra;
 
 /* 拨打电话-群聊
  * 如果type为音视频，直接打开默认（前置）摄像头。
  */
-- (RCCallIWCallSession *)startCall:(NSString *)groupId
-                           userIds:(NSArray<NSString *> *)userIds
-                              type:(RCCallIWMediaType)type;
+- (void)startCall:(NSString *)groupId
+          userIds:(NSArray<NSString *> *)userIds
+             type:(RCCallIWMediaType)type;
 
-- (RCCallIWCallSession *)startCall:(NSString *)groupId
-                           userIds:(NSArray<NSString *> *)userIds
-                              type:(RCCallIWMediaType)type
-                             extra:(nullable NSString *)extra;
+- (void)startCall:(NSString *)groupId
+          userIds:(NSArray<NSString *> *)userIds
+             type:(RCCallIWMediaType)type
+            extra:(nullable NSString *)extra;
 
-- (RCCallIWCallSession *)startCall:(NSString *)groupId
-                           userIds:(NSArray<NSString *> *)userIds
-                   observerUserIds:(nullable NSArray<NSString *> *)observerUserIds
-                              type:(RCCallIWMediaType)type;
+- (void)startCall:(NSString *)groupId
+          userIds:(NSArray<NSString *> *)userIds
+  observerUserIds:(nullable NSArray<NSString *> *)observerUserIds
+             type:(RCCallIWMediaType)type;
 
-- (RCCallIWCallSession *)startCall:(NSString *)groupId
-                           userIds:(NSArray<NSString *> *)userIds
-                   observerUserIds:(nullable NSArray<NSString *> *)observerUserIds
-                              type:(RCCallIWMediaType)type
-                             extra:(nullable NSString *)extra;
+- (void)startCall:(NSString *)groupId
+          userIds:(NSArray<NSString *> *)userIds
+  observerUserIds:(nullable NSArray<NSString *> *)observerUserIds
+             type:(RCCallIWMediaType)type
+            extra:(nullable NSString *)extra;
+
+/// 获取当前call session
+- (RCCallIWCallSession *)getCurrentCallSession;
 
 /* 接电话
  * 如果呼入类型为语音通话，即接受语音通话，如果呼入类型为视频通话，即接受视频通话，打开默认（前置）摄像头。
