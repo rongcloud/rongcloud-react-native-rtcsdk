@@ -11,6 +11,14 @@
 
 RCT_EXPORT_MODULE()
 
+RCT_EXPORT_METHOD(setServerInfo:(NSString *) navigate
+                  file:(NSString *)file
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    BOOL ret = [[RCIMClient sharedRCIMClient] setServerInfo:navigate fileServer:file];
+    resolve(@(ret));
+}
+
 RCT_EXPORT_METHOD(init:(NSString *)key
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {

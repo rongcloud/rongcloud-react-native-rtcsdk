@@ -27,6 +27,12 @@ public class RCReactNativeImModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setServerInfo(String navigate, String file, Promise promise) {
+        RongIMClient.setServerInfo(navigate, file);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
     public void init(String key, Promise promise) {
         RongIMClient.init(reactContext, key);
         promise.resolve(null);
