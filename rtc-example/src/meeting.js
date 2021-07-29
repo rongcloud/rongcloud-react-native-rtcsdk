@@ -1,6 +1,11 @@
 
 import React from 'react';
 
+import * as Config from './config';
+import * as Util from './util';
+import * as UI from './ui';
+import * as Constants from './constants'
+
 import {
   SafeAreaView,
   ScrollView,
@@ -44,7 +49,7 @@ class MeetingScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.column}>
+      <View style={UI.styles.column}>
       </View>
     );
   }
