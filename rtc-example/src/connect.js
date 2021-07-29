@@ -7,16 +7,10 @@ import * as UI from './ui';
 import * as Constants from './constants'
 
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
   Text,
   TextInput,
-  Dimensions,
   View,
   TouchableOpacity,
-  NativeEventEmitter,
 } from 'react-native';
 
 import {
@@ -24,23 +18,9 @@ import {
   RRCLoading,
 } from 'react-native-overlayer';
 
-import RadioForm, {
-  RadioButton,
-  RadioButtonInput,
-  RadioButtonLabel
-} from 'react-native-simple-radio-button';
+import RadioForm from 'react-native-simple-radio-button';
 
-import {
-  CheckBox
-} from '@react-native-community/checkbox';
-
-import {
-  NavigationContainer
-} from '@react-navigation/native';
-
-import {
-  createStackNavigator
-} from '@react-navigation/stack';
+import CheckBox from '@react-native-community/checkbox';
 
 import {
   RCReactNativeIm
@@ -48,7 +28,6 @@ import {
 
 import {
   RCReactNativeRtc,
-  RCReactNativeRtcView,
   RCReactNativeRtcEventEmitter,
 } from 'rc-react-native-rtc'
 
@@ -86,27 +65,54 @@ class ConnectScreen extends React.Component {
     });
 
     this.state.extra.push(
-      <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10 }}>
-        {/* <CheckBox
+      <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10, alignItems: 'center' }}>
+        <CheckBox
           disabled={false}
           value={this.state.tiny}
           onValueChange={(checked) => {
             this.state.tiny = checked;
             this.setState(this.state);
           }}
-        /> */}
+        />
+        <View style={{ width: 10 }} />
         <Text style={UI.styles.text}>开启大小流</Text>
       </View>
     );
 
     this.state.extra.push(
-      <View style={UI.styles.row}>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={UI.styles.button}
-          onPress={this.disconnect}>
-          <Text style={UI.styles.text}>断开链接</Text>
-        </TouchableOpacity>
+      <View style={UI.styles.column}>
+        <RadioForm
+          style={{
+            marginTop: -20,
+            alignSelf: 'center',
+          }}
+          radio_props={[
+            { label: '音视频模式', value: 0 },
+            { label: '纯音频模式', value: 1 },
+          ]}
+          initial={this.state.mode}
+          formHorizontal={true}
+          labelHorizontal={false}
+          animation={false}
+          onPress={(value) => {
+            if (this.state.mode != value) {
+              this.state.mode = value;
+              this.setState(this.state);
+            }
+          }}
+        />
+        <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10, alignItems: 'center' }}>
+          <CheckBox
+            disabled={false}
+            value={this.state.tiny}
+            onValueChange={(checked) => {
+              this.state.tiny = checked;
+              this.setState(this.state);
+            }}
+          />
+          <View style={{ width: 10 }} />
+          <Text style={UI.styles.text}>开启大小流</Text>
+        </View>
       </View>
     );
   }
@@ -195,7 +201,7 @@ class ConnectScreen extends React.Component {
     RRCLoading.show();
     let media = this.state.media;
     let videoSetup = {
-      enableTinyStream: true, // TODO 小流
+      enableTinyStream: this.state.tiny,
     };
     let setup = Util.isEmpty(media) ? {
       videoSetup: videoSetup,
@@ -205,7 +211,7 @@ class ConnectScreen extends React.Component {
     };
     RCReactNativeRtc.init(setup).then(() => {
       RCReactNativeRtc.joinRoom(id, {
-        type: 2, // TODO 音视频
+        type: this.state.mode == 0 ? 2 : 0,
         role: this.state.type,
       }).then((code) => {
         if (code != 0) {
@@ -400,7 +406,6 @@ class ConnectScreen extends React.Component {
 
   render() {
     return this.state.connected ? this.connected() : this.unconnected();
-    // return this.connected();
   }
 }
 
