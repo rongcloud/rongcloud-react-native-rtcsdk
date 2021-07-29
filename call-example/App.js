@@ -1,83 +1,48 @@
-import React, { Component } from 'react';
-import {
-  Button,
-  View,
-  SafeAreaView,
-  findNodeHandle
-} from 'react-native';
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import {
-  RCReactNativeCall,
-  RCReactNativeCallVideoView
-} from 'rc-react-native-call';
-
+import Home from './src/home';
 import Room from './src/room';
+import JoinRoom from './src/joinroom';
 
-class App extends Component {
+const Stack = createStackNavigator();
 
-  constructor(props) {
-    super(props);
+const AppKey = "n19jmcy59ocx9";
+const AppSecret = "hccSLZPPmu";
 
-    this.state = {
-      goto: false
-    };
-  }
-
-  onclickbutton() {
-    // RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnReceiveCall");
-    this.setState({
-      goto: !this.state.goto
-    })
-  }
-
-  componentDidMount() {
-
-    RCReactNativeCall.ManagerEmitter.addListener("Engine:OnReceiveCall", (session) => {
-      alert(session);
-    });
-
-  }
-
-  componentWillUnmount() {
-    RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnReceiveCall");
-  }
-
-  callback() {
-    this.setState({
-      goto: !this.state.goto
-    })
-  }
-
-  renderView = (goto) => {
-    switch(goto) {
-      case false:
-        return (
-          <View style={{flex: 1}}>
-            <Button title="按钮" color='red' style={{padding: 100, width: 100, height: 80}} onPress={this.onclickbutton.bind(this)}/>
-            <RCReactNativeCallVideoView ref={ref => { this._callView = findNodeHandle(ref); }} style={{width: 200, height: 200}} />
-          </View>
-        )
-      case true:
-        return (
-          // <View style={{flex: 1}}>
-          //   <Button title="返回" color='blue' style={{padding: 100, width: 100, height: 80}} onPress={this.onclickbutton.bind(this)}/>
-          //   <RCReactNativeCallVideoView ref={ref => { this._callView = findNodeHandle(ref); }} style={{width: 200, height: 200}} />
-          // </View>
-          <Room onaction={ this.callback.bind(this) }/>
-        )
-    }
-  }
-
+class App extends React.Component {
   render() {
-
-    const {goto} = this.state;
-
     return (
-      <SafeAreaView style={{flex: 1}}>
-        { this.renderView(goto) }
-      </SafeAreaView>
-    )
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={Home} 
+            options={{ title: '融云 CallLib RN 示例' }}
+            initialParams={{ 
+              AppKey,
+              AppSecret
+            }}/>
+          <Stack.Screen
+            name="JoinRoom"
+            component={JoinRoom}
+            options={{
+              headerShown: false,
+              gestureEnabled: false
+            }}/>
+          <Stack.Screen
+            name="Room"
+            component={Room}
+            options={{
+              headerShown: false,
+              gestureEnabled: false
+            }}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
   }
-};
+}
 
 export default App;

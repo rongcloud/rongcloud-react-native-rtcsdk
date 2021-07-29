@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = 'Frameworks/*.framework'
 
   s.dependency "React"
-  s.dependency "RongCloudIM/IMLibCore", "5.1.2"
-  s.dependency "RongCloudRTC/RongCallLib", "5.1.2"
+  s.dependency 'RongCloudIM/IMLib', '5.1.3.1'
+  s.dependency "RongCloudRTC/RongCallLib", "5.1.4"
   
 end

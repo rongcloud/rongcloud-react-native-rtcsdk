@@ -10,11 +10,17 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-navigation/native": "^5.9.4",
+    "@react-navigation/stack": "^5.14.5",
+    "crypto-js": "^4.1.1",
     "rc-react-native-call": "file:../rc-react-native-call",
+    "rc-react-native-im": "file:../rc-react-native-im",
     "react": "17.0.1",
     "react-native": "0.64.2",
     "react-native-gesture-handler": "^1.10.3",
-    "react-navigation": "^4.4.4"
+    "react-native-safe-area-context": "^3.2.0",
+    "react-native-safe-area-view": "^1.1.1",
+    "react-native-screens": "^3.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

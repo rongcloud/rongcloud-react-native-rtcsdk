@@ -14,7 +14,7 @@
 
 @implementation RCReactNativeCall
 
-@synthesize bridge = _bridge;
+//@synthesize bridge = _bridge;
 
 - (dispatch_queue_t)methodQueue {
     return dispatch_get_main_queue();
@@ -99,8 +99,7 @@ RCT_EXPORT_METHOD(startGroupCall:(NSString *)groupId
 }
 
 /// 获取当前call session
-RCT_REMAP_METHOD(getCurrentCallSession,
-                 rcNativeGetCurrentCallSession:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(getCurrentCallSession:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject)
 {
     resolve(fromCallIWCallSession([[RCCallIWEngine sharedInstance] getCurrentCallSession]));
@@ -127,8 +126,7 @@ RCT_EXPORT_METHOD(enableMicrophone:(BOOL)enable)
     [[RCCallIWEngine sharedInstance] enableMicrophone:enable];
 }
 
-RCT_REMAP_METHOD(isEnableMicrophone,
-                 rcNativeIsEnableMicrophone:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(isEnableMicrophone:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject)
 {
     resolve(@([[RCCallIWEngine sharedInstance] isEnableMicrophone]));
@@ -140,8 +138,7 @@ RCT_EXPORT_METHOD(enableSpeaker:(BOOL)enable)
     [[RCCallIWEngine sharedInstance] enableSpeaker:enable];
 }
 
-RCT_REMAP_METHOD(isEnableSpeaker,
-                 rcNativeIsEnableSpeaker:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(isEnableSpeaker:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject)
 {
     resolve(@([[RCCallIWEngine sharedInstance] isEnableSpeaker]));
@@ -154,15 +151,13 @@ RCT_EXPORT_METHOD(enableCamera:(BOOL)enable
     [[RCCallIWEngine sharedInstance] enableCamera:enable camera:toCallIWCamera(camera)];
 }
  
-RCT_REMAP_METHOD(isEnableCamera,
-                 rcNativeIsEnableCamera:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(isEnableCamera:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject)
 {
     resolve(@([[RCCallIWEngine sharedInstance] isEnableCamera]));
 }
 
-RCT_REMAP_METHOD(currentCamera,
-                 rcNativeCurrentCamera:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(currentCamera:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject)
 {
     resolve(@(fromCallIWCamera([[RCCallIWEngine sharedInstance] currentCamera])));
@@ -175,7 +170,7 @@ RCT_EXPORT_METHOD(switchCamera)
  
 /// 设置预览窗口
 RCT_EXPORT_METHOD(setVideoView:(NSString *)userId
-                  view:(NSNumber *)reactTag
+                  view:(nonnull NSNumber *)reactTag
                   fit:(int)fit)
 {
     UIView *videoView = [self.bridge.uiManager viewForReactTag:reactTag];
@@ -383,6 +378,8 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 }
 
 - (void)user:(RCCallIWUserProfile *)user audioVolume:(int)volume {
+    
+    RCRNReturnIfFalse(self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];

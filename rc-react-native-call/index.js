@@ -1,11 +1,18 @@
 import {
     NativeModules, 
     requireNativeComponent,
-    NativeEventEmitter
+    NativeEventEmitter,
+    DeviceEventEmitter,
+    Platform
 } from 'react-native';
 
 const { RCReactNativeCall } = NativeModules;
-RCReactNativeCall.ManagerEmitter = new NativeEventEmitter(RCReactNativeCall);
+
+if (Platform.OS === "android") {
+    RCReactNativeCall.ManagerEmitter = DeviceEventEmitter;
+} else {
+    RCReactNativeCall.ManagerEmitter = new NativeEventEmitter(RCReactNativeCall);
+}
 
 const RCReactNativeCallVideoView = requireNativeComponent('RCReactNativeCallVideoView');
 
