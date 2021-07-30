@@ -94,7 +94,7 @@ RCT_EXPORT_METHOD(startGroupCall:(NSString *)groupId
     [[RCCallIWEngine sharedInstance] startCall:groupId
                                        userIds:userIds
                                observerUserIds:observerUserIds
-                                          type:type
+                                          type:toCallIWMediaType(type)
                                          extra:extra];
 }
 

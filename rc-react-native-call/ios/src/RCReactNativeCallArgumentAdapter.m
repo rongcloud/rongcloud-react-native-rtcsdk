@@ -411,6 +411,3 @@ NSDictionary *fromCallIWCallSession(RCCallIWCallSession *session) {
     }] forKey:@"users"];
     return dictionary;
 }
-
-
-//@property (nonatomic, readonly) NSArray<RCCallIWUserProfile *> *users; // 当前通话的全部用户列表

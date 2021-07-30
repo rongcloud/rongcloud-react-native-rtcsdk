@@ -12,7 +12,7 @@
 - (NSDictionary *)indexDictionary {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:self.count];
     [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [dictionary setObject:obj forKey:@(idx)];
+        [dictionary setObject:@(idx) forKey:obj];
     }];
     return dictionary;
 }

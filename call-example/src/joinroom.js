@@ -9,11 +9,13 @@ import {
     TouchableOpacity,
     Image,
     Keyboard,
-    FlatList
+    FlatList,
+    Switch
 } from 'react-native';
 
 import { RCReactNativeIm } from 'rc-react-native-im';
 import { RCReactNativeCall } from 'rc-react-native-call';
+import { CallType } from './defines';
 
 class UserCard extends Component {
 
@@ -49,7 +51,8 @@ class JoinRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userIds: [{key: 0, userId: "990099"}]
+            userIds: [{key: 0, userId: "990099"}],
+            isVideo: true
         }
         this.keyCount = 1;
     }
@@ -87,6 +90,7 @@ class JoinRoom extends Component {
         const options = { isCallOut };
         if (isCallOut) {
             options.userIds = args;
+            options.callType = this.state.isVideo ? CallType.video : CallType.audio;
         } else {
             options.callSession = args;
         }
@@ -110,10 +114,17 @@ class JoinRoom extends Component {
 
     componentDidMount() {
         RCReactNativeCall.init();
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnReceiveCall", (cs)=>this.onGotoCallRoom(false, cs));
     }
 
     componentWillUnmount() {
         RCReactNativeCall.unInit();
+    }
+
+    toggleSwitch() {
+        this.setState({
+            isVideo: !this.state.isVideo
+        });
     }
 
     render() {
@@ -154,6 +165,16 @@ class JoinRoom extends Component {
                                 );
                             }
                         }/>
+                        <View style={styles.switchView}>
+                            <Switch
+                                style={styles.switch}
+                                trackColor={{ false: "#cccccc", true: "#1DB7FF" }}
+                                thumbColor={"width"}
+                                ios_backgroundColor="#cccccc"
+                                onValueChange={this.toggleSwitch.bind(this)}
+                                value={this.state.isVideo}/>
+                            <Text style={styles.switchText}>{this.state.isVideo ? "视频通话" : "语音通话"}</Text>
+                        </View>
                         <TouchableOpacity
                             style={[styles.btn, {opacity: userCount > 0 ? 1 : 0.5}]}
                             onPress={ this.onClickJoinRoom.bind(this) }
@@ -213,8 +234,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         paddingVertical: 10
     },
+    switchView: {
+        marginHorizontal: 30,
+        flexDirection: "row",
+        alignItems: 'center'
+    },
+    switch: {
+        marginVertical: 20
+    }, 
+    switchText: {
+        fontSize: 17,
+        marginLeft: 10
+    }, 
     btn: {
-        margin: 30,
+        marginHorizontal: 30,
+        marginBottom: 20,
         height: 44,
         backgroundColor: "red",
         justifyContent: 'center',
