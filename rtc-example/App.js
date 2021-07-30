@@ -15,7 +15,6 @@ import type {
 } from 'react';
 
 import {
-  RRCToast,
   RRCLoading,
 } from 'react-native-overlayer';
 
@@ -49,11 +48,16 @@ const App: () => Node = () => {
         <Stack.Screen
           name='Connect'
           component={ConnectScreen}
-          options={{ title: '测试专用DEMO' }}
+          options={{
+            headerTitle: '测试专用DEMO'
+          }}
         />
         <Stack.Screen
           name='Meeting'
           component={MeetingScreen}
+          options={{
+            headerBackTitle: null
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

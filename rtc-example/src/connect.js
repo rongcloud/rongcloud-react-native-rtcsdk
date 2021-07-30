@@ -53,13 +53,13 @@ class ConnectScreen extends React.Component {
     this.disconnect = this.disconnect.bind(this);
     this.join = this.join.bind(this);
 
-    RCReactNativeRtcEventEmitter.addListener('Engine:OnRoomJoined', (data) => {
-      let code = data.code;
-      let message = data.message;
+    RCReactNativeRtcEventEmitter.addListener('Engine:OnRoomJoined', (event) => {
+      let code = event.code;
+      let message = event.message;
       if (code != 0) {
         RRCToast.show('Join Room Error: ' + code + ", message:" + message);
       } else {
-        this.props.navigation.navigate(Constants.screens[this.state.type], { content: this.state.room });
+        this.props.navigation.navigate(Constants.screens[this.state.type], { room: this.state.room });
       }
       RRCLoading.hide();
     });

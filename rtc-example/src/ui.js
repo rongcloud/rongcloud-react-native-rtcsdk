@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     alignSelf: 'center',
+    alignItems: 'center',
   },
   column: {
     flexDirection: 'column',
