@@ -55,13 +55,6 @@ class MeetingScreen extends React.Component {
       speaker: false,
       front: true,
       mirror: true,
-      videoFpsPopUp: false,
-      videoResolutionPopUp: false,
-      videoMinBitratePopUp: false,
-      videoMaxBitratePopUp: false,
-      tinyVideoResolutionPopUp: false,
-      tinyVideoMinBitratePopUp: false,
-      tinyVideoMaxBitratePopUp: false,
       videoConfig: {
         minBitrate: 200,
         maxBitrate: 1200,
@@ -481,149 +474,11 @@ class MeetingScreen extends React.Component {
         </View>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View>
-            
+
           </View>
         </ScrollView>
       </View>
     );
-  }
-
-  videoResolutionPopUp() {
-    if (this.state.videoResolutionPopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.resolution.map((resolution, index) => {
-              return (
-                <TouchableOpacity key={resolution} onPress={() => {
-                  this.state.videoConfig.resolution = index;
-                  this.state.videoResolutionPopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{resolution}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
-  }
-
-  videoMinBitratePopUp() {
-    if (this.state.videoMinBitratePopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.minVideoKbps.map((kbps) => {
-              return (
-                <TouchableOpacity key={kbps} onPress={() => {
-                  this.state.videoConfig.minBitrate = kbps;
-                  this.state.videoMinBitratePopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{kbps + 'kbps'}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
-  }
-
-  videoMaxBitratePopUp() {
-    if (this.state.videoMaxBitratePopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.maxVideoKbps.map((kbps) => {
-              return (
-                <TouchableOpacity key={kbps} onPress={() => {
-                  this.state.videoConfig.maxBitrate = kbps;
-                  this.state.videoMaxBitratePopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{kbps + 'kbps'}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
-  }
-
-  tinyVideoResolutionPopUp() {
-    if (this.state.tinyVideoResolutionPopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.resolution.map((resolution, index) => {
-              return (
-                <TouchableOpacity key={resolution} onPress={() => {
-                  this.state.tinyVideoConfig.resolution = index;
-                  this.state.tinyVideoResolutionPopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.tinyVideoConfig, true);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{resolution}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
-  }
-
-  tinyVideoMinBitratePopUp() {
-    if (this.state.tinyVideoMinBitratePopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.minVideoKbps.map((kbps) => {
-              return (
-                <TouchableOpacity key={kbps} onPress={() => {
-                  this.state.tinyVideoConfig.minBitrate = kbps;
-                  this.state.tinyVideoMinBitratePopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.tinyVideoConfig, true);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{kbps + 'kbps'}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
-  }
-
-  tinyVideoMaxBitratePopUp() {
-    if (this.state.tinyVideoMaxBitratePopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.maxVideoKbps.map((kbps) => {
-              return (
-                <TouchableOpacity key={kbps} onPress={() => {
-                  this.state.tinyVideoConfig.maxBitrate = kbps;
-                  this.state.tinyVideoMaxBitratePopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.tinyVideoConfig, true);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{kbps + 'kbps'}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
   }
 
 }
