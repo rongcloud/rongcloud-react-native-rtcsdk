@@ -342,9 +342,15 @@ class MeetingScreen extends React.Component {
               <TouchableOpacity
                 activeOpacity={0.5}
                 style={UI.styles.button}
-                onPress={() => {
-                  this.state.speaker = !this.state.speaker;
-                  this.setState(this.state);
+                onPress={async () => {
+                  RRCLoading.show();
+                  let code = await RCReactNativeRtc.enableSpeaker(!this.state.speaker);
+                  if (code != 0) {
+                    RRCToast.show((this.state.speaker ? 'Stop' : 'Start') + ' Speaker Error: ' + code);
+                  } else {
+                    this.setState({ speaker: !this.state.speaker });
+                  }
+                  RRCLoading.hide();
                 }}>
                 <Text style={UI.styles.text, { fontSize: 15 }}>{this.state.speaker ? '扬声器' : '听筒'}</Text>
               </TouchableOpacity>
@@ -355,9 +361,12 @@ class MeetingScreen extends React.Component {
                 items={Constants.fps}
                 value={this.state.videoConfig.fps}
                 onValueChange={(value) => {
-                  this.state.videoConfig.fps = value;
-                  this.setState(this.state);
-                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  if (value != null) {
+                    const videoConfig = {}
+                    videoConfig.fps = value;
+                    this.setState({ videoConfig: videoConfig })
+                    RCReactNativeRtc.setVideoConfig(videoConfig, false);
+                  }
                 }}
               />
               <View style={{ width: 10 }} />
@@ -365,9 +374,12 @@ class MeetingScreen extends React.Component {
                 items={Constants.resolution}
                 value={this.state.videoConfig.resolution}
                 onValueChange={(value) => {
-                  this.state.videoConfig.resolution = value;
-                  this.setState(this.state);
-                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  if (value != null) {
+                    const videoConfig = {}
+                    videoConfig.resolution = value;
+                    this.setState({ videoConfig: videoConfig })
+                    RCReactNativeRtc.setVideoConfig(videoConfig, false);
+                  }
                 }}
               />
             </View>
@@ -378,9 +390,12 @@ class MeetingScreen extends React.Component {
                 items={Constants.minVideoKbps}
                 value={this.state.videoConfig.minBitrate}
                 onValueChange={(value) => {
-                  this.state.videoConfig.minBitrate = value;
-                  this.setState(this.state);
-                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  if (value != null) {
+                    const videoConfig = {}
+                    videoConfig.minBitrate = value;
+                    this.setState({ videoConfig: videoConfig })
+                    RCReactNativeRtc.setVideoConfig(videoConfig, false);
+                  }
                 }}
               />
             </View>
@@ -391,9 +406,12 @@ class MeetingScreen extends React.Component {
                 items={Constants.maxVideoKbps}
                 value={this.state.videoConfig.maxBitrate}
                 onValueChange={(value) => {
-                  this.state.videoConfig.maxBitrate = value;
-                  this.setState(this.state);
-                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  if (value != null) {
+                    const videoConfig = {}
+                    videoConfig.maxBitrate = value;
+                    this.setState({ videoConfig: videoConfig })
+                    RCReactNativeRtc.setVideoConfig(videoConfig, false);
+                  }
                 }}
               />
             </View>
@@ -416,9 +434,12 @@ class MeetingScreen extends React.Component {
                 items={Constants.resolution}
                 value={this.state.tinyVideoConfig.resolution}
                 onValueChange={(value) => {
-                  this.state.tinyVideoConfig.resolution = value;
-                  this.setState(this.state);
-                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  if (value != null) {
+                    const videoConfig = {}
+                    videoConfig.resolution = value;
+                    this.setState({ tinyVideoConfig: videoConfig })
+                    RCReactNativeRtc.setVideoConfig(videoConfig, true);
+                  }
                 }}
               />
             </View>
@@ -430,9 +451,12 @@ class MeetingScreen extends React.Component {
                   items={Constants.minVideoKbps}
                   value={this.state.tinyVideoConfig.minBitrate}
                   onValueChange={(value) => {
-                    this.state.tinyVideoConfig.minBitrate = value;
-                    this.setState(this.state);
-                    // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                    if (value != null) {
+                      const videoConfig = {}
+                      videoConfig.minBitrate = value;
+                      this.setState({ tinyVideoConfig: videoConfig })
+                      RCReactNativeRtc.setVideoConfig(videoConfig, true);
+                    }
                   }}
                 />
               </View>
@@ -443,9 +467,12 @@ class MeetingScreen extends React.Component {
                   items={Constants.maxVideoKbps}
                   value={this.state.tinyVideoConfig.maxBitrate}
                   onValueChange={(value) => {
-                    this.state.tinyVideoConfig.maxBitrate = value;
-                    this.setState(this.state);
-                    // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                    if (value != null) {
+                      const videoConfig = {}
+                      videoConfig.maxBitrate = value;
+                      this.setState({ tinyVideoConfig: videoConfig })
+                      RCReactNativeRtc.setVideoConfig(videoConfig, true);
+                    }
                   }}
                 />
               </View>
@@ -454,6 +481,7 @@ class MeetingScreen extends React.Component {
         </View>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View>
+            
           </View>
         </ScrollView>
       </View>
