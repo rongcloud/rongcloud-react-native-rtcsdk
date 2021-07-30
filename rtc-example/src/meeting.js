@@ -28,6 +28,8 @@ import CheckBox from '@react-native-community/checkbox';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
+import RNPickerSelect from 'react-native-picker-select';
+
 import {
   NavigationContainer
 } from '@react-navigation/native';
@@ -61,8 +63,8 @@ class MeetingScreen extends React.Component {
       tinyVideoMinBitratePopUp: false,
       tinyVideoMaxBitratePopUp: false,
       videoConfig: {
-        minBitrate: 250,
-        maxBitrate: 2200,
+        minBitrate: 200,
+        maxBitrate: 1200,
         fps: 2,
         resolution: 15,
       },
@@ -348,60 +350,52 @@ class MeetingScreen extends React.Component {
               </TouchableOpacity>
             </View>
             <View style={{ height: 10 }} />
-            <View style={{ flexDirection: 'row', paddingLeft: 10, paddingRight: 10, alignSelf: 'center', alignItems: 'flex-start' }}>
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  style={UI.styles.button}
-                  onPress={() => {
-                    this.setState({ videoFpsPopUp: !this.state.videoFpsPopUp })
-                  }}>
-                  <Text>{Constants.fps[this.state.videoConfig.fps] + 'FPS' + (this.state.videoFpsPopUp ? '▲' : '▼')}</Text>
-                </TouchableOpacity>
-                {this.videoFpsPopUp()}
-              </View>
+            <View style={UI.styles.row}>
+              <RNPickerSelect
+                items={Constants.fps}
+                value={this.state.videoConfig.fps}
+                onValueChange={(value) => {
+                  this.state.videoConfig.fps = value;
+                  this.setState(this.state);
+                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                }}
+              />
               <View style={{ width: 10 }} />
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  style={UI.styles.button}
-                  onPress={() => {
-                    this.setState({ videoResolutionPopUp: !this.state.videoResolutionPopUp })
-                  }}>
-                  <Text>{Constants.resolution[this.state.videoConfig.resolution] + (this.state.videoResolutionPopUp ? '▲' : '▼')}</Text>
-                </TouchableOpacity>
-                {this.videoResolutionPopUp()}
-              </View>
+              <RNPickerSelect
+                items={Constants.resolution}
+                value={this.state.videoConfig.resolution}
+                onValueChange={(value) => {
+                  this.state.videoConfig.resolution = value;
+                  this.setState(this.state);
+                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                }}
+              />
             </View>
             <View style={{ height: 10 }} />
-            <View style={{ flexDirection: 'row', paddingLeft: 10, paddingRight: 10, alignSelf: 'center', alignItems: 'flex-start' }}>
+            <View style={UI.styles.row}>
               <Text style={UI.styles.text, { fontSize: 15 }}>码率下限:</Text>
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  style={UI.styles.button}
-                  onPress={() => {
-                    this.setState({ videoMinBitratePopUp: !this.state.videoMinBitratePopUp })
-                  }}>
-                  <Text>{this.state.videoConfig.minBitrate + 'kbps' + (this.state.videoMinBitratePopUp ? '▲' : '▼')}</Text>
-                </TouchableOpacity>
-                {this.videoMinBitratePopUp()}
-              </View>
+              <RNPickerSelect
+                items={Constants.minVideoKbps}
+                value={this.state.videoConfig.minBitrate}
+                onValueChange={(value) => {
+                  this.state.videoConfig.minBitrate = value;
+                  this.setState(this.state);
+                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                }}
+              />
             </View>
             <View style={{ height: 10 }} />
-            <View style={{ flexDirection: 'row', paddingLeft: 10, paddingRight: 10, alignSelf: 'center', alignItems: 'flex-start' }}>
+            <View style={UI.styles.row}>
               <Text style={UI.styles.text, { fontSize: 15 }}>码率上限:</Text>
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  style={UI.styles.button}
-                  onPress={() => {
-                    this.setState({ videoMaxBitratePopUp: !this.state.videoMaxBitratePopUp })
-                  }}>
-                  <Text>{this.state.videoConfig.maxBitrate + 'kbps' + (this.state.videoMaxBitratePopUp ? '▲' : '▼')}</Text>
-                </TouchableOpacity>
-                {this.videoMaxBitratePopUp()}
-              </View>
+              <RNPickerSelect
+                items={Constants.maxVideoKbps}
+                value={this.state.videoConfig.maxBitrate}
+                onValueChange={(value) => {
+                  this.state.videoConfig.maxBitrate = value;
+                  this.setState(this.state);
+                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                }}
+              />
             </View>
           </View>
         </View>
@@ -417,47 +411,43 @@ class MeetingScreen extends React.Component {
           <Text style={UI.styles.text, { fontSize: 15 }}>小流设置</Text>
           <View style={{ width: 5 }} />
           <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-            <View>
-              <TouchableOpacity
-                activeOpacity={0.5}
-                style={UI.styles.button}
-                onPress={() => {
-                  this.setState({ tinyVideoResolutionPopUp: !this.state.tinyVideoResolutionPopUp })
-                }}>
-                <Text>{Constants.resolution[this.state.tinyVideoConfig.resolution] + (this.state.tinyVideoResolutionPopUp ? '▲' : '▼')}</Text>
-              </TouchableOpacity>
-              {this.tinyVideoResolutionPopUp()}
+            <View style={UI.styles.row}>
+              <RNPickerSelect
+                items={Constants.resolution}
+                value={this.state.tinyVideoConfig.resolution}
+                onValueChange={(value) => {
+                  this.state.tinyVideoConfig.resolution = value;
+                  this.setState(this.state);
+                  // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                }}
+              />
             </View>
             <View style={{ height: 10 }} />
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ flexDirection: 'row', paddingLeft: 10, paddingRight: 10, alignSelf: 'center', alignItems: 'flex-start' }}>
+              <View style={UI.styles.row}>
                 <Text style={UI.styles.text, { fontSize: 15 }}>下限:</Text>
-                <View>
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    style={UI.styles.button}
-                    onPress={() => {
-                      this.setState({ tinyVideoMinBitratePopUp: !this.state.tinyVideoMinBitratePopUp })
-                    }}>
-                    <Text>{this.state.tinyVideoConfig.minBitrate + 'kbps' + (this.state.tinyVideoMinBitratePopUp ? '▲' : '▼')}</Text>
-                  </TouchableOpacity>
-                  {this.tinyVideoMinBitratePopUp()}
-                </View>
+                <RNPickerSelect
+                  items={Constants.minVideoKbps}
+                  value={this.state.tinyVideoConfig.minBitrate}
+                  onValueChange={(value) => {
+                    this.state.tinyVideoConfig.minBitrate = value;
+                    this.setState(this.state);
+                    // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  }}
+                />
               </View>
               <View style={{ width: 5 }} />
-              <View style={{ flexDirection: 'row', paddingLeft: 10, paddingRight: 10, alignSelf: 'center', alignItems: 'flex-start' }}>
+              <View style={UI.styles.row}>
                 <Text style={UI.styles.text, { fontSize: 15 }}>上限:</Text>
-                <View>
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    style={UI.styles.button}
-                    onPress={() => {
-                      this.setState({ tinyVideoMaxBitratePopUp: !this.state.tinyVideoMaxBitratePopUp })
-                    }}>
-                    <Text>{this.state.tinyVideoConfig.maxBitrate + 'kbps' + (this.state.tinyVideoMaxBitratePopUp ? '▲' : '▼')}</Text>
-                  </TouchableOpacity>
-                  {this.tinyVideoMaxBitratePopUp()}
-                </View>
+                <RNPickerSelect
+                  items={Constants.maxVideoKbps}
+                  value={this.state.tinyVideoConfig.maxBitrate}
+                  onValueChange={(value) => {
+                    this.state.tinyVideoConfig.maxBitrate = value;
+                    this.setState(this.state);
+                    // RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
+                  }}
+                />
               </View>
             </View>
           </View>
@@ -468,29 +458,6 @@ class MeetingScreen extends React.Component {
         </ScrollView>
       </View>
     );
-  }
-
-  videoFpsPopUp() {
-    if (this.state.videoFpsPopUp) {
-      return (
-        <View style={{ borderWidth: 1, borderColor: 'black' }}>
-          {
-            Constants.fps.map((fps, index) => {
-              return (
-                <TouchableOpacity key={fps} onPress={() => {
-                  this.state.videoConfig.fps = index;
-                  this.state.videoFpsPopUp = false;
-                  RCReactNativeRtc.setVideoConfig(this.state.videoConfig, false);
-                  this.setState(this.state);
-                }}>
-                  <Text style={UI.styles.text, { fontSize: 15 }}>{fps + 'FPS'}</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </View>
-      );
-    }
   }
 
   videoResolutionPopUp() {
