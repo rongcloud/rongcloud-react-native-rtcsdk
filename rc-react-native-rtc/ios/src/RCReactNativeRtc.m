@@ -304,7 +304,7 @@ RCT_EXPORT_METHOD(setLocalView:(NSNumber * _Nonnull)tag
 
 RCT_EXPORT_METHOD(removeLocalView:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    BOOL code = false;
+    NSInteger code = -1;
     if (engine) {
         code = [engine removeLocalView];
     }
@@ -346,7 +346,7 @@ RCT_EXPORT_METHOD(setLiveMixView:(NSNumber * _Nonnull)tag
 
 RCT_EXPORT_METHOD(removeLiveMixView:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    BOOL code = false;
+    NSInteger code = -1;
     if (engine) {
         code = [engine removeLiveMixView];
     }
