@@ -297,7 +297,7 @@ RCT_EXPORT_METHOD(setLocalView:(NSNumber * _Nonnull)tag
     NSInteger code = -1;
     if (engine) {
         UIView *uiView = [self.bridge.uiManager viewForReactTag:tag];
-        [engine setLocalView:(RCRTCIWView *) uiView];
+        code = [engine setLocalView:(RCRTCIWView *) uiView];
     }
     resolve(@(code));
 }
@@ -318,7 +318,7 @@ RCT_EXPORT_METHOD(setRemoteView:(NSNumber * _Nonnull)tag
     NSInteger code = -1;
     if (engine) {
         UIView *uiView = [self.bridge.uiManager viewForReactTag:tag];
-        [engine setRemoteView:(RCRTCIWView *)uiView userId:userId];
+        code = [engine setRemoteView:(RCRTCIWView *)uiView userId:userId];
     }
     resolve(@(code));
 }
@@ -339,7 +339,7 @@ RCT_EXPORT_METHOD(setLiveMixView:(NSNumber * _Nonnull)tag
     NSInteger code = -1;
     if (engine) {
         UIView *uiView = [self.bridge.uiManager viewForReactTag:tag];
-        [engine setLiveMixView:(RCRTCIWView *) uiView];
+        code = [engine setLiveMixView:(RCRTCIWView *) uiView];
     }
     resolve(@(code));
 }
