@@ -113,6 +113,10 @@ class Room extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.removeListener();
+    }
+
     async startCall(options) {
         const userIds = options.userIds;
         if (userIds.length == 0) {
@@ -133,7 +137,7 @@ class Room extends Component {
         if (this.viewHandles.bigView !== null) {
             await this.onSetBigVideoView(this.viewHandles.bigView);
         }
-        this.viewHandles.smallViews.forEach((value, idx, arr)=>{
+        this.viewHandles.smallViews.forEach((value)=>{
             this.onSetVideoView(value.userId, value.view);
         });
     }
@@ -149,9 +153,8 @@ class Room extends Component {
         if (userId == null || userId == undefined || ref == null || ref == undefined) {
             return;
         }
-        await RCReactNativeCall.setVideoView(userId, ref, 1);
+        await RCReactNativeCall.setVideoView(userId, ref, 0);
     }
-
 
     onGoBack() {
         this.props.navigation.goBack();
@@ -164,7 +167,6 @@ class Room extends Component {
 
     async onHangup() {
         await RCReactNativeCall.hangup();
-        this.onGoBack();
     }
 
     async onHandFree(isSelected) {
@@ -176,9 +178,6 @@ class Room extends Component {
 
         await RCReactNativeCall.accept();
 
-        this.setState({
-            callState: CallState.call
-        });
     }
 
     async onChangeAudio() {
@@ -201,7 +200,7 @@ class Room extends Component {
     bottomView() {            
         if (this.state.callState === CallState.callin) {
             return (
-                <View style={styles.bottomView}>
+                <View style={[styles.bottomView, {justifyContent: 'space-around'}]}>
                     <ItemButton 
                         title="挂断" 
                         image={require('./images/hang_up.png')}
@@ -261,24 +260,27 @@ class Room extends Component {
 
     smallVideoViews() {
         const smallUserIds = this.state.smallUserIds;
-        return smallUserIds.map(userId=>{
-            return (
-                <View>
-                    <RCReactNativeCallVideoView 
-                        style={styles.smallVideo} 
-                        ref={ ref => { 
-                            this.viewHandles.smallViews.push({
-                                view: findNodeHandle(ref),
-                                userId
-                            });
-                        }}/>
-                </View>
-            );
-        });
+        return (
+            <View>
+                {
+                    smallUserIds.map((userId)=>{
+                        return (<RCReactNativeCallVideoView 
+                            style={styles.smallVideo} 
+                            ref={ ref => { 
+                                this.viewHandles.smallViews.push({
+                                    view: findNodeHandle(ref),
+                                    userId
+                                });
+                            }}/>
+                        );
+                    })
+                }            
+            </View>
+        );
     }
 
     render() {
-        const smallUserIds = this.state.smallUserIds;
+        // const smallUserIds = this.state.smallUserIds;
         return (
             <View style={styles.container}>
                 <RCReactNativeCallVideoView 
@@ -299,7 +301,7 @@ class Room extends Component {
                                     <Text style={{color: 'white', fontSize: 18}}> {this.state.bigUserId === null ? "" : "UserID: " + this.state.bigUserId }</Text>
                                 </View>
                                 <ScrollView
-                                    bounces={smallUserIds.length > 3}
+                                    // bounces={smallUserIds.length > 3}
                                     showsVerticalScrollIndicator={false}
                                     style={styles.videoScrollview}>
                                     {this.smallVideoViews()}
@@ -315,40 +317,47 @@ class Room extends Component {
     //////////////////////////////////// Listener ////////////////////////////////////
     addListener() {
         RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallConnect", ()=>this.onCallConnect());
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnect", ()=>this.onCallDisconnect());
+    }
+
+    removeListener() {
+        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnCallConnect");
+        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnCallDisconnect");
     }
 
     async onCallConnect() {
         try {
-            await this.test();
+            const callSession = await RCReactNativeCall.getCurrentCallSession();
+            const mineId = callSession.mine.userId;
+            var smallUserIds = [mineId];
+            var isHasBigView = false;
+            callSession.users.forEach((user)=> {
+                if (user.userId !== mineId) {
+                    if (!isHasBigView) {
+                        this.viewHandles.bigView.userId = user.userId;
+                        isHasBigView = true;
+                    } else {
+                        smallUserIds.push(user.userId);
+                    }
+                }
+            });
+
+            this.setState({
+                smallUserIds,
+                callState: CallState.call
+            });
+
+            setTimeout(()=>{
+                this.onSetVideoViews();
+            },200);
+
         } catch (e) {
             alert(e);
         }
     }
 
-    async test() {
-
-        const callSession = await RCReactNativeCall.getCurrentCallSession();
-        const mineId = callSession.mine.userId;
-        var smallUserIds = [mineId];
-        var isHasBigView = false;
-        callSession.users.forEach((user, idx, arr)=>{
-            if (user.userId !== mineId) {
-                if (!isHasBigView) {
-                    this.viewHandles.bigView.userId = user.userId;
-                    isHasBigView = true;
-                } else {
-                    smallUserIds.push(user.userId);
-                }
-            }
-        });
-        this.setState({
-            smallUserIds
-        });
-
-        setTimeout(()=>{
-            this.onSetVideoViews(); 
-        }, 2000);
-        // await 
+    async onCallDisconnect() {
+        this.onGoBack();
     }
 }
 

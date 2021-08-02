@@ -119,6 +119,7 @@ class JoinRoom extends Component {
 
     componentWillUnmount() {
         RCReactNativeCall.unInit();
+        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnReceiveCall");
     }
 
     toggleSwitch() {
