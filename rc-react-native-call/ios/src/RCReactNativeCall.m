@@ -206,7 +206,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 
 //@required
 - (void)callDidConnect {
-    
+
     RCRNReturnIfFalse(self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:nil];
@@ -252,17 +252,6 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
                               isVoIPPush:(BOOL)isVoIPPush
                               pushConfig:(RCCallIWPushConfig *)pushConfig {
     
-    RCRNReturnIfFalse(self.hasListener)
-    
-    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
-    [arguments setValue:callId forKey:@"callId"];
-    [arguments setValue:inviterUserId forKey:@"inviterUserId"];
-    [arguments setValue:@(fromCallIWMediaType(mediaType)) forKey:@"mediaType"];
-    [arguments setValue:userIdList forKey:@"userIdList"];
-    [arguments setValue:userDict forKey:@"userDict"];
-    [arguments setValue:@(isVoIPPush) forKey:@"isVoIPPush"];
-    [arguments setValue:fromCallIWPushConfig(pushConfig) forKey:@"pushConfig"];
-    [self sendEventWithName:kRCRNEventName body:arguments];
 }
 
 - (void)didCancelCallRemoteNotification:(NSString *)callId
@@ -272,16 +261,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
                              pushConfig:(RCCallIWPushConfig *)pushConfig
                          isRemoteCancel:(BOOL)isRemoteCancel {
     
-    RCRNReturnIfFalse(self.hasListener)
     
-    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
-    [arguments setValue:callId forKey:@"callId"];
-    [arguments setValue:inviterUserId forKey:@"inviterUserId"];
-    [arguments setValue:@(fromCallIWMediaType(mediaType)) forKey:@"mediaType"];
-    [arguments setValue:userIdList forKey:@"userIdList"];
-    [arguments setValue:fromCallIWPushConfig(pushConfig) forKey:@"pushConfig"];
-    [arguments setValue:@(isRemoteCancel) forKey:@"isRemoteCancel"];
-    [self sendEventWithName:kRCRNEventName body:arguments];
 }
  
 - (void)didEnableCamera:(RCCallIWCamera)camera
@@ -390,24 +370,22 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 - (NSDictionary<NSString *, NSString *> *)mapEvents {
     if (!_mapEvents) {
         _mapEvents = @{
-            NSStringFromSelector(@selector(didReceiveCall:)): @"Engine:OnReceiveCall",
-            NSStringFromSelector(@selector(callDidConnect)): @"Engine:OnCallConnect",
-            NSStringFromSelector(@selector(callDidDisconnect:)): @"Engine:OnCallDisconnect",
-            NSStringFromSelector(@selector(remoteUserDidJoin:)): @"Engine:OnRemoteUserJoin",
-            NSStringFromSelector(@selector(remoteUserDidLeave:reason:)): @"Engine:OnRemoteUserLeave",
-            NSStringFromSelector(@selector(didReceiveCallRemoteNotification:inviterUserId:mediaType:userIdList:userDict:isVoIPPush:pushConfig:)): @"Engine:OnReceiveCallRemoteNotification",
-            NSStringFromSelector(@selector(didCancelCallRemoteNotification:inviterUserId:mediaType:userIdList:pushConfig:isRemoteCancel:)): @"Engine:OnCancelCallRemoteNotification",
+            NSStringFromSelector(@selector(didReceiveCall:)): @"Engine:OnCallReceived",
+            NSStringFromSelector(@selector(callDidConnect)): @"Engine:OnCallConnected",
+            NSStringFromSelector(@selector(callDidDisconnect:)): @"Engine:OnCallDisconnected",
+            NSStringFromSelector(@selector(remoteUserDidJoin:)): @"Engine:OnRemoteUserJoined",
+            NSStringFromSelector(@selector(remoteUserDidLeave:reason:)): @"Engine:OnRemoteUserLeft",
             NSStringFromSelector(@selector(didEnableCamera:enable:)): @"Engine:OnEnableCamera",
             NSStringFromSelector(@selector(didSwitchCamera:)): @"Engine:OnSwitchCamera",
-            NSStringFromSelector(@selector(callDidError:)): @"Engine:OnCallError",
-            NSStringFromSelector(@selector(callDidMake)): @"Engine:OnCallMake",
-            NSStringFromSelector(@selector(remoteUserDidRing:)): @"Engine:OnRemoteUserRing",
-            NSStringFromSelector(@selector(remoteUserDidInvite:mediaType:)): @"Engine:OnRemoteUserInvite",
-            NSStringFromSelector(@selector(remoteUserDidChangeMediaType:mediaType:)): @"Engine:OnRemoteUserChangeMediaType",
-            NSStringFromSelector(@selector(remoteUserDidChangeMicrophoneState:enable:)): @"Engine:OnRemoteUserChangeMicrophoneState",
-            NSStringFromSelector(@selector(remoteUserDidChangeCameraState:enable:)): @"Engine:OnRemoteUserChangeCameraState",
-            NSStringFromSelector(@selector(user:networkQuality:)): @"Engine:OnUserNetworkQuality:",
-            NSStringFromSelector(@selector(user:audioVolume:)): @"Engine:OnUserAudioVolume:"
+            NSStringFromSelector(@selector(callDidError:)): @"Engine:OnError",
+            NSStringFromSelector(@selector(callDidMake)): @"Engine:OnCallOutgoing",
+            NSStringFromSelector(@selector(remoteUserDidRing:)): @"Engine:OnRemoteUserRinging",
+            NSStringFromSelector(@selector(remoteUserDidInvite:mediaType:)): @"Engine:OnRemoteUserInvited",
+            NSStringFromSelector(@selector(remoteUserDidChangeMediaType:mediaType:)): @"Engine:OnRemoteUserMediaTypeChanged",
+            NSStringFromSelector(@selector(remoteUserDidChangeMicrophoneState:enable:)): @"Engine:OnRemoteUserMicrophoneStateChanged",
+            NSStringFromSelector(@selector(remoteUserDidChangeCameraState:enable:)): @"Engine:OnRemoteUserCameraStateChanged",
+            NSStringFromSelector(@selector(user:networkQuality:)): @"Engine:OnNetworkQuality",
+            NSStringFromSelector(@selector(user:audioVolume:)): @"Engine:OnAudioVolume"
         };
     }
     return _mapEvents;

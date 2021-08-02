@@ -317,13 +317,13 @@ class Room extends Component {
 
     //////////////////////////////////// Listener ////////////////////////////////////
     addListener() {
-        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallConnect", ()=>this.onCallConnect());
-        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnect", (r)=>this.onCallDisconnect(r));
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallConnected", ()=>this.onCallConnect());
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnected", (r)=>this.onCallDisconnect(r));
     }
 
     removeListener() {
-        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnCallConnect");
-        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnCallDisconnect");
+        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnCallConnected");
+        RCReactNativeCall.ManagerEmitter.removeAllListeners("Engine:OnCallDisconnected");
     }
 
     async onCallConnect() {
