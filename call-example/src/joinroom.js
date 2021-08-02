@@ -51,7 +51,7 @@ class JoinRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userIds: [{key: 0, userId: "990099"}],
+            userIds: [{key: 0, userId: ""}],
             isVideo: true
         }
         this.keyCount = 1;

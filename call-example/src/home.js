@@ -18,7 +18,7 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: "112244",
+            userId: "",
             isRegisterAppKey: false,
             isConnecting: false
         }

@@ -264,7 +264,8 @@ class Room extends Component {
             <View>
                 {
                     smallUserIds.map((userId)=>{
-                        return (<RCReactNativeCallVideoView 
+                        return (<RCReactNativeCallVideoView
+                            key={userId}
                             style={styles.smallVideo} 
                             ref={ ref => { 
                                 this.viewHandles.smallViews.push({
@@ -280,7 +281,7 @@ class Room extends Component {
     }
 
     render() {
-        // const smallUserIds = this.state.smallUserIds;
+        const smallUserIds = this.state.smallUserIds;
         return (
             <View style={styles.container}>
                 <RCReactNativeCallVideoView 
@@ -301,7 +302,7 @@ class Room extends Component {
                                     <Text style={{color: 'white', fontSize: 18}}> {this.state.bigUserId === null ? "" : "UserID: " + this.state.bigUserId }</Text>
                                 </View>
                                 <ScrollView
-                                    // bounces={smallUserIds.length > 3}
+                                    bounces={smallUserIds.length > 3}
                                     showsVerticalScrollIndicator={false}
                                     style={styles.videoScrollview}>
                                     {this.smallVideoViews()}
@@ -317,7 +318,7 @@ class Room extends Component {
     //////////////////////////////////// Listener ////////////////////////////////////
     addListener() {
         RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallConnect", ()=>this.onCallConnect());
-        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnect", ()=>this.onCallDisconnect());
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnect", (r)=>this.onCallDisconnect(r));
     }
 
     removeListener() {
@@ -356,7 +357,7 @@ class Room extends Component {
         }
     }
 
-    async onCallDisconnect() {
+    async onCallDisconnect(reason) {
         this.onGoBack();
     }
 }
