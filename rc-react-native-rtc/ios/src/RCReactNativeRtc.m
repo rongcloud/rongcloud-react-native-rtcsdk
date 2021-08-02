@@ -311,8 +311,8 @@ RCT_EXPORT_METHOD(removeLocalView:(RCTPromiseResolveBlock)resolve
     resolve(@(code));
 }
 
-RCT_EXPORT_METHOD(setRemoteView:(NSNumber * _Nonnull)tag
-                  userId:(NSString *)userId
+RCT_EXPORT_METHOD(setRemoteView:(NSString *)userId
+                  tag:(NSNumber * _Nonnull)tag
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
     NSInteger code = -1;
