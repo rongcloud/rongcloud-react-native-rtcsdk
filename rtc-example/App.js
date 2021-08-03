@@ -26,8 +26,10 @@ import {
   createStackNavigator
 } from '@react-navigation/stack';
 
+import * as Constants from './src/constants'
 import ConnectScreen from './src/connect';
 import MeetingScreen from './src/meeting';
+import HostScreen from './src/host';
 
 const options = { loadingImage: null, text: 'Loading...' };
 RRCLoading.setLoadingOptions(options);
@@ -53,8 +55,15 @@ const App: () => Node = () => {
           }}
         />
         <Stack.Screen
-          name='Meeting'
+          name={Constants.screens[0]}
           component={MeetingScreen}
+          options={{
+            headerBackTitle: null
+          }}
+        />
+        <Stack.Screen
+          name={Constants.screens[1]}
+          component={HostScreen}
           options={{
             headerBackTitle: null
           }}

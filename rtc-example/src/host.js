@@ -30,7 +30,7 @@ import {
   RCReactNativeRtcEventEmitter
 } from 'rc-react-native-rtc'
 
-class MeetingScreen extends React.Component {
+class HostScreen extends React.Component {
 
   constructor(props) {
     super(props);
@@ -88,17 +88,16 @@ class MeetingScreen extends React.Component {
         let message = event.message;
         switch (type) {
           case 0:
-            this.state.audio = code == 0;
+            this.setState({ audio: code == 0 });
             break;
           case 1:
-            this.state.video = code == 0;
+            this.setState({ video: code == 0 });
             break;
           default:
-            this.state.audio = code == 0;
-            this.state.video = code == 0;
+            this.setState({ audio: code == 0 });
+            this.setState({ video: code == 0 });
             break;
         }
-        this.setState(this.state);
         if (code != 0) RRCToast.show('Publish ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
         RRCLoading.hide();
       })
@@ -111,17 +110,16 @@ class MeetingScreen extends React.Component {
         let message = event.message;
         switch (type) {
           case 0:
-            this.state.audio = code != 0;
+            this.setState({ audio: code != 0 });
             break;
           case 1:
-            this.state.video = code != 0;
+            this.setState({ video: code != 0 });
             break;
           default:
-            this.state.audio = code != 0;
-            this.state.video = code != 0;
+            this.setState({ audio: code != 0 });
+            this.setState({ video: code != 0 });
             break;
         }
-        this.setState(this.state);
         if (code != 0) RRCToast.show('Publish ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
         RRCLoading.hide();
       })
@@ -228,27 +226,37 @@ class MeetingScreen extends React.Component {
 
   render() {
     this.props.navigation.setOptions({
-      headerTitle: '会议号:' + this.props.route.params.room,
+      headerTitle: '房间号:' + this.props.route.params.room,
       headerRight: () => (
         <View style={UI.styles.row}>
           <Icon.Button
-            name="bullhorn"
+            name="cloud"
             backgroundColor='transparent'
             underlayColor={this.state.audio || this.state.video ? 'lightblue' : 'transparent'}
             color={this.state.audio || this.state.video ? 'blue' : 'gray'}
             iconStyle={{ marginRight: 0 }}
             onPress={() => {
-              // TODO 音效
+              // TODO CDN
             }}
           />
           <Icon.Button
-            name="music"
+            name="object-group"
             backgroundColor='transparent'
             underlayColor={this.state.audio || this.state.video ? 'lightblue' : 'transparent'}
             color={this.state.audio || this.state.video ? 'blue' : 'gray'}
             iconStyle={{ marginRight: 0 }}
             onPress={() => {
-              // TODO 混音
+              // TODO 布局
+            }}
+          />
+          <Icon.Button
+            name="comments"
+            backgroundColor='transparent'
+            underlayColor='lightblue'
+            color='blue'
+            iconStyle={{ marginRight: 0 }}
+            onPress={() => {
+              // TODO 聊天室
             }}
           />
         </View>
@@ -655,4 +663,4 @@ class MeetingScreen extends React.Component {
 
 }
 
-export default MeetingScreen;
+export default HostScreen;

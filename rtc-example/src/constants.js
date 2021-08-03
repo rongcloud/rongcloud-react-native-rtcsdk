@@ -13,7 +13,7 @@ export const types = [
 
 export const screens = [
     'Meeting',
-    'Meeting',
+    'Host',
     'Meeting',
 ];
 
