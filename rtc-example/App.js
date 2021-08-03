@@ -30,6 +30,7 @@ import * as Constants from './src/constants'
 import ConnectScreen from './src/connect';
 import MeetingScreen from './src/meeting';
 import HostScreen from './src/host';
+import AudienceScreen from './src/audience';
 
 const options = { loadingImage: null, text: 'Loading...' };
 RRCLoading.setLoadingOptions(options);
@@ -64,6 +65,13 @@ const App: () => Node = () => {
         <Stack.Screen
           name={Constants.screens[1]}
           component={HostScreen}
+          options={{
+            headerBackTitle: null
+          }}
+        />
+        <Stack.Screen
+          name={Constants.screens[2]}
+          component={AudienceScreen}
           options={{
             headerBackTitle: null
           }}

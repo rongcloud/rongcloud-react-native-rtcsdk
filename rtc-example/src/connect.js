@@ -87,8 +87,8 @@ class ConnectScreen extends React.Component {
             alignSelf: 'center',
           }}
           radio_props={[
-            { label: '音视频模式', value: 0 },
-            { label: '纯音频模式', value: 1 },
+            { label: '    音视频模式    ', value: 0 },
+            { label: '    纯音频模式    ', value: 1 },
           ]}
           initial={this.state.mode}
           formHorizontal={true}
@@ -285,7 +285,7 @@ class ConnectScreen extends React.Component {
           }}
           radio_props={[
             { label: '会议模式', value: 0 },
-            { label: '主播模式', value: 1 },
+            { label: '            主播模式            ', value: 1 },
             { label: '观众模式', value: 2 },
           ]}
           initial={this.state.type}
