@@ -306,7 +306,7 @@ RCCallIWVideoConfig *toCallIWVideoConfig(NSDictionary *arguments) {
  */
 NSDictionary *fromCallIWEngineConfig(RCCallIWEngineConfig *config) {
     
-    RCRNReturnIfNull(config)
+    RCRNReturnIfNeed(!config, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:@(config.enableCallSummary) forKey:@"enableCallSummary"];
@@ -315,7 +315,7 @@ NSDictionary *fromCallIWEngineConfig(RCCallIWEngineConfig *config) {
 
 NSDictionary *fromCallIWPushConfig(RCCallIWPushConfig *config) {
     
-    RCRNReturnIfNull(config)
+    RCRNReturnIfNeed(!config, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:@(config.disableTitle) forKey:@"disableTitle"];
@@ -331,7 +331,7 @@ NSDictionary *fromCallIWPushConfig(RCCallIWPushConfig *config) {
 
 NSDictionary *fromCallIWIOSPushConfig(RCCallIWIOSPushConfig *config) {
     
-    RCRNReturnIfNull(config)
+    RCRNReturnIfNeed(!config, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:config.threadId forKey:@"threadId"];
@@ -343,7 +343,7 @@ NSDictionary *fromCallIWIOSPushConfig(RCCallIWIOSPushConfig *config) {
 
 NSDictionary *fromCallIWAndroidPushConfig(RCCallIWAndroidPushConfig *config) {
     
-    RCRNReturnIfNull(config)
+    RCRNReturnIfNeed(!config, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:config.notificationId forKey:@"notificationId"];
@@ -359,7 +359,7 @@ NSDictionary *fromCallIWAndroidPushConfig(RCCallIWAndroidPushConfig *config) {
 
 NSDictionary *fromCallIWAudioConfig(RCCallIWAudioConfig *config) {
     
-    RCRNReturnIfNull(config)
+    RCRNReturnIfNeed(!config, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     return dictionary;
@@ -367,7 +367,7 @@ NSDictionary *fromCallIWAudioConfig(RCCallIWAudioConfig *config) {
 
 NSDictionary *fromCallIWVideoConfig(RCCallIWVideoConfig *config) {
     
-    RCRNReturnIfNull(config)
+    RCRNReturnIfNeed(!config, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:@(fromCallIWVideoProfile(config.profile)) forKey:@"profile"];
@@ -378,7 +378,7 @@ NSDictionary *fromCallIWVideoConfig(RCCallIWVideoConfig *config) {
 
 NSDictionary *fromCallIWUserProfile(RCCallIWUserProfile *profile) {
     
-    RCRNReturnIfNull(profile)
+    RCRNReturnIfNeed(!profile, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:@(fromCallIWUserType(profile.userType)) forKey:@"userType"];
@@ -392,7 +392,7 @@ NSDictionary *fromCallIWUserProfile(RCCallIWUserProfile *profile) {
 
 NSDictionary *fromCallIWCallSession(RCCallIWCallSession *session) {
     
-    RCRNReturnIfNull(session)
+    RCRNReturnIfNeed(!session, nil)
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setValue:@(fromCallIWCallType(session.callType)) forKey:@"callType"];

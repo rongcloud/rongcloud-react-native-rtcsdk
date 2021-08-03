@@ -11,16 +11,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RCCallIWVideoConfig : NSObject
-/*
- * 默认值 RCCallIW_VIDEO_PROFILE_720_1280
+
+/*!
+ 视频配置
+ 默认值 RCCallIW_VIDEO_PROFILE_720_1280
  */
 @property (nonatomic, assign) RCCallIWVideoProfile profile;
-/*
- * 默认值 RCCallIWCameraFront
+/*!
+ 摄像头
+ 默认值 RCCallIWCameraFront
  */
 @property (nonatomic, assign) RCCallIWCamera defaultCamera;
-/*
- * 默认值 RCCallIWCameraOrientationPortrait
+/*!
+ 相机方向
+ 默认值 RCCallIWCameraOrientationPortrait
  */
 @property (nonatomic, assign) RCCallIWCameraOrientation cameraOrientation;
 

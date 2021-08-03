@@ -10,40 +10,99 @@
 
 #import <Foundation/Foundation.h>
 
+/*!
+ 用户身份类型
+ */
 typedef NS_ENUM(NSInteger, RCCallIWUserType) {
+    /*!
+     普通身份
+     */
     RCCallIWUserTypeNormal            = 1,
+    /*!
+     观察者身份
+     */
     RCCallIWUserTypeObserver          = 2
 };
 
-
+/*!
+ 通话类型
+ */
 typedef NS_ENUM(NSInteger, RCCallIWCallType) {
+    /*!
+     单聊通话
+     */
     RCCallIWCallTypeSingle           = 0,
+    /*!
+     群聊通话
+     */
     RCCallIWCallTypeGroup            = 1
 };
 
+/*!
+ 通话媒体类型
+ */
 typedef NS_ENUM(NSInteger, RCCallIWMediaType) {
+    /*!
+     音频通话
+     */
     RCCallIWMediaTypeAudio            = 0,
+    /*!
+     音视频通话
+     */
     RCCallIWMediaTypeAudioVideo       = 2
 };
 
-
+/*!
+ 相机类型
+ */
 typedef NS_ENUM(NSInteger, RCCallIWCamera) {
+    /*!
+     未指定
+     */
     RCCallIWCameraNone                = -1,
+    /*!
+     前置相机
+     */
     RCCallIWCameraFront               = 0,
+    /*!
+     后置相机
+     */
     RCCallIWCameraBack                = 1,
 };
 
-
+/*!
+ 网络质量
+ */
 typedef NS_ENUM(NSInteger, RCCallIWNetworkQuality) {
+    /*!
+     未知
+     */
     RCCallIWNetworkQualityUnknown     = 0,
+    /*!
+     极好
+     */
     RCCallIWNetworkQualityExcellent   = 1,
+    /*!
+     好
+     */
     RCCallIWNetworkQualityGood        = 2,
+    /*!
+     一般
+     */
     RCCallIWNetworkQualityPoor        = 3,
+    /*!
+     差
+     */
     RCCallIWNetworkQualityBad         = 4,
+    /*!
+     极差
+     */
     RCCallIWNetworkQualityTerrible    = 5,
 };
 
-
+/*!
+ 视频显示模式
+ */
 typedef NS_ENUM(NSInteger, RCCallIWViewFitType) {
     /*!
      拉伸全屏
@@ -139,6 +198,10 @@ typedef NS_ENUM (NSInteger, RCCallIWVideoProfile) {
 };
 
 
+/*!
+ 摄像机方向
+ 值与 AVCaptureVideoOrientation 一致
+ */
 typedef NS_ENUM(NSInteger, RCCallIWCameraOrientation) {
       RCCallIWCameraOrientationPortrait           = 1,
       RCCallIWCameraOrientationPortraitUpsideDown = 2,
@@ -146,6 +209,9 @@ typedef NS_ENUM(NSInteger, RCCallIWCameraOrientation) {
       RCCallIWCameraOrientationLandscapeLeft      = 4,
 };
 
+/*!
+ 通话结束原因
+ */
 typedef NS_ENUM (NSInteger, RCCallIWCallDisconnectedReason) {
     /*!
      己方取消已发出的通话请求

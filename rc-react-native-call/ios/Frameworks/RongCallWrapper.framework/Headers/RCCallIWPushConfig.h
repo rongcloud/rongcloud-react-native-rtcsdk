@@ -11,10 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*
- * 推送配置
+/*!
+ 推送配置
  */
-
 @interface RCCallIWPushConfig : NSObject
 
 /*!

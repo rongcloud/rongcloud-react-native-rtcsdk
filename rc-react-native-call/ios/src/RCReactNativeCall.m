@@ -14,8 +14,6 @@
 
 @implementation RCReactNativeCall
 
-//@synthesize bridge = _bridge;
-
 - (dispatch_queue_t)methodQueue {
     return dispatch_get_main_queue();
 }
@@ -33,7 +31,7 @@ RCT_EXPORT_MODULE();
 #pragma mark - RN API...
 
 /// 初始化 设置代理
-RCT_REMAP_METHOD(init, rcNativeInit)
+RCT_REMAP_METHOD(init, rcNativeInit:(NSDictionary *)arguments)
 {
     [[RCCallIWEngine sharedInstance] setEngineDelegate:self];
 }
@@ -207,35 +205,35 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 //@required
 - (void)callDidConnect {
 
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:nil];
 }
 
 - (void)callDidDisconnect:(RCCallIWCallDisconnectedReason)reason {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
    
     [self sendEventWithName:kRCRNEventName body:@(fromCallIWCallDisconnectedReason(reason))];
 }
 
 - (void)didReceiveCall:(nonnull RCCallIWCallSession *)session {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:fromCallIWCallSession(session)];
 }
 
 - (void)remoteUserDidJoin:(nonnull RCCallIWUserProfile *)user {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:fromCallIWUserProfile(user)];
 }
 
 - (void)remoteUserDidLeave:(nonnull RCCallIWUserProfile *)user reason:(RCCallIWCallDisconnectedReason)reason {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];
@@ -267,7 +265,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 - (void)didEnableCamera:(RCCallIWCamera)camera
                  enable:(BOOL)enable {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:@(fromCallIWCamera(camera)) forKey:@"camera"];
@@ -277,28 +275,28 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 
 - (void)didSwitchCamera:(RCCallIWCamera)camera {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:@(fromCallIWCamera(camera))];
 }
 
 - (void)callDidError:(int)code {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:@(code)];
 }
 
 - (void)callDidMake {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:nil];
 }
 
 - (void)remoteUserDidRing:(NSString *)userId {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     [self sendEventWithName:kRCRNEventName body:userId];
 }
@@ -306,7 +304,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 - (void)remoteUserDidInvite:(NSString *)userId
                   mediaType:(RCCallIWMediaType)mediaType {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:userId forKey:@"userId"];
@@ -317,7 +315,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 - (void)remoteUserDidChangeMediaType:(RCCallIWUserProfile *)user
                            mediaType:(RCCallIWMediaType)mediaType {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];
@@ -328,7 +326,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 - (void)remoteUserDidChangeMicrophoneState:(RCCallIWUserProfile *)user
                                     enable:(BOOL)enable {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];
@@ -339,7 +337,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 - (void)remoteUserDidChangeCameraState:(RCCallIWUserProfile *)user
                                 enable:(BOOL)enable {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];
@@ -349,7 +347,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 
 - (void)user:(RCCallIWUserProfile *)user networkQuality:(RCCallIWNetworkQuality)quality {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];
@@ -359,7 +357,7 @@ RCT_EXPORT_METHOD(inviteUsers:(NSArray<NSString *> *)userIds
 
 - (void)user:(RCCallIWUserProfile *)user audioVolume:(int)volume {
     
-    RCRNReturnIfFalse(self.hasListener)
+    RCRNReturnIfNeed(!self.hasListener)
     
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:fromCallIWUserProfile(user) forKey:@"user"];

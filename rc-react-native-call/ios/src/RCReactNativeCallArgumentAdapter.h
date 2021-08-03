@@ -13,8 +13,7 @@ if (f) {                         \
     return __VA_ARGS__;          \
 }
 
-#define RCRNReturnIfFalse(f) RCRNReturnValue(!f)
-#define RCRNReturnIfNull(o) RCRNReturnValue(!o, nil)
+#define RCRNReturnIfNeed(f, ...) RCRNReturnValue(f, __VA_ARGS__)
 
 #endif
 
