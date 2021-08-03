@@ -210,6 +210,7 @@ class ConnectScreen extends React.Component {
       videoSetup: videoSetup,
     };
     RCReactNativeRtc.init(setup).then(() => {
+      Util.init();
       RCReactNativeRtc.joinRoom(id, {
         type: this.state.mode == 0 ? 2 : 0,
         role: this.state.type,
@@ -228,6 +229,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='App key'
             underlineColorAndroid={'transparent'}
             value={this.state.key}
@@ -236,6 +238,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='Navigate Url'
             underlineColorAndroid={'transparent'}
             value={this.state.navigate}
@@ -252,6 +255,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='Media Url'
             underlineColorAndroid={'transparent'}
             value={this.state.media}
@@ -260,6 +264,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='Token'
             underlineColorAndroid={'transparent'}
             value={this.state.token}
@@ -300,6 +305,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder={Constants.holders[this.state.type] + '.'}
             underlineColorAndroid={'transparent'}
             value={this.state.room}
@@ -328,6 +334,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='App key'
             underlineColorAndroid={'transparent'}
             value={this.state.key}
@@ -340,6 +347,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='Navigate Url'
             underlineColorAndroid={'transparent'}
             value={this.state.navigate}
@@ -352,6 +360,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='File Url'
             underlineColorAndroid={'transparent'}
             value={this.state.file}
@@ -364,6 +373,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='Media Url'
             underlineColorAndroid={'transparent'}
             value={this.state.media}
@@ -376,6 +386,7 @@ class ConnectScreen extends React.Component {
         <View style={UI.styles.row}>
           <TextInput
             style={UI.styles.input}
+            autoCapitalize='none'
             placeholder='Token'
             underlineColorAndroid={'transparent'}
             value={this.state.token}
@@ -402,6 +413,10 @@ class ConnectScreen extends React.Component {
         </View>
       </View>
     );
+  }
+
+  componentWillUnmount() {
+    Util.unInit();
   }
 
   render() {

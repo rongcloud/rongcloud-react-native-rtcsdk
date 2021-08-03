@@ -7,6 +7,7 @@ import * as UI from './ui';
 import * as Constants from './constants'
 
 import {
+  FlatList,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -47,7 +48,7 @@ class MeetingScreen extends React.Component {
 
     this.state = {
       local: null,
-      remotes: [],
+      refresh: {},
       microphone: false,
       camera: false,
       audio: false,
@@ -68,74 +69,158 @@ class MeetingScreen extends React.Component {
       },
     };
 
+    this.listeners = [];
+    this.remotes = new Map();
+
     // RRCLoading.hide();
 
-    RCReactNativeRtcEventEmitter.addListener('Engine:OnEnableCamera', (event) => {
-      let enable = event.enable;
-      let code = event.code;
-      let message = event.message;
-      if (enable) {
-        RCReactNativeRtc.setLocalView(this.state.local);
-      } else {
-        RCReactNativeRtc.removeLocalView();
-      }
-      this.setState({ camera: enable });
-      if (code != 0) {
-        RRCToast.show((enable ? 'Stop' : 'Start') + ' Camera Error: ' + code + ', message: ' + message);
-      }
-      RRCLoading.hide();
-    });
+    this.listeners.push(
+      RCReactNativeRtcEventEmitter.addListener('Engine:OnEnableCamera', (event) => {
+        let enable = event.enable;
+        let code = event.code;
+        let message = event.message;
+        if (enable) {
+          RCReactNativeRtc.setLocalView(this.state.local);
+        } else {
+          RCReactNativeRtc.removeLocalView();
+        }
+        this.setState({ camera: enable });
+        if (code != 0) {
+          RRCToast.show((enable ? 'Stop' : 'Start') + ' Camera Error: ' + code + ', message: ' + message);
+        }
+        RRCLoading.hide();
+      })
+    );
 
-    RCReactNativeRtcEventEmitter.addListener('Engine:OnPublished', (event) => {
-      let type = event.type;
-      let code = event.code;
-      let message = event.message;
-      switch (type) {
-        case 0:
-          this.setState({ audio: code == 0 });
-          break;
-        case 1:
-          this.setState({ video: code == 0 });
-          break;
-        default:
-          this.setState({ audio: code == 0 });
-          this.setState({ video: code == 0 });
-          break;
-      }
-      if (code != 0) RRCToast.show('Publish ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
-      RRCLoading.hide();
-    });
+    this.listeners.push(
+      RCReactNativeRtcEventEmitter.addListener('Engine:OnPublished', (event) => {
+        let type = event.type;
+        let code = event.code;
+        let message = event.message;
+        switch (type) {
+          case 0:
+            this.setState({ audio: code == 0 });
+            break;
+          case 1:
+            this.setState({ video: code == 0 });
+            break;
+          default:
+            this.setState({ audio: code == 0 });
+            this.setState({ video: code == 0 });
+            break;
+        }
+        if (code != 0) RRCToast.show('Publish ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
+        RRCLoading.hide();
+      })
+    );
 
-    RCReactNativeRtcEventEmitter.addListener('Engine:OnUnpublished', (event) => {
-      let type = event.type;
-      let code = event.code;
-      let message = event.message;
-      switch (type) {
-        case 0:
-          this.setState({ audio: code != 0 });
-          break;
-        case 1:
-          this.setState({ video: code != 0 });
-          break;
-        default:
-          this.setState({ audio: code != 0 });
-          this.setState({ video: code != 0 });
-          break;
-      }
-      if (code != 0) RRCToast.show('Publish ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
-      RRCLoading.hide();
-    });
+    this.listeners.push(
+      RCReactNativeRtcEventEmitter.addListener('Engine:OnUnpublished', (event) => {
+        let type = event.type;
+        let code = event.code;
+        let message = event.message;
+        switch (type) {
+          case 0:
+            this.setState({ audio: code != 0 });
+            break;
+          case 1:
+            this.setState({ video: code != 0 });
+            break;
+          default:
+            this.setState({ audio: code != 0 });
+            this.setState({ video: code != 0 });
+            break;
+        }
+        if (code != 0) RRCToast.show('Publish ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
+        RRCLoading.hide();
+      })
+    );
 
-    RCReactNativeRtcEventEmitter.addListener('Engine:OnSwitchCamera', (event) => {
-      let camera = event.camera;
-      let code = event.code;
-      let message = event.message;
-      this.setState({ front: camera == 1 });
-      if (code != 0) {
-        RRCToast.show('Switch Camera Error: ' + code + ', message: ' + message);
-      }
-      RRCLoading.hide();
-    });
+    this.listeners.push(
+      RCReactNativeRtcEventEmitter.addListener('Engine:OnSwitchCamera', (event) => {
+        let camera = event.camera;
+        let code = event.code;
+        let message = event.message;
+        this.setState({ front: camera == 1 });
+        if (code != 0) {
+          RRCToast.show('Switch Camera Error: ' + code + ', message: ' + message);
+        }
+        RRCLoading.hide();
+      })
+    );
+
+    this.listeners.push(
+      RCReactNativeRtcEventEmitter.addListener('Engine:OnSubscribed', (event) => {
+        let id = event.id;
+        let type = event.type;
+        let code = event.code;
+        let message = event.message;
+        if (code != 0) {
+          RRCToast.show('Subscribe ' + id + ' ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
+        } else {
+          RCReactNativeRtc.setRemoteView(id, this.remotes.get(id));
+          let user = Util.users.get(id);
+          switch (type) {
+            case 0:
+              user.audioSubscribed = true;
+              break;
+            case 1:
+              user.videoSubscribed = true;
+              break;
+            default:
+              user.audioSubscribed = true;
+              user.videoSubscribed = true;
+              break;
+          }
+          this.setState({ refresh: {} });
+        }
+        RRCLoading.hide();
+      })
+    );
+
+    this.listeners.push(
+      RCReactNativeRtcEventEmitter.addListener('Engine:OnUnsubscribed', (event) => {
+        let id = event.id;
+        let type = event.type;
+        let code = event.code;
+        let message = event.message;
+        if (code != 0) {
+          RRCToast.show('Unsubscribe ' + id + ' ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
+        } else {
+          RCReactNativeRtc.removeRemoteView(id);
+          let user = Util.users.get(id);
+          switch (type) {
+            case 0:
+              user.audioSubscribed = false;
+              break;
+            case 1:
+              user.videoSubscribed = false;
+              break;
+            default:
+              user.audioSubscribed = false;
+              user.videoSubscribed = false;
+              break;
+          }
+          this.setState({ refresh: {} });
+        }
+        RRCLoading.hide();
+      })
+    );
+
+    Util.setListeners(
+      () => {
+        this.setState({ refresh: {} });
+      },
+      () => {
+        this.setState({ refresh: {} });
+      },
+      (id, published) => {
+        this.setState({ refresh: {} });
+      },
+      (id, published) => {
+        this.setState({ refresh: {} });
+      },
+    );
 
     RCReactNativeRtc.enableMicrophone(this.state.microphone);
 
@@ -169,14 +254,18 @@ class MeetingScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    // TODO 暂时屏蔽
-    // RCReactNativeRtc.leaveRoom();
-    // RCReactNativeRtc.unInit();
+    Util.unInit();
+    this.listeners.map((listener) => {
+      listener.remove();
+    });
+    this.listeners.length = 0;
+    RCReactNativeRtc.leaveRoom();
+    RCReactNativeRtc.unInit();
   }
 
   render() {
     return (
-      <View style={{ flexDirection: 'column' }}>
+      <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
           <RCReactNativeRtcView
             style={{
@@ -472,12 +561,104 @@ class MeetingScreen extends React.Component {
             </View>
           </View>
         </View>
-        <ScrollView contentInsetAdjustmentBehavior="automatic">
-          <View>
-
-          </View>
-        </ScrollView>
-      </View>
+        <FlatList
+          style={{ flex: 1 }}
+          data={Array.from(Util.users.values())}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: 5 }} />
+          )}
+          renderItem={
+            ({ item }) => (
+              <View style={{ flexDirection: 'row' }}>
+                <RCReactNativeRtcView
+                  style={{
+                    width: '50%', height: 210, backgroundColor: 'black'
+                  }}
+                  ref={(ref) => {
+                    let id = item.id;
+                    let current = findNodeHandle(ref);
+                    if (!Util.isNull(current)) {
+                      if (this.remotes.has(id)) {
+                        let cache = this.remotes.get(id);
+                        if (current != cache) {
+                          this.remotes.delete(id);
+                          this.remotes.set(id, current);
+                        }
+                      } else {
+                        this.remotes.set(id, current);
+                      }
+                    }
+                  }}
+                  mirror={false}
+                />
+                <View style={UI.styles.column}>
+                  <View style={UI.styles.row}>
+                    <TouchableOpacity
+                      disabled={!item.audioPublished}
+                      onPress={async () => {
+                        RRCLoading.show();
+                        if (!item.audioSubscribed) {
+                          let code = await RCReactNativeRtc.subscribe(item.id, 0, false);
+                          if (code != 0) {
+                            RRCToast.show('Subscribe Audio Error: ' + code);
+                            RRCLoading.hide();
+                          }
+                        } else {
+                          let code = await RCReactNativeRtc.unsubscribe(item.id, 0);
+                          if (code != 0) {
+                            RRCToast.show('Unsubscribe Audio Error: ' + code);
+                            RRCLoading.hide();
+                          }
+                        }
+                      }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <CheckBox
+                          style={{ width: 15, height: 15 }}
+                          disabled={true}
+                          value={item.audioSubscribed}
+                        />
+                        <View style={{ width: 2 }} />
+                        <Text style={{ fontSize: 15, color: item.audioPublished ? 'black' : 'gray' }}>订阅音频</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={{ width: 10 }} />
+                    <TouchableOpacity
+                      disabled={!item.videoPublished}
+                      onPress={async () => {
+                        RRCLoading.show();
+                        if (!item.videoSubscribed) {
+                          let code = await RCReactNativeRtc.subscribe(item.id, 1, false);
+                          if (code != 0) {
+                            RRCToast.show('Subscribe Video Error: ' + code);
+                            RRCLoading.hide();
+                          }
+                        } else {
+                          let code = await RCReactNativeRtc.unsubscribe(item.id, 1);
+                          if (code != 0) {
+                            RRCToast.show('Unsubscribe Video Error: ' + code);
+                            RRCLoading.hide();
+                          }
+                        }
+                      }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <CheckBox
+                          style={{ width: 15, height: 15 }}
+                          disabled={true}
+                          value={item.videoSubscribed}
+                        />
+                        <View style={{ width: 2 }} />
+                        <Text style={{ fontSize: 15, color: item.videoPublished ? 'black' : 'gray' }}>订阅视频</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={{ height: 10 }} />
+                  {/* TODO stats table */}
+                </View>
+              </View>
+            )
+          }
+        />
+      </View >
     );
   }
 
