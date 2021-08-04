@@ -23,6 +23,10 @@ allprojects {
     repositories {
         mavenLocal()
         maven {
+        url "http://maven.rongcloud.cn/repository/maven-releases/"
+        allowInsecureProtocol true
+        }
+        maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url("$rootDir/../node_modules/react-native/android")
         }

@@ -36,6 +36,17 @@ public class RCReactNativeCallModule extends ReactContextBaseJavaModule {
     }
 
 	@ReactMethod
+	public void init() {
+		RCCallIWEngine.getInstance().setEngineListener(new RCCallIWEngineListenerImpl(reactContext));
+
+	}
+
+	@ReactMethod
+	public void unInit() {
+		RCCallIWEngine.getInstance().setEngineListener(null);
+	}
+
+	@ReactMethod
 	public void setEngineConfig(ReadableMap config) {
 		FinLog.d(TAG, "[setEngineConfig] ==> config:" + config);
 		RCCallIWEngine.getInstance().setEngineConfig(ArgumentAdapter.toRCCallIWEngineConfig(config));
@@ -62,7 +73,6 @@ public class RCReactNativeCallModule extends ReactContextBaseJavaModule {
 	@ReactMethod
 	public void startSingleCall(String userId, int type, String extra, Promise promise) {
 		FinLog.d(TAG, "[startSingleCall] ==> userId:" + userId + "," + "type:" + type + "," + "extra:" + extra + "," + "promise:" + promise);
-		RCCallIWEngine.getInstance().setEngineListener(new RCCallIWEngineListenerImpl(reactContext));
 		RCCallIWCallSession result = RCCallIWEngine.getInstance().startCall(userId, ArgumentAdapter.toRCCallIWMediaType(type), extra);
 		promise.resolve(ArgumentAdapter.fromRCCallIWCallSession(result));
 	}
@@ -72,7 +82,6 @@ public class RCReactNativeCallModule extends ReactContextBaseJavaModule {
 		FinLog.d(TAG,
 			"[startGroupCall] ==> groupId:" + groupId + "," + "userIds:" + userIds + "," + "observerUserIds:" + observerUserIds + "," + "type:" + type + "," + "extra:" + extra + "," + "promise:"
 				+ promise);
-		RCCallIWEngine.getInstance().setEngineListener(new RCCallIWEngineListenerImpl(reactContext));
 		RCCallIWCallSession result = RCCallIWEngine.getInstance().startCall(groupId, ArgumentAdapter.toStringList(userIds), ArgumentAdapter.toStringList(observerUserIds), ArgumentAdapter.toRCCallIWMediaType(type), extra);
 		promise.resolve(ArgumentAdapter.fromRCCallIWCallSession(result));
 	}
@@ -154,6 +163,12 @@ public class RCReactNativeCallModule extends ReactContextBaseJavaModule {
 				RCCallIWEngine.getInstance().setVideoView(userId, (FrameLayout) view, ArgumentAdapter.toRCCallIWViewFitType(type));
 			}
 		});
+	}
+
+	@ReactMethod
+	public void getCurrentCallSession(Promise promise) {
+		RCCallIWCallSession session = RCCallIWEngine.getInstance().getCurrentCallSession();
+		promise.resolve(ArgumentAdapter.fromRCCallIWCallSession(session));
 	}
 
 	@ReactMethod

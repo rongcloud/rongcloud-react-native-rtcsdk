@@ -49,6 +49,9 @@ final class ArgumentAdapter {
 
 	public static WritableMap fromRCCallIWUserProfile(@NonNull RCCallIWUserProfile rcCallIWUserProfile) {
 		WritableMap arguments = Arguments.createMap();
+		if (rcCallIWUserProfile == null) {
+			return arguments;
+		}
 		arguments.putInt("userType", rcCallIWUserProfile.getUserType().ordinal());
 		arguments.putString("userId", rcCallIWUserProfile.getUserId());
 		arguments.putInt("mediaType", rcCallIWUserProfile.getMediaType().ordinal());
@@ -60,6 +63,8 @@ final class ArgumentAdapter {
 
 	public static WritableMap fromRCCallIWCallSession(@NonNull RCCallIWCallSession rcCallIWCallSession) {
 		WritableMap arguments = Arguments.createMap();
+		if (rcCallIWCallSession == null)
+			return arguments;
 		arguments.putInt("callType", rcCallIWCallSession.getCallType().ordinal());
 		arguments.putInt("mediaType", rcCallIWCallSession.getMediaType().ordinal());
 		arguments.putString("callId", rcCallIWCallSession.getCallId());

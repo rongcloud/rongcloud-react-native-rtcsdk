@@ -26,23 +26,23 @@ public class RCCallIWEngineListenerImpl extends RCCallIWEngineListener {
     @Override
     public void onCallReceived(RCCallIWCallSession session) {
 		WritableMap arguments = ArgumentAdapter.fromRCCallIWCallSession(session);
-		sendEvent("onCallReceived", arguments);
+		sendEvent("Engine:OnCallReceived", arguments);
     }
 
     @Override
     public void onCallConnected() {
-		sendEvent("onCallConnected", null);
+		sendEvent("Engine:OnCallConnected", null);
     }
 
     @Override
     public void onCallDisconnected(RCCallIWCallDisconnectedReason reason) {
-		sendEvent("onCallDisconnected", reason.ordinal());
+		sendEvent("Engine:OnCallDisconnected", reason.ordinal());
     }
 
     @Override
     public void onRemoteUserJoined(RCCallIWUserProfile user) {
 		WritableMap arguments = ArgumentAdapter.fromRCCallIWUserProfile(user);
-		sendEvent("onRemoteUserJoined", arguments);
+		sendEvent("Engine:OnRemoteUserJoined", arguments);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class RCCallIWEngineListenerImpl extends RCCallIWEngineListener {
         WritableMap arguments = Arguments.createMap();
         arguments.putMap("user",ArgumentAdapter.fromRCCallIWUserProfile(user));
         arguments.putInt("reason", reason.ordinal());
-		sendEvent("onRemoteUserLeft", arguments);
+		sendEvent("Engine:OnRemoteUserLeft", arguments);
     }
 
     @Override
@@ -63,27 +63,27 @@ public class RCCallIWEngineListenerImpl extends RCCallIWEngineListener {
         WritableMap arguments = Arguments.createMap();
 		arguments.putInt("camera", camera.ordinal());
 		arguments.putBoolean("enable", enable);
-		sendEvent("onEnableCamera", arguments);
+		sendEvent("Engine:OnEnableCamera", arguments);
     }
 
     @Override
     public void onSwitchCamera(RCCallIWCamera camera) {
-		sendEvent("onSwitchCamera", camera.ordinal());
+		sendEvent("Engine:OnSwitchCamera", camera.ordinal());
     }
 
     @Override
     public void onError(int code) {
-		sendEvent("onError", code);
+		sendEvent("Engine:OnError", code);
     }
 
     @Override
     public void onCallOutgoing() {
-		sendEvent("onCallOutgoing", null);
+		sendEvent("Engine:OnCallOutgoing", null);
     }
 
     @Override
     public void onRemoteUserRinging(String userId) {
-		sendEvent("onRemoteUserRinging", userId);
+		sendEvent("Engine:OnRemoteUserRinging", userId);
     }
 
     @Override
@@ -91,23 +91,23 @@ public class RCCallIWEngineListenerImpl extends RCCallIWEngineListener {
 		WritableMap arguments = Arguments.createMap();
 		arguments.putString("userId", userId);
 		arguments.putInt("mediaType", mediaType.ordinal());
-		sendEvent("onRemoteUserInvited", arguments);
+		sendEvent("Engine:OnRemoteUserInvited", arguments);
     }
 
     @Override
     public void onRemoteUserMediaTypeChanged(RCCallIWUserProfile user, RCCallIWMediaType mediaType) {
-		sendEvent("onRemoteUserMediaTypeChanged", mediaType.ordinal());
+		sendEvent("Engine:OnRemoteUserMediaTypeChanged", mediaType.ordinal());
     }
 
     @Override
     public void onRemoteUserMicrophoneStateChanged(RCCallIWUserProfile user, boolean enable) {
-		sendEvent("onRemoteUserMicrophoneStateChanged", enable);
+		sendEvent("Engine:OnRemoteUserMicrophoneStateChanged", enable);
 
     }
 
     @Override
     public void onRemoteUserCameraStateChanged(RCCallIWUserProfile user, boolean enable) {
-		sendEvent("onRemoteUserCameraStateChanged", enable);
+		sendEvent("Engine:OnRemoteUserCameraStateChanged", enable);
 
     }
 
@@ -116,13 +116,13 @@ public class RCCallIWEngineListenerImpl extends RCCallIWEngineListener {
 		WritableMap arguments = Arguments.createMap();
 		arguments.putMap("user",ArgumentAdapter.fromRCCallIWUserProfile(user));
 		arguments.putInt("quality", quality.ordinal());
-		sendEvent("onNetworkQuality", arguments);
+		sendEvent("Engine:OnNetworkQuality", arguments);
 
     }
 
     @Override
     public void onAudioVolume(RCCallIWUserProfile user, int volume) {
-		sendEvent("onAudioVolume", volume);
+		sendEvent("Engine:OnAudioVolume", volume);
 
     }
 

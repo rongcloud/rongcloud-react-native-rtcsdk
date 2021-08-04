@@ -1,6 +1,7 @@
 package cn.rongcloud.rn.call;
 
 import android.widget.FrameLayout;
+import cn.rongcloud.rtc.utils.FinLog;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 
@@ -9,13 +10,17 @@ import com.facebook.react.uimanager.ThemedReactContext;
  */
 public class RCReactNativeCallViewManager extends SimpleViewManager<FrameLayout> {
 
+    private static final String TAG = "RCReactNativeCallViewManager";
+
     @Override
     public String getName() {
-        return "RCReactNativeCallView";
+        return "RCReactNativeCallVideoView";
     }
 
     @Override
     protected FrameLayout createViewInstance(ThemedReactContext themedReactContext) {
-        return new FrameLayout(themedReactContext);
+        FrameLayout frameLayout = new FrameLayout(themedReactContext);
+        FinLog.d(TAG, "[createViewInstance] ==> frameLayout:" + frameLayout);
+        return frameLayout;
     }
 }
