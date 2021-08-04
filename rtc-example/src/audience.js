@@ -56,7 +56,7 @@ class AudienceScreen extends React.Component {
         let code = event.code;
         let message = event.message;
         if (code != 0) {
-          RRCToast.show('Subscribe Live Mix ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
+          RRCToast.show('Subscribe Live Mix ' + (Constants.media[type]) + ' Error: ' + code + ', message: ' + message);
         } else {
           RCReactNativeRtc.setLiveMixView(this.state.local);
           this.setState({ subscribed: true });
@@ -71,7 +71,7 @@ class AudienceScreen extends React.Component {
         let code = event.code;
         let message = event.message;
         if (code != 0) {
-          RRCToast.show('Unsubscribe Live Mix ' + (media[type]) + ' Error: ' + code + ', message: ' + message);
+          RRCToast.show('Unsubscribe Live Mix ' + (Constants.media[type]) + ' Error: ' + code + ', message: ' + message);
         } else {
           RCReactNativeRtc.removeLiveMixView();
           this.setState({ subscribed: false });
@@ -160,7 +160,7 @@ class AudienceScreen extends React.Component {
               if (!this.state.subscribed) {
                 let code = await RCReactNativeRtc.subscribeLiveMix(this.state.media, this.state.tiny);
                 if (code != 0) {
-                  RRCToast.show('Subscribe Live Mix ' + (media[type]) + ' Error: ' + code);
+                  RRCToast.show('Subscribe Live Mix ' + (Constants.media[this.state.media]) + ' Error: ' + code);
                   RRCLoading.hide();
                 }
               } else {
@@ -175,15 +175,17 @@ class AudienceScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={{ height: 10 }} />
-        <RCReactNativeRtcView
-          style={{
-            width: '100%', height: 300, backgroundColor: 'black'
-          }}
-          ref={ref => {
-            this.state.local = findNodeHandle(ref);
-          }}
-          mirror={false}
-        />
+        <View style={{ height: 300, overflow: 'hidden' }}>
+          <RCReactNativeRtcView
+            style={{
+              width: '100%', height: 300
+            }}
+            ref={ref => {
+              this.state.local = findNodeHandle(ref);
+            }}
+            mirror={false}
+          />
+        </View>
         <View style={{ height: 10 }} />
         <View style={UI.styles.row}>
           <TouchableOpacity

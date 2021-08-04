@@ -128,6 +128,7 @@ export const unInit = () => {
     listener.remove();
   });
   listeners.length = 0;
+  users.clear();
   onUserJoined = null;
   onUserLeft = null;
   onUserAudioStateChanged = null;
