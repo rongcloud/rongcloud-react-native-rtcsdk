@@ -1,14 +1,22 @@
 package cn.rongcloud.rn.call;
 
 import android.widget.FrameLayout;
+
+import androidx.annotation.Nullable;
+
 import cn.rongcloud.rtc.utils.FinLog;
+
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+
+import java.util.Map;
 
 /**
  * Created by wangw on 2021/7/22.
  */
-public class RCReactNativeCallViewManager extends SimpleViewManager<FrameLayout> {
+public class RCReactNativeCallViewManager extends SimpleViewManager<RCReactNativeFrameLayout> {
 
     private static final String TAG = "RCReactNativeCallViewManager";
 
@@ -18,9 +26,10 @@ public class RCReactNativeCallViewManager extends SimpleViewManager<FrameLayout>
     }
 
     @Override
-    protected FrameLayout createViewInstance(ThemedReactContext themedReactContext) {
-        FrameLayout frameLayout = new FrameLayout(themedReactContext);
+    protected RCReactNativeFrameLayout createViewInstance(ThemedReactContext themedReactContext) {
+        RCReactNativeFrameLayout frameLayout = new RCReactNativeFrameLayout(themedReactContext);
         FinLog.d(TAG, "[createViewInstance] ==> frameLayout:" + frameLayout);
         return frameLayout;
     }
+
 }
