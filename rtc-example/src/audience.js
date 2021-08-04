@@ -175,7 +175,7 @@ class AudienceScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={{ height: 10 }} />
-        <View style={{ height: 300, overflow: 'hidden' }}>
+        <View style={{ height: 300, backgroundColor: 'black', overflow: 'hidden' }}>
           <RCReactNativeRtcView
             style={{
               width: '100%', height: 300

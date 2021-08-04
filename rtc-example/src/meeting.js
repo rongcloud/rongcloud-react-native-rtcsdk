@@ -258,7 +258,7 @@ class MeetingScreen extends React.Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
-          <View style={{ width: '50%', height: 210, overflow: 'hidden' }}>
+          <View style={{ width: '50%', height: 210, backgroundColor: 'black', overflow: 'hidden' }}>
             <RCReactNativeRtcView
               style={{
                 width: '100%', height: 210
@@ -563,7 +563,7 @@ class MeetingScreen extends React.Component {
           renderItem={
             ({ item }) => (
               <View style={{ flexDirection: 'row' }}>
-                <View style={{ width: '50%', height: 210, overflow: 'hidden' }}>
+                <View style={{ width: '50%', height: 210, backgroundColor: 'black', overflow: 'hidden' }}>
                   <RCReactNativeRtcView
                     style={{
                       width: '100%', height: 210
