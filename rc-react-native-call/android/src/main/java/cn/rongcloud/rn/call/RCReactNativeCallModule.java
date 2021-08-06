@@ -36,13 +36,15 @@ public class RCReactNativeCallModule extends ReactContextBaseJavaModule {
     }
 
 	@ReactMethod
-	public void init() {
+	public void init(ReadableMap map) {
+		FinLog.d(TAG, "[init] ==>  ");
 		RCCallIWEngine.getInstance().setEngineListener(new RCCallIWEngineListenerImpl(reactContext));
 
 	}
 
 	@ReactMethod
 	public void unInit() {
+		FinLog.d(TAG, "[unInit] ==>  ");
 		RCCallIWEngine.getInstance().setEngineListener(null);
 	}
 

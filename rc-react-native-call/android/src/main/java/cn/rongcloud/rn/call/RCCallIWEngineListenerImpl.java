@@ -96,17 +96,26 @@ public class RCCallIWEngineListenerImpl extends RCCallIWEngineListener {
 
     @Override
     public void onRemoteUserMediaTypeChanged(RCCallIWUserProfile user, RCCallIWMediaType mediaType) {
-		sendEvent("Engine:OnRemoteUserMediaTypeChanged", mediaType.ordinal());
+        WritableMap arguments = Arguments.createMap();
+        arguments.putMap("user",ArgumentAdapter.fromRCCallIWUserProfile(user));
+        arguments.putInt("mediaType",mediaType.ordinal());
+		sendEvent("Engine:OnRemoteUserMediaTypeChanged", arguments);
     }
 
     @Override
     public void onRemoteUserMicrophoneStateChanged(RCCallIWUserProfile user, boolean enable) {
+        WritableMap arguments = Arguments.createMap();
+        arguments.putMap("user",ArgumentAdapter.fromRCCallIWUserProfile(user));
+        arguments.putBoolean("enable",enable);
 		sendEvent("Engine:OnRemoteUserMicrophoneStateChanged", enable);
 
     }
 
     @Override
     public void onRemoteUserCameraStateChanged(RCCallIWUserProfile user, boolean enable) {
+        WritableMap arguments = Arguments.createMap();
+        arguments.putMap("user",ArgumentAdapter.fromRCCallIWUserProfile(user));
+        arguments.putBoolean("enable",enable);
 		sendEvent("Engine:OnRemoteUserCameraStateChanged", enable);
 
     }
