@@ -11,12 +11,12 @@ import {
     ScrollView
 } from 'react-native';
 
-import { 
+import {
     RCReactNativeCall,
     RCReactNativeCallVideoView
 } from 'rc-react-native-call';
 
-import { 
+import {
     CallState,
     CallType
 } from './defines';
@@ -27,7 +27,7 @@ class ItemButton extends Component {
         super(props);
         this.style = props.style === undefined ? {} : props.style;
         this.state = {
-            isSelected: props.selected === undefined ? false :  props.selected
+            isSelected: props.selected === undefined ? false : props.selected
         }
     }
 
@@ -50,15 +50,15 @@ class ItemButton extends Component {
             <View style={this.style}>
                 <TouchableOpacity
                     style={styles.itemButton}
-                    onPress={ this.onClick.bind(this) }>
-                    <Image 
-                        style={styles.btnButton} 
+                    onPress={this.onClick.bind(this)}>
+                    <Image
+                        style={styles.btnButton}
                         source={imageSource} />
-                    <Text 
+                    <Text
                         style={styles.itemTitle}>
                         {this.props.title}
-                    </Text> 
-                </TouchableOpacity>                   
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -100,7 +100,7 @@ class Room extends Component {
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
 
         this.addListener();
 
@@ -123,7 +123,7 @@ class Room extends Component {
             return;
         }
         if (userIds.length > 1) {
-            await RCReactNativeCall.startGroupCall(userIds[0],userIds,null,this.state.callType,null);
+            await RCReactNativeCall.startGroupCall(userIds[0], userIds, null, this.state.callType, null);
         } else {
             await RCReactNativeCall.startSingleCall(userIds[0], this.state.callType, null);
         }
@@ -137,7 +137,7 @@ class Room extends Component {
         if (this.viewHandles.bigView !== null) {
             await this.onSetBigVideoView(this.viewHandles.bigView);
         }
-        this.viewHandles.smallViews.forEach((value)=>{
+        this.viewHandles.smallViews.forEach((value) => {
             this.onSetVideoView(value.userId, value.view);
         });
     }
@@ -149,7 +149,7 @@ class Room extends Component {
         });
     }
 
-    async onSetVideoView(userId,ref) {
+    async onSetVideoView(userId, ref) {
         if (userId == null || userId == undefined || ref == null || ref == undefined) {
             return;
         }
@@ -186,7 +186,7 @@ class Room extends Component {
             callType: CallType.audio
         });
     }
-    
+
     async onSwitchCamera() {
         await RCReactNativeCall.switchCamera();
     }
@@ -194,64 +194,64 @@ class Room extends Component {
     async onDisableCamera(isSelected) {
         this.state.config.disableCamera = isSelected;
         const currentCamera = await RCReactNativeCall.currentCamera();
-        await RCReactNativeCall.enableCamera(!isSelected,currentCamera);
+        await RCReactNativeCall.enableCamera(!isSelected, currentCamera);
     }
 
-    bottomView() {            
+    bottomView() {
         if (this.state.callState === CallState.callin) {
             return (
-                <View style={[styles.bottomView, {justifyContent: 'space-around'}]}>
-                    <ItemButton 
-                        title="挂断" 
+                <View style={[styles.bottomView, { justifyContent: 'space-around' }]}>
+                    <ItemButton
+                        title="挂断"
                         image={require('./images/hang_up.png')}
-                        onclick={this.onHangup.bind(this)}/>
-                    <ItemButton 
-                        title="接听" 
-                        image={ this.state.callType === CallType.video ? require('./images/answervideo.png') : require('./images/answer.png')}
-                        onclick={this.onAccept.bind(this)}/>
+                        onclick={this.onHangup.bind(this)} />
+                    <ItemButton
+                        title="接听"
+                        image={this.state.callType === CallType.video ? require('./images/answervideo.png') : require('./images/answer.png')}
+                        onclick={this.onAccept.bind(this)} />
                 </View>
             );
         } else {
             return (
                 <View style={styles.bottomView}>
-                    <ItemButton 
+                    <ItemButton
                         title="静音"
-                        selected={this.state.config.mute} 
+                        selected={this.state.config.mute}
                         image={require('./images/mute.png')}
-                        selectedImage={require("./images/mute_hover.png")} 
-                        onclick={this.onMute.bind(this)}/>  
-                    <ItemButton 
-                        title="挂断" 
+                        selectedImage={require("./images/mute_hover.png")}
+                        onclick={this.onMute.bind(this)} />
+                    <ItemButton
+                        title="挂断"
                         image={require('./images/hang_up.png')}
-                        onclick={this.onHangup.bind(this)}/>
+                        onclick={this.onHangup.bind(this)} />
                     <View>
                         {this.state.callType === CallType.video && (
                             <View>
                                 <ItemButton
-                                    style={{marginBottom: 25}}
-                                    title="音频通话" 
+                                    style={{ marginBottom: 25 }}
+                                    title="音频通话"
                                     image={require('./images/audio.png')}
-                                    onclick={this.onChangeAudio.bind(this)}/>
-                                <ItemButton 
-                                    style={{marginBottom: 25}}
-                                    title="切换像机" 
+                                    onclick={this.onChangeAudio.bind(this)} />
+                                <ItemButton
+                                    style={{ marginBottom: 25 }}
+                                    title="切换像机"
                                     image={require('./images/camera.png')}
-                                    onclick={this.onSwitchCamera.bind(this)}/>
-                                <ItemButton 
-                                    style={{marginBottom: 25}}
-                                    title="摄像头" 
+                                    onclick={this.onSwitchCamera.bind(this)} />
+                                <ItemButton
+                                    style={{ marginBottom: 25 }}
+                                    title="摄像头"
                                     selected={this.state.config.disableCamera}
                                     image={require('./images/video.png')}
                                     selectedImage={require("./images/video_hover.png")}
-                                    onclick={this.onDisableCamera.bind(this)}/>
+                                    onclick={this.onDisableCamera.bind(this)} />
                             </View>
                         )}
-                        <ItemButton 
-                            title="免提" 
+                        <ItemButton
+                            title="免提"
                             selected={this.state.config.handFree}
                             image={require('./images/handfree.png')}
                             selectedImage={require("./images/handfree_hover.png")}
-                            onclick={this.onHandFree.bind(this)}/>
+                            onclick={this.onHandFree.bind(this)} />
                     </View>
                 </View>
             );
@@ -263,19 +263,22 @@ class Room extends Component {
         return (
             <View>
                 {
-                    smallUserIds.map((userId)=>{
-                        return (<RCReactNativeCallVideoView
-                            key={userId}
-                            style={styles.smallVideo} 
-                            ref={ ref => { 
-                                this.viewHandles.smallViews.push({
-                                    view: findNodeHandle(ref),
-                                    userId
-                                });
-                            }}/>
+                    smallUserIds.map((userId) => {
+                        return (
+                            <View style={styles.smallVideo} key={userId}>
+                                <RCReactNativeCallVideoView
+                                    style={{ width: '100%', height: '100%' }}
+                                    ref={ref => {
+                                        this.viewHandles.smallViews.push({
+                                            view: findNodeHandle(ref),
+                                            userId
+                                        });
+                                    }}
+                                />
+                            </View>
                         );
                     })
-                }            
+                }
             </View>
         );
     }
@@ -284,22 +287,24 @@ class Room extends Component {
         const smallUserIds = this.state.smallUserIds;
         return (
             <View style={styles.container}>
-                <RCReactNativeCallVideoView 
-                    style={styles.bigVideo}
-                    ref={ref => { this.viewHandles.bigView.view = findNodeHandle(ref); }}>
-                </RCReactNativeCallVideoView>
+                <View style={styles.bigVideo}>
+                    <RCReactNativeCallVideoView
+                        style={{ width: '100%', height: '100%' }}
+                        ref={ref => { this.viewHandles.bigView.view = findNodeHandle(ref); }}>
+                    </RCReactNativeCallVideoView>
+                </View>
                 <View style={styles.content}>
-                    <SafeAreaView style={{flex: 1}}>
-                        <View style={{flex: 1}}>
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <View style={{ flex: 1 }}>
                             <TouchableWithoutFeedback
-                                onPress={()=>{this.setState({showMenus: !this.state.showMenus})}}>
+                                onPress={() => { this.setState({ showMenus: !this.state.showMenus }) }}>
                                 <View style={styles.topView}>
                                     {this.state.showMenus ? this.bottomView() : null}
                                 </View>
                             </TouchableWithoutFeedback>
                             <View pointerEvents="box-none" style={styles.videosView}>
-                                <View  pointerEvents="box-none" style={{alignItems:'center'}}>
-                                    <Text style={{color: 'white', fontSize: 18}}> {this.state.bigUserId === null ? "" : "UserID: " + this.state.bigUserId }</Text>
+                                <View pointerEvents="box-none" style={{ alignItems: 'center' }}>
+                                    <Text style={{ color: 'white', fontSize: 18 }}> {this.state.bigUserId === null ? "" : "UserID: " + this.state.bigUserId}</Text>
                                 </View>
                                 <ScrollView
                                     bounces={smallUserIds.length > 3}
@@ -317,8 +322,8 @@ class Room extends Component {
 
     //////////////////////////////////// Listener ////////////////////////////////////
     addListener() {
-        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallConnected", ()=>this.onCallConnect());
-        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnected", (r)=>this.onCallDisconnect(r));
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallConnected", () => this.onCallConnect());
+        RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallDisconnected", (r) => this.onCallDisconnect(r));
     }
 
     removeListener() {
@@ -332,7 +337,7 @@ class Room extends Component {
             const mineId = callSession.mine.userId;
             var smallUserIds = [mineId];
             var isHasBigView = false;
-            callSession.users.forEach((user)=> {
+            callSession.users.forEach((user) => {
                 if (user.userId !== mineId) {
                     if (!isHasBigView) {
                         this.viewHandles.bigView.userId = user.userId;
@@ -348,9 +353,9 @@ class Room extends Component {
                 callState: CallState.call
             });
 
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.onSetVideoViews();
-            },200);
+            }, 200);
 
         } catch (e) {
             alert(e);
@@ -370,15 +375,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
         position: 'absolute',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        overflow: 'hidden'
     },
     content: {
         height: '100%',
         width: '100%'
     },
-    videosView:{
-        position: 'absolute', 
-        width: "100%", 
+    videosView: {
+        position: 'absolute',
+        width: "100%",
         height: "100%",
         zIndex: 10
     },
@@ -387,7 +393,7 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         marginTop: 10,
         marginBottom: 170
-    },  
+    },
     topView: {
         flex: 1,
         flexDirection: 'column-reverse',
@@ -418,12 +424,13 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     smallVideo: {
-        backgroundColor: 'black', 
-        width: 110, 
-        aspectRatio:0.7, 
+        backgroundColor: 'black',
+        width: 110,
+        aspectRatio: 0.7,
         marginBottom: 10,
         borderWidth: 1,
-        borderColor: '#aaaaaa'
+        borderColor: '#aaaaaa',
+        overflow: 'hidden'
     }
 });
 

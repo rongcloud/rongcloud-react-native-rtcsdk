@@ -14,7 +14,7 @@ export const types = [
 export const screens = [
     'Meeting',
     'Host',
-    'Meeting',
+    'Audience',
 ];
 
 export const fps = [

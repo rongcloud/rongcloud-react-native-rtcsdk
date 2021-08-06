@@ -266,15 +266,17 @@ class HostScreen extends React.Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
-          <RCReactNativeRtcView
-            style={{
-              width: '50%', height: 210, backgroundColor: 'black'
-            }}
-            ref={ref => {
-              this.state.local = findNodeHandle(ref);
-            }}
-            mirror={this.state.mirror}
-          />
+          <View style={{ width: '50%', height: 210, backgroundColor: 'black', overflow: 'hidden' }}>
+            <RCReactNativeRtcView
+              style={{
+                width: '100%', height: 210
+              }}
+              ref={ref => {
+                this.state.local = findNodeHandle(ref);
+              }}
+              mirror={this.state.mirror}
+            />
+          </View>
           <View style={UI.styles.column}>
             <View style={UI.styles.row}>
               <TouchableOpacity
@@ -569,27 +571,30 @@ class HostScreen extends React.Component {
           renderItem={
             ({ item }) => (
               <View style={{ flexDirection: 'row' }}>
-                <RCReactNativeRtcView
-                  style={{
-                    width: '50%', height: 210, backgroundColor: 'black'
-                  }}
-                  ref={(ref) => {
-                    let id = item.id;
-                    let current = findNodeHandle(ref);
-                    if (!Util.isNull(current)) {
-                      if (this.remotes.has(id)) {
-                        let cache = this.remotes.get(id);
-                        if (current != cache) {
-                          this.remotes.delete(id);
+                <View style={{ width: '50%', height: 210, backgroundColor: 'black', overflow: 'hidden' }}>
+                  <RCReactNativeRtcView
+                    style={{
+                      width: '100%', height: 210
+                    }}
+                    ref={(ref) => {
+                      let id = item.id;
+                      let current = findNodeHandle(ref);
+                      if (!Util.isNull(current)) {
+                        if (this.remotes.has(id)) {
+                          let cache = this.remotes.get(id);
+                          if (current != cache) {
+                            this.remotes.delete(id);
+                            this.remotes.set(id, current);
+                          }
+                        } else {
                           this.remotes.set(id, current);
                         }
-                      } else {
-                        this.remotes.set(id, current);
                       }
-                    }
-                  }}
-                  mirror={false}
-                />
+                    }}
+                    mirror={false}
+                  />
+                </View>
+
                 <View style={UI.styles.column}>
                   <View style={UI.styles.row}>
                     <TouchableOpacity

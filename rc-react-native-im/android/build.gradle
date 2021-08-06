@@ -38,12 +38,12 @@ repositories {
     }
     maven {
         // All of React Native (JS, Android binaries) is installed from npm
-        url "$projectDir/../../../../../node_modules/react-native/android"
+        url "$projectDir/../node_modules/react-native/android"
     }
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'cn.rongcloud.sdk:im_lib:5.1.3.1'
+    implementation 'cn.rongcloud.sdk:im_lib:5.1.3.2'
 }
   

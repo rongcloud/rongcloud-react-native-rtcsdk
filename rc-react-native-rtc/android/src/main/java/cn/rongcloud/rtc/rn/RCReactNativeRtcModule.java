@@ -299,15 +299,14 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setLocalView(ReadableMap view, final Promise promise) {
-        final int id = view.getInt("id");
+    public void setLocalView(final int tag, final Promise promise) {
         UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
         assert manager != null;
         manager.addUIBlock(new UIBlock() {
             @Override
             public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
                 int code = -1;
-                View nativeView = nativeViewHierarchyManager.resolveView(id);
+                View nativeView = nativeViewHierarchyManager.resolveView(tag);
                 if (engine != null) {
                     code = engine.setLocalView((RCRTCIWView) nativeView);
                 }
@@ -326,15 +325,14 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setRemoteView(final String id, ReadableMap view, final Promise promise) {
-        final int viewId = view.getInt("id");
+    public void setRemoteView(final String id, final int tag, final Promise promise) {
         UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
         assert manager != null;
         manager.addUIBlock(new UIBlock() {
             @Override
             public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
                 int code = -1;
-                View nativeView = nativeViewHierarchyManager.resolveView(viewId);
+                View nativeView = nativeViewHierarchyManager.resolveView(tag);
                 if (engine != null) {
                     code = engine.setRemoteView(id, (RCRTCIWView) nativeView);
                 }
@@ -353,15 +351,14 @@ public class RCReactNativeRtcModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setLiveMixView(ReadableMap view, final Promise promise) {
-        final int id = view.getInt("id");
+    public void setLiveMixView(final int tag, final Promise promise) {
         UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
         assert manager != null;
         manager.addUIBlock(new UIBlock() {
             @Override
             public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
                 int code = -1;
-                View nativeView = nativeViewHierarchyManager.resolveView(id);
+                View nativeView = nativeViewHierarchyManager.resolveView(tag);
                 if (engine != null) {
                     code = engine.setLiveMixView((RCRTCIWView) nativeView);
                 }

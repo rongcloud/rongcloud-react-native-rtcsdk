@@ -45,7 +45,6 @@ class ConnectScreen extends React.Component {
       room: '',
       tiny: true,
       mode: 0,
-      extra: [],
     };
     RCReactNativeIm.disconnect();
     this.generate = this.generate.bind(this);
@@ -63,58 +62,6 @@ class ConnectScreen extends React.Component {
       }
       RRCLoading.hide();
     });
-
-    this.state.extra.push(
-      <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10, alignItems: 'center' }}>
-        <CheckBox
-          disabled={false}
-          value={this.state.tiny}
-          onValueChange={(checked) => {
-            this.state.tiny = checked;
-            this.setState(this.state);
-          }}
-        />
-        <View style={{ width: 10 }} />
-        <Text style={UI.styles.text}>开启大小流</Text>
-      </View>
-    );
-
-    this.state.extra.push(
-      <View style={UI.styles.column}>
-        <RadioForm
-          style={{
-            marginTop: -20,
-            alignSelf: 'center',
-          }}
-          radio_props={[
-            { label: '音视频模式', value: 0 },
-            { label: '纯音频模式', value: 1 },
-          ]}
-          initial={this.state.mode}
-          formHorizontal={true}
-          labelHorizontal={false}
-          animation={false}
-          onPress={(value) => {
-            if (this.state.mode != value) {
-              this.state.mode = value;
-              this.setState(this.state);
-            }
-          }}
-        />
-        <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10, alignItems: 'center' }}>
-          <CheckBox
-            disabled={false}
-            value={this.state.tiny}
-            onValueChange={(checked) => {
-              this.state.tiny = checked;
-              this.setState(this.state);
-            }}
-          />
-          <View style={{ width: 10 }} />
-          <Text style={UI.styles.text}>开启大小流</Text>
-        </View>
-      </View>
-    );
   }
 
   generate() {
@@ -224,6 +171,67 @@ class ConnectScreen extends React.Component {
   }
 
   connected() {
+    this.extra = [
+      (
+        <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10, alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => {
+              console.log('tiny = ' + this.state.tiny);
+              this.setState({ tiny: !this.state.tiny });
+            }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <CheckBox
+                disabled={true}
+                value={this.state.tiny}
+              />
+              <View style={{ width: 2 }} />
+              <Text style={UI.styles.text}>开启大小流</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      ),
+      (
+        <View style={UI.styles.column}>
+          <RadioForm
+            style={{
+              marginTop: -20,
+              alignSelf: 'center',
+            }}
+            radio_props={[
+              { label: '    音视频模式    ', value: 0 },
+              { label: '    纯音频模式    ', value: 1 },
+            ]}
+            initial={this.state.mode}
+            formHorizontal={true}
+            labelHorizontal={false}
+            animation={false}
+            onPress={(value) => {
+              if (this.state.mode != value) {
+                this.state.mode = value;
+                this.setState(this.state);
+              }
+            }}
+          />
+          <View style={{ flexDirection: 'row', paddingLeft: 10, paddingBottom: 10, alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('tiny = ' + this.state.tiny);
+                this.setState({ tiny: !this.state.tiny });
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <CheckBox
+                  disabled={true}
+                  value={this.state.tiny}
+                />
+                <View style={{ width: 2 }} />
+                <Text style={UI.styles.text}>开启大小流</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ),
+    ];
+
     return (
       <View style={UI.styles.column}>
         <View style={UI.styles.row}>
@@ -285,7 +293,7 @@ class ConnectScreen extends React.Component {
           }}
           radio_props={[
             { label: '会议模式', value: 0 },
-            { label: '主播模式', value: 1 },
+            { label: '            主播模式            ', value: 1 },
             { label: '观众模式', value: 2 },
           ]}
           initial={this.state.type}
@@ -315,7 +323,7 @@ class ConnectScreen extends React.Component {
               this.setState(this.state);
             }} />
         </View>
-        {this.state.extra[this.state.type]}
+        {this.extra[this.state.type]}
         <View style={UI.styles.row}>
           <TouchableOpacity
             activeOpacity={0.5}
