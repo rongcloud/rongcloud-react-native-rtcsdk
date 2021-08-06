@@ -56,10 +56,6 @@
 		<data>
 		bGtwwgKHwLMwQfaUelccHDRrJxU=
 		</data>
-		<key>RCConfig.plist</key>
-		<data>
-		tLLC4Uyo/ChnXw0e+qQoP2Aq2Rc=
-		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
@@ -193,17 +189,6 @@
 			<key>hash2</key>
 			<data>
 			fMhT5El4LZF8OYeumQOKH4sDpxA4AmppQgSzOds4/YA=
-			</data>
-		</dict>
-		<key>RCConfig.plist</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			tLLC4Uyo/ChnXw0e+qQoP2Aq2Rc=
-			</data>
-			<key>hash2</key>
-			<data>
-			vw5hCzMW6KYUbA7UDYMWR4yCSd/1uDX8ljdaiOveDLs=
 			</data>
 		</dict>
 	</dict>
