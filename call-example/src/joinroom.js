@@ -113,7 +113,7 @@ class JoinRoom extends Component {
     }
 
     componentDidMount() {
-        RCReactNativeCall.init();
+        RCReactNativeCall.init({});
         RCReactNativeCall.ManagerEmitter.addListener("Engine:OnCallReceived", (cs)=>this.onGotoCallRoom(false, cs));
     }
 
