@@ -153,7 +153,7 @@ class ConnectScreen extends React.Component {
     let setup = Util.isEmpty(media) ? {
       videoSetup: videoSetup,
     } : {
-      mediaUrl: 'media',
+      mediaUrl: media,
       videoSetup: videoSetup,
     };
     RCReactNativeRtc.init(setup).then(() => {
