@@ -26,7 +26,7 @@ interface CustomLayoutScreenStates {
 
 
 class CustomLayoutScreen extends React.Component<CustomLayoutScreenProps, CustomLayoutScreenStates> {
-    static customLayouts: RCRTCCustomLayout[] = []
+    static customLayouts: Map<string, RCRTCCustomLayout>=new Map()
     _extraUniqueKey = (item: any, index: number) => {
         return item + index
     }
@@ -61,7 +61,7 @@ class CustomLayoutScreen extends React.Component<CustomLayoutScreenProps, Custom
             <View style={{ flexDirection: 'row', marginLeft: 15, marginRight: 15 }}>
                 <Text style={{ flex: 1 }}>{JSON.stringify(item)}</Text>
                 <TouchableOpacity onPress={() => {
-                    CustomLayoutScreen.customLayouts = CustomLayoutScreen.customLayouts.filter(value => value !== item);
+                    CustomLayoutScreen.customLayouts.delete(item.id)
                     this.setState({})
                 }}>
                     <Image source={{ uri: 'delete' }} style={{ width: 25, height: 25 }} />
@@ -145,7 +145,7 @@ class CustomLayoutScreen extends React.Component<CustomLayoutScreenProps, Custom
                         }
                         else
                             layout.type = RCRTCStreamType.LIVE
-                        CustomLayoutScreen.customLayouts = [...CustomLayoutScreen.customLayouts, layout]
+                        CustomLayoutScreen.customLayouts.set(layout.id,layout)
                         this.setState({})
                     }} />
                     <View style={{ width: 30 }} />
@@ -156,11 +156,12 @@ class CustomLayoutScreen extends React.Component<CustomLayoutScreenProps, Custom
 
 
     render() {
+        let customLayouts = Array.from(CustomLayoutScreen.customLayouts.values())
         return (<View style={{ flex: 1 }}>
             <FlatList
                 keyExtractor={this._extraUniqueKey}
                 style={{ flex: 1, marginTop: 10 }}
-                data={CustomLayoutScreen.customLayouts}
+                data={customLayouts}
                 ItemSeparatorComponent={() => {
                     return (<View style={{ height: 1, backgroundColor: 'grey', marginTop: 5, marginBottom: 5 }} />)
                 }}
@@ -173,8 +174,8 @@ class CustomLayoutScreen extends React.Component<CustomLayoutScreenProps, Custom
                 <Button title="新增" onPress={() => this.addLayout()} />
                 <View style={{ width: 30 }}></View>
                 <Button title="提交" onPress={() => {
-                    if (CustomLayoutScreen.customLayouts.length > 0) {
-                        RCRTCEngine.setLiveMixCustomLayouts(CustomLayoutScreen.customLayouts);
+                    if (customLayouts.length > 0) {
+                        RCRTCEngine.setLiveMixCustomLayouts(customLayouts);
                         DeviceEventEmitter.emit('OnMixLayoutModeChange')
                         this.props.navigation.goBack()
                     }
