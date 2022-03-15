@@ -6,8 +6,7 @@ import Picker from '../component/Picker';
 import Radio from '../component/Radio';
 import CheckBox from '../component/CheckBox';
 import Pop from "../component/Pop";
-import * as ImagePicker from 'react-native-image-picker';
-
+import ImagePicker from 'react-native-image-crop-picker';
 import {
   Text,
   View,
@@ -749,6 +748,16 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     this.setOptions();
   }
 
+  shortFileName(file: string) {
+    let shortName = ''
+    const lastIndex = file.lastIndexOf("/")
+    if (lastIndex > 0)
+      shortName = file.substring(lastIndex + 1)
+    else
+      shortName = file
+    return shortName
+  }
+
   renderItem() {
     return Array.from(Util.users.values()).map((item, index) => {
       return (
@@ -787,7 +796,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                     { label: '订阅大流', value: 0 },
                     { label: '订阅小流', value: 1 },
                   ]}
-                  value={item.subscribeTiny?1:0}
+                  value={item.subscribeTiny ? 1 : 0}
                   onSelect={(value: number) => {
                     item.subscribeTiny = (value === 1)
                     //如果已经订阅，重新订阅
@@ -1024,15 +1033,20 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
           </View>
           <View style={{ flex: 1, marginLeft: 5 }}>
             <Text>已选文件</Text>
-            <Text>{this.state.customVideoFile}</Text>
+            <Text>{this.shortFileName(this.state.customVideoFile)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <TouchableOpacity onPress={() => {
-                ImagePicker.launchImageLibrary({ mediaType: 'video' }, (response) => {
-                  if (response.assets && response.assets!.length > 0) {
-                    let file = response.assets![0].uri!
-                    this.setState({ customVideoFile: file })
-                  }
-                })
+                ImagePicker.openPicker({
+                  mediaType: "video",
+                  cropping: false,
+                  writeTempFile: false,
+                  waitAnimationEnd: false,
+                 
+                }).then((video) => {
+                  let file = video.sourceURL ? video.sourceURL : video.path
+                  console.log(file)
+                  this.setState({ customVideoFile: file })
+                });
               }}>
 
                 <Text style={{ textDecorationLine: 'underline', color: 'blue' }}>选择文件</Text>
