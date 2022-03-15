@@ -1,6 +1,6 @@
 {
   "name": "@rongcloud/react-native-rtc",
-  "version": "0.1.0",
+  "version": "5.1.17",
   "description": "React Native RongCloud Rtc",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -37,14 +37,14 @@
     "react-native",
     "ios",
     "android"
-  ],
-  "repository": "https://github.com/rongcloud/rongcloud-react-native-rtc",
+  ],               
+  "repository": "https://github.com/rongcloud/rongcloud-react-native-rtcsdk",
   "author": "RongCloud <support@rongcloud.cn> (https://www.rongcloud.cn)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rongcloud/rongcloud-react-native-rtc/issues"
+    "url": "https://github.com/rongcloud/rongcloud-react-native-rtcsdk/issues"
   },
-  "homepage": "https://github.com/rongcloud/rongcloud-react-native-rtc#readme",
+  "homepage": "https://github.com/rongcloud/rongcloud-react-native-rtcsdk#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
