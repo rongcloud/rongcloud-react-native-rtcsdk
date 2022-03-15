@@ -1,7 +1,7 @@
 
-export const key = 'e5t4ouvptkm2a';
-export const navigate = 'zav.cn.ronghub.com';
-export const file = 'up.qbox.me';
+export const key = '';
+export const navigate = '';
+export const file = '';
 export const media = '';
-export const host = 'http://106.75.91.81:8080/';
-export const prefix = 'rtd_';
+export const host = '';
+export const prefix = '';
