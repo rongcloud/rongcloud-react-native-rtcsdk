@@ -20,7 +20,11 @@ import {
   RRCToast,
   RRCLoading,
 } from 'react-native-overlayer';
-import * as IMLib from '@rongcloud/react-native-imlib'
+import {
+  RCIMIWEngine,
+  RCIMIWEngineOptions,
+} from '@rongcloud/react-native-im-wrapper';
+
 
 import {
   RCRTCEngine, RCRTCMediaType, RCRTCRole, RCRTCRoomSetup
@@ -82,6 +86,9 @@ export const holders = [
 
 const storageKey = 'key'
 
+export let imEngine: RCIMIWEngine;
+export let rtcEngine: any
+
 class ConnectScreen extends React.Component<ConnectScreenProps, ConnectScreenStates> {
   _extraUniqueKey = (item: any, index: number) => {
     return item + index
@@ -105,16 +112,8 @@ class ConnectScreen extends React.Component<ConnectScreenProps, ConnectScreenSta
       userId: '',
       storageData: []
     }
-    IMLib.disconnect();
-
-    RCRTCEngine.setOnRoomJoinedListener((code: number, message: string) => {
-      if (code != 0) {
-        RRCToast.show('Join Room Error: ' + code + ", message:" + message);
-      } else {
-        this.props.navigation.navigate(Constants.screens[this.state.roleType], { roomId: this.state.room, userId: this.state.userId });
-      }
-      RRCLoading.hide();
-    })
+    imEngine?.disconnect(true);
+    rtcEngine?.destroy();
   }
 
   clear() {
@@ -239,30 +238,49 @@ class ConnectScreen extends React.Component<ConnectScreenProps, ConnectScreenSta
       state.file = file;
     }
 
-    IMLib.setServerInfo(navigate, file)
+    // IM 初始化
+    const options: RCIMIWEngineOptions = {
+      naviServer: navigate,
+      fileServer: file,
+    };
+    imEngine = RCIMIWEngine.create(key, options);
 
-    IMLib.init(key)
-
-    IMLib.connect(token, (userId) => {
-      console.log('IM连接成功 userId ->' + userId)
-
-      if (userId.length == 0) {
-        RRCToast.show('IM Connect Error: ' + userId);
+    // 设置连接回调
+    imEngine?.setOnConnectedListener((code: number, userId: string) => {
+      if (code === 0) {
+        console.log('IM 连接成功 userId:' + userId);
+        if (userId.length === 0) {
+          RRCToast.show('IM Connect Error: ' + userId);
+        } else {
+          state.connected = true;
+          state.userId = userId;
+        }
+        this.setState(state);
+        this.save();
+        RRCLoading.hide();
       } else {
-        state.connected = true;
-        state.userId = userId;
+        console.log('IM 连接失败,code: ' + code);
       }
-      this.setState(state);
-      this.save()
-      RRCLoading.hide();
-    }, (code) => {
-      console.log('连接失败  code -> ' + code)
-    }, () => { })
+    });
+
+    // 连接融云 IM 服务器
+    imEngine?.connect(token, 30)
+    .then((code: number) => {
+      if (code === 0) {
+        console.log('connect 接口调用成功');
+      } else {
+        console.log('connect 接口调用失败', code);
+      }
+    });
   }
 
   disconnect() {
-    IMLib.disconnect();
-    this.setState({ connected: false });
+    imEngine?.disconnect(true)
+    .then((code: number) => {
+      if (code === 0) {
+        this.setState({ connected: false });
+      }
+    });
   }
 
   join() {
@@ -284,18 +302,25 @@ class ConnectScreen extends React.Component<ConnectScreenProps, ConnectScreenSta
     };
 
 
-    RCRTCEngine.init(setup).then(() => {
-      Util.init();
-      const setup: RCRTCRoomSetup = {
-        type: this.state.mediaType == 0 ? RCRTCMediaType.AudioVideo : RCRTCMediaType.Audio,
-        role: this.state.roleType,
+    rtcEngine = RCRTCEngine.create(setup)
+    rtcEngine?.setOnRoomJoinedListener((code: number, message: string) => {
+      if (code != 0) {
+        RRCToast.show('Join Room Error: ' + code + ", message:" + message);
+      } else {
+        this.props.navigation.navigate(Constants.screens[this.state.roleType], { roomId: this.state.room, userId: this.state.userId });
       }
-      RCRTCEngine.joinRoom(id, setup).then((code) => {
-        if (code != 0) {
-          RRCToast.show('Join Room Error: ' + code);
-          RRCLoading.hide();
-        }
-      });
+      RRCLoading.hide();
+    })
+    Util.init();
+    const roomSetup: RCRTCRoomSetup = {
+      type: this.state.mediaType == 0 ? RCRTCMediaType.AudioVideo : RCRTCMediaType.Audio,
+      role: this.state.roleType,
+    }
+    rtcEngine?.joinRoom(id, roomSetup).then((code: number) => {
+      if (code != 0) {
+        RRCToast.show('Join Room Error: ' + code);
+        RRCLoading.hide();
+      }
     });
   }
   componentDidMount() {

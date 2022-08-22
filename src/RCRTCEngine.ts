@@ -45,21 +45,40 @@ const { RCReactNativeRtc } = NativeModules;
 
 const RCReactNativeEventEmitter = Platform.OS === 'ios' ? new NativeEventEmitter(RCReactNativeRtc) : DeviceEventEmitter;
 
-class RCRTCEngineImpl implements
+export default class RCRTCEngine implements
    RCRTCEngineInterface,
    RCRTCEngineEventsInterface,
    RCRTCStatsEventsInterface {
+   static _instance: RCRTCEngine|null;
 
 
-   init(setup: RCRTCEngineSetup): Promise<null> {
-      Logger.log(`init setup=${Logger.toString(setup)}`);
-      return RCReactNativeRtc.init(setup);
+   /**
+   * 创建 RTC 接口引擎
+   *
+   * @param setup  引擎初始化配置
+   * @return 引擎实例
+   */
+   static create(setup?: RCRTCEngineSetup | undefined): RCRTCEngine {
+      if (setup) {
+         Logger.log(`create setup=${Logger.toString(setup)}`);
+      }
+      if (!RCRTCEngine._instance) {
+         RCReactNativeRtc.create(setup);
+         RCRTCEngine._instance = new RCRTCEngine();
+      }
+      return RCRTCEngine._instance;
    }
 
 
-   unInit(): Promise<null> {
-      Logger.log(`unInit`);
-      return RCReactNativeRtc.unInit();
+   /**
+   * 销毁引擎
+   */
+   destroy(): void {
+      Logger.log(`destroy`);
+      RCReactNativeRtc.destroy();
+      if (RCRTCEngine._instance) {
+         RCRTCEngine._instance = null;
+      }
    }
 
 
@@ -1371,6 +1390,3 @@ class RCRTCEngineImpl implements
       }
    }
 }
-
-const RCRTCEngine = new RCRTCEngineImpl();
-export default RCRTCEngine;

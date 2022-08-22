@@ -2,9 +2,14 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Button, FlatList, ListRenderItemInfo, Text, View } from "react-native";
 
 import React from 'react';
-import * as IMLib from '@rongcloud/react-native-imlib'
 import { RCRTCRole } from '@rongcloud/react-native-rtc';
-import { ErrorCode, ObjectName, ReceiveMessage, SentMessage, TextMessage } from "@rongcloud/react-native-imlib";
+import { imEngine } from './Connect';
+import {
+    RCIMIWConversationType,
+    RCIMIWMessage,
+    RCIMIWMessageType,
+    RCIMIWTextMessage,
+  } from '@rongcloud/react-native-im-wrapper';
 
 
 
@@ -45,6 +50,70 @@ class MessageScreen extends React.Component<MessageProps, MessageStates> {
 
     componentDidMount() {
         this.setOptions();
+        this.addListener();
+    }
+
+    addListener() {
+        // 设置离开聊天室的回调
+        imEngine?.setOnChatRoomLeftListener((code: number, targetId: string) => {
+            if (code === 0) {
+                this.setState({ joinRoom: false })
+            }
+        })
+
+        // 设置加入聊天室的回调
+        imEngine?.setOnChatRoomJoinedListener(
+            (
+                code: number,
+                targetId: string
+            ) => {
+                if (code === 0) {
+                    console.log('加入聊天室成功');
+                    this.setState({ joinRoom: true });
+
+                    // 设置接收到消息的监听
+                    imEngine?.setOnMessageReceivedListener(
+                        (
+                            message: RCIMIWMessage,
+                            left: number,
+                            offline: boolean,
+                            hasPackage: boolean
+                        ) => {
+                            if (this.unMount) return;
+                            let timestamp = Math.floor(new Date().getTime() / 1000);
+                            imEngine?.sendPrivateReadReceiptMessage(message.targetId || '', '', timestamp);
+                            if (message.messageType !== RCIMIWMessageType.TEXT) return;
+                            const textMessage: RCIMIWTextMessage = message as RCIMIWTextMessage;
+                            this.addMessage({
+                                userId: message.senderUserId || '',
+                                msg: textMessage.text || '',
+                            });
+                        }
+                    );
+                } else {
+                    console.log('加入聊天室失败,code: ', code);
+                }
+            }
+        );
+
+        // 设置消息发送回调
+        imEngine?.setOnMessageSentListener(
+            (code: number, message: RCIMIWMessage) => {
+                if (code === 0) {
+                    console.log('消息发送成功');
+                    if (message.messageType !== RCIMIWMessageType.TEXT) return;
+                    const textMessage: RCIMIWTextMessage = message as RCIMIWTextMessage;
+                    const userId = this.props.route.params!.userId
+                    this.addMessage({
+                        userId: userId,
+                        msg: textMessage.text || '',
+                    });
+                } else {
+                    console.log('消息发送失败');
+                }
+            }
+        );
+
     }
 
     componentWillUnmount() {
@@ -66,24 +135,16 @@ class MessageScreen extends React.Component<MessageProps, MessageStates> {
                         const roomId = this.props.route.params!.roomId
 
                         if (this.state.joinRoom) {
-                            IMLib.quitChatRoom(roomId).then(() => {
-                                this.setState({ joinRoom: false })
-                            })
-                        }
-                        else {
-                            IMLib.joinChatRoom(roomId).then(() => {
-                                this.setState({ joinRoom: true })
-                                IMLib.addReceiveMessageListener(((msg: ReceiveMessage) => {
-                                    if (this.unMount)
-                                        return;
-
-                                    const message = msg.message
-                                    let timestamp = Math.floor(new Date().getTime() / 1000)
-                                    IMLib.sendReadReceiptMessage(message.conversationType, message.targetId, timestamp)//发送已读回执
-                                    const textMessage: TextMessage = message.content as TextMessage
-                                    this.addMessage({ userId: message.senderUserId, msg: textMessage.content })
-                                }))
-                            })
+                            imEngine?.leaveChatRoom(roomId)
+                            .then((code: number) => {
+                                if (code === 0) {
+                                    console.log('leaveChatRoom 接口调用成功');
+                                } else {
+                                    console.log('leaveChatRoom 接口调用失败', code);
+                                }
+                            });
+                        } else {
+                            imEngine?.joinChatRoom(roomId, 50, true);
                         }
                     }}
                 />
@@ -116,39 +177,19 @@ class MessageScreen extends React.Component<MessageProps, MessageStates> {
                         const roomId = this.props.route.params!.roomId
                         const role: RCRTCRole = this.props.route.params!.role
                         const msg = (role === RCRTCRole.LiveBroadcaster) ? '我是主播' : '我是观众'
-                        const userId = this.props.route.params!.userId
-                        const textMessage: TextMessage = {
-                            objectName: ObjectName.Text,
-                            content: msg
-                        }
-
-                        let imMsg: SentMessage = {
-                            conversationType: IMLib.ConversationType.CHATROOM,
-                            targetId: roomId,
-                            content: textMessage,
-                            pushContent: "",
-                            pushData: ""
-                        };
-
-                        const callback: IMLib.SentMessageCallback = {
-                            success: (messageId: number) => {
-                                this.addMessage({
-                                    userId: userId,
-                                    msg: msg
-                                })
-                            },
-                            progress: (progress: number, messageId: number) => {
-
-                            },
-                            cancel: () => {
-
-                            },
-                            error: (errorCode: ErrorCode, messageId: number, errorMessage?: string) => {
-
-                            }
-                        }
-
-                        IMLib.sendMessage(imMsg, callback)
+                        // 创建文本消息
+                        imEngine?.createTextMessage(
+                            RCIMIWConversationType.CHATROOM,
+                            roomId,
+                            '',
+                            msg
+                        )
+                        .then((message: RCIMIWTextMessage) => {
+                            if (message) {
+                                // 发送文本消息
+                                imEngine?.sendMessage(message);
+                            } 
+                        });
                     }} />
             </View>
         </View>)

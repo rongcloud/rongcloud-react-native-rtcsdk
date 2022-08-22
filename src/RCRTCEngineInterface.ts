@@ -4,7 +4,6 @@ import type {
     RCRTCCamera,
     RCRTCCameraCaptureOrientation,
     RCRTCCustomLayout,
-    RCRTCEngineSetup,
     RCRTCErrorCode,
     RCRTCLiveMixLayoutMode,
     RCRTCLiveMixRenderMode,
@@ -17,20 +16,12 @@ import type {
 export default interface RCRTCEngineInterface {
 
     /**
-     * 初始化
-     * 
-     * @param setup 配置项
-     * @memberof RCRTCEngineInterface
-     */
-    init(setup: RCRTCEngineSetup): Promise<null>;
-
-    /**
      * 反初始化
      *
      * @memberof RCRTCEngineInterface
      */
-    unInit(): Promise<null>;
-
+     destroy(): void;
+     
     /**
      * 加入房间
      * 

@@ -13,6 +13,11 @@
 
 #import "Macros.h"
 #import <RongRTCLibWrapper/RCRTCIWEngine.h>
+
+@interface RCReactNativeRCVersion : NSObject
+
+@end
+
 @interface RCReactNativeRtc : RCTEventEmitter <RCTBridgeModule>
 SingleInstanceH(Instance);
 

@@ -16,7 +16,6 @@ import {
   RRCLoading,
 } from 'react-native-overlayer';
 import {
-  RCRTCEngine,
   RCReactNativeRtcView,
   RCRTCMediaType,
   RCRTCRole,
@@ -30,6 +29,8 @@ import CheckBox from '../component/CheckBox';
 import Radio from '../component/Radio';
 import Picker from '../component/Picker';
 import * as Constants from '../constants'
+import { rtcEngine } from './Connect';
+
 interface AudienceScreenProps extends NativeStackScreenProps<any> {
 
 }
@@ -64,34 +65,34 @@ class AudienceScreen extends React.Component<AudienceScreenProps, AudienceScreen
     };
 
     this.localtag = null;
-    RCRTCEngine.enableSpeaker(this.state.speaker)
-    RCRTCEngine.setOnLiveMixSubscribedListener((type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.enableSpeaker(this.state.speaker)
+    rtcEngine?.setOnLiveMixSubscribedListener((type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0) {
         RRCToast.show('Subscribe Live Mix Error: ' + code + ', message: ' + message);
       } else {
         if (type != RCRTCMediaType.Audio)
-          RCRTCEngine.setLiveMixView(this.localtag!);
+        rtcEngine?.setLiveMixView(this.localtag!);
         this.setState({ subscribed: true });
       }
       RRCLoading.hide();
     })
 
-    RCRTCEngine.setOnLiveMixUnsubscribedListener((type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnLiveMixUnsubscribedListener((type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0) {
         RRCToast.show('Unsubscribe Live Mix Error: ' + code + ', message: ' + message);
       } else {
         if (type != RCRTCMediaType.Audio)
-          RCRTCEngine.removeLiveMixView();
+        rtcEngine?.removeLiveMixView();
         this.setState({ subscribed: false });
       }
       RRCLoading.hide();
     })
 
-    RCRTCEngine.setOnLiveMixAudioStatsListener((stats: RCRTCRemoteAudioStats) => {
+    rtcEngine?.setOnLiveMixAudioStatsListener((stats: RCRTCRemoteAudioStats) => {
       this.setState({ audioStats: stats })
     })
 
-    RCRTCEngine.setOnLiveMixVideoStatsListener((stats: RCRTCRemoteVideoStats) => {
+    rtcEngine?.setOnLiveMixVideoStatsListener((stats: RCRTCRemoteVideoStats) => {
       this.setState({ videoStats: stats })
     })
   }
@@ -125,17 +126,17 @@ class AudienceScreen extends React.Component<AudienceScreenProps, AudienceScreen
   componentWillUnmount() {
     Util.unInit();
 
-    RCRTCEngine.leaveRoom();
-    RCRTCEngine.unInit();
+    rtcEngine?.leaveRoom();
+    rtcEngine?.destroy();
 
-    RCRTCEngine.setOnRemoteAudioStatsListener()
-    RCRTCEngine.setOnRemoteVideoStatsListener()
+    rtcEngine?.setOnRemoteAudioStatsListener()
+    rtcEngine?.setOnRemoteVideoStatsListener()
   }
 
 
   async subscribeLiveMix() {
     RRCLoading.show();
-    let code = await RCRTCEngine.subscribeLiveMix(this.state.media, this.state.tiny);
+    let code = await rtcEngine?.subscribeLiveMix(this.state.media, this.state.tiny);
     if (code != 0) {
       RRCToast.show('Subscribe Live Mix Error: ' + code);
       RRCLoading.hide();
@@ -144,7 +145,7 @@ class AudienceScreen extends React.Component<AudienceScreenProps, AudienceScreen
 
   async unsubscribeLiveMix() {
     RRCLoading.show();
-    let code = await RCRTCEngine.unsubscribeLiveMix(RCRTCMediaType.AudioVideo);
+    let code = await rtcEngine?.unsubscribeLiveMix(RCRTCMediaType.AudioVideo);
     if (code != 0) {
       RRCToast.show('Unsubscribe Live Mix Error: ' + code);
       RRCLoading.hide();
@@ -152,7 +153,7 @@ class AudienceScreen extends React.Component<AudienceScreenProps, AudienceScreen
   }
   async enableSpeaker() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableSpeaker(!this.state.speaker);
+    let code = await rtcEngine?.enableSpeaker(!this.state.speaker);
     if (code != 0) {
       RRCToast.show((this.state.speaker ? 'Stop' : 'Start') + ' Speaker Error: ' + code);
     } else {
@@ -215,7 +216,7 @@ class AudienceScreen extends React.Component<AudienceScreenProps, AudienceScreen
             onValueChange={() => {
               const silenceAudio = !this.state.silenceAudio
               this.setState({ silenceAudio: silenceAudio })
-              RCRTCEngine.muteLiveMixStream(RCRTCMediaType.Audio, silenceAudio)
+              rtcEngine?.muteLiveMixStream(RCRTCMediaType.Audio, silenceAudio)
             }}
             value={this.state.silenceAudio} />
 
@@ -225,7 +226,7 @@ class AudienceScreen extends React.Component<AudienceScreenProps, AudienceScreen
             onValueChange={() => {
               const silenceVideo = !this.state.silenceVideo
               this.setState({ silenceVideo: silenceVideo })
-              RCRTCEngine.muteLiveMixStream(RCRTCMediaType.Video, silenceVideo)
+              rtcEngine?.muteLiveMixStream(RCRTCMediaType.Video, silenceVideo)
             }}
             value={this.state.silenceVideo} />
         </View>

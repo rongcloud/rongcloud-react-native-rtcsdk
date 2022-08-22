@@ -5,7 +5,7 @@ import React from 'react';
 import Radio from "../component/Radio";
 import CheckBox from "../component/CheckBox";
 import Slider from "@react-native-community/slider";
-import { RCRTCAudioMixingMode, RCRTCEngine } from '@rongcloud/react-native-rtc';
+import { RCRTCAudioMixingMode } from '@rongcloud/react-native-rtc';
 import * as FS from 'react-native-fs'
 
 interface SoundMixingScreenProps extends NativeStackScreenProps<any> {
@@ -55,21 +55,21 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
             playState: PlayState.IDLE
         }
 
-        RCRTCEngine.setOnAudioMixingStartedListener(() => {
+        rtcEngine?.setOnAudioMixingStartedListener(() => {
             console.log("OnAudioMixingStartedListener ")
         })
 
-        RCRTCEngine.setOnAudioMixingPausedListener(() => {
+        rtcEngine?.setOnAudioMixingPausedListener(() => {
             console.log("OnAudioMixingPausedListener")
 
         })
 
-        RCRTCEngine.setOnAudioMixingStoppedListener(() => {
+        rtcEngine?.setOnAudioMixingStoppedListener(() => {
             console.log("OnAudioMixingStoppedListener")
 
         })
 
-        RCRTCEngine.setOnAudioMixingFinishedListener(() => {
+        rtcEngine?.setOnAudioMixingFinishedListener(() => {
             console.log("OnAudioMixingFinishedListener")
         })
     }
@@ -85,7 +85,7 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
     }
 
     componentWillUnmount() {
-        RCRTCEngine.stopAudioMixing()
+        rtcEngine?.stopAudioMixing()
     }
 
     render() {
@@ -119,7 +119,7 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
                     <Slider
                         onValueChange={(value) => {
                             this.setState({ inputVolume: Math.floor(value) })
-                            RCRTCEngine.adjustAudioMixingVolume(value);
+                            rtcEngine?.adjustAudioMixingVolume(value);
                         }}
                         value={this.state.inputVolume}
                         style={{ width: "100%", height: 10 }}
@@ -138,7 +138,7 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
                     <Slider
                         onValueChange={(value) => {
                             this.setState({ localVolume: Math.floor(value) })
-                            RCRTCEngine.adjustAudioMixingPlaybackVolume(value);
+                            rtcEngine?.adjustAudioMixingPlaybackVolume(value);
                         }}
                         value={this.state.localVolume}
                         style={{ width: "100%", height: 10 }}
@@ -157,7 +157,7 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
                     <Slider
                         onValueChange={(value) => {
                             this.setState({ publishVolume: Math.floor(value) })
-                            RCRTCEngine.adjustAudioMixingPublishVolume(value);
+                            rtcEngine?.adjustAudioMixingPublishVolume(value);
                         }}
                         value={this.state.publishVolume}
                         style={{ width: "100%", height: 10 }}
@@ -191,7 +191,7 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
                 <Button
                     disabled={!(this.state.playState === PlayState.IDLE)} title="播放"
                     onPress={() => {
-                        RCRTCEngine.startAudioMixing(this.audioPath, this.state.mixMode, this.state.playback, this.state.loop).then((code)=>{
+                        rtcEngine?.startAudioMixing(this.audioPath, this.state.mixMode, this.state.playback, this.state.loop).then((code)=>{
                             console.log("startAudioMixing code="+code)
                         })
                         this.setState({ playState: PlayState.Playing })
@@ -200,21 +200,21 @@ class SoundMixingScreen extends React.Component<SoundMixingScreenProps, SoundMix
                     disabled={!(this.state.playState === PlayState.Playing)}
                     title="暂停"
                     onPress={() => {
-                        RCRTCEngine.pauseAudioMixing()
+                        rtcEngine?.pauseAudioMixing()
                         this.setState({ playState: PlayState.Pause })
                     }} />
                 <Button
                     disabled={!(this.state.playState === PlayState.Pause)}
                     title="恢复"
                     onPress={() => {
-                        RCRTCEngine.resumeAudioMixing()
+                        rtcEngine?.resumeAudioMixing()
                         this.setState({ playState: PlayState.Playing })
                     }} />
                 <Button
                     disabled={!(this.state.playState === PlayState.Playing)}
                     title="停止"
                     onPress={() => {
-                        RCRTCEngine.stopAudioMixing()
+                        rtcEngine?.stopAudioMixing()
                         this.setState({ playState: PlayState.IDLE })
                     }} />
             </View>

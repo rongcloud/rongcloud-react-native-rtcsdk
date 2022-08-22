@@ -22,7 +22,6 @@ import {
   RRCLoading,
 } from 'react-native-overlayer';
 import {
-  RCRTCEngine,
   RCReactNativeRtcView,
   RCRTCMediaType,
   RCRTCCamera,
@@ -37,6 +36,7 @@ import {
   RCRTCVideoFps,
   RCRTCVideoResolution
 } from '@rongcloud/react-native-rtc'
+import { rtcEngine } from './Connect';
 
 
 const { Beauty } = NativeModules;
@@ -116,19 +116,19 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
     this.localtag = null;
     this.isBeautyOpen = false
-    RCRTCEngine.setVideoConfig(defaultVideoConfig, false);
-    RCRTCEngine.setVideoConfig(defaultTinyVideoConfig, true);
-    RCRTCEngine.enableMicrophone(this.state.microphone);
-    RCRTCEngine.enableSpeaker(this.state.speaker)
-    RCRTCEngine.setOnEnableCameraListener((enable: boolean, code: number, message: string) => {
+    rtcEngine?.setVideoConfig(defaultVideoConfig, false);
+    rtcEngine?.setVideoConfig(defaultTinyVideoConfig, true);
+    rtcEngine?.enableMicrophone(this.state.microphone);
+    rtcEngine?.enableSpeaker(this.state.speaker)
+    rtcEngine?.setOnEnableCameraListener((enable: boolean, code: number, message: string) => {
       if (code != 0)
         RRCToast.show((enable ? 'Stop' : 'Start') + ' Camera Error: ' + code + ', message: ' + message);
       else {
         if (enable) {
           if (this.localtag)
-            RCRTCEngine.setLocalView(this.localtag);
+            rtcEngine?.setLocalView(this.localtag);
         } else {
-          RCRTCEngine.removeLocalView();
+          rtcEngine?.removeLocalView();
         }
         this.setState({ camera: enable });
       }
@@ -136,7 +136,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
     })
 
 
-    RCRTCEngine.setOnPublishedListener((type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnPublishedListener((type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0) RRCToast.show('Publish Error: ' + code + ', message: ' + message);
       else {
         let state: any = {};
@@ -159,7 +159,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
     })
 
 
-    RCRTCEngine.setOnUnpublishedListener((type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnUnpublishedListener((type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Publish  Error: ' + code + ', message: ' + message);
       else {
@@ -183,7 +183,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
     })
 
 
-    RCRTCEngine.setOnSwitchCameraListener((camera: RCRTCCamera, code: number, message: string) => {
+    rtcEngine?.setOnSwitchCameraListener((camera: RCRTCCamera, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Switch Camera Error: ' + code + ', message: ' + message);
       else
@@ -192,13 +192,13 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
     })
 
 
-    RCRTCEngine.setOnSubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnSubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Subscribe ' + id + ' ' + ' Error: ' + code + ', message: ' + message);
       else {
         let user = Util.users.get(id);
         if (type != RCRTCMediaType.Audio)
-          RCRTCEngine.setRemoteView(id, user!.viewTag!);
+          rtcEngine?.setRemoteView(id, user!.viewTag!);
         if (user) {
           switch (type) {
             case 0:
@@ -219,12 +219,12 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
     })
 
 
-    RCRTCEngine.setOnUnsubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnUnsubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Unsubscribe ' + id + ' ' + ' Error: ' + code + ', message: ' + message);
       else {
         if (type != RCRTCMediaType.Audio)
-          RCRTCEngine.removeRemoteView(id);
+          rtcEngine?.removeRemoteView(id);
         let user = Util.users.get(id);
         if (user) {
           switch (type) {
@@ -244,22 +244,22 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
       }
       RRCLoading.hide();
     })
-    RCRTCEngine.setOnNetworkStatsListener((stats: RCRTCNetworkStats) => {
+    rtcEngine?.setOnNetworkStatsListener((stats: RCRTCNetworkStats) => {
       this.setState({ networkStats: stats })
     })
 
-    RCRTCEngine.setOnLocalAudioStatsListener((stats: RCRTCLocalAudioStats) => {
+    rtcEngine?.setOnLocalAudioStatsListener((stats: RCRTCLocalAudioStats) => {
       this.setState({ localAudioStats: stats })
     })
 
-    RCRTCEngine.setOnLocalVideoStatsListener((stats: RCRTCLocalVideoStats) => {
+    rtcEngine?.setOnLocalVideoStatsListener((stats: RCRTCLocalVideoStats) => {
       if (stats.tiny)
         this.setState({ localTinyVideoStats: stats })
       else
         this.setState({ localVideoStats: stats })
     })
 
-    RCRTCEngine.setOnRemoteAudioStatsListener((roomId: string, userId: string, stats: RCRTCRemoteAudioStats) => {
+    rtcEngine?.setOnRemoteAudioStatsListener((roomId: string, userId: string, stats: RCRTCRemoteAudioStats) => {
       const user = Util.users.get(userId)
       if (user) {
         user.remoteAudioStats = stats;
@@ -267,7 +267,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
       }
     })
 
-    RCRTCEngine.setOnRemoteVideoStatsListener((roomId: string, userId: string, stats: RCRTCRemoteVideoStats) => {
+    rtcEngine?.setOnRemoteVideoStatsListener((roomId: string, userId: string, stats: RCRTCRemoteVideoStats) => {
       const user = Util.users.get(userId)
       if (user) {
         user.remoteVideoStats = stats;
@@ -284,7 +284,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async enableMicrophone() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableMicrophone(!this.state.microphone);
+    let code = await rtcEngine?.enableMicrophone(!this.state.microphone);
     if (code != 0) {
       RRCToast.show((this.state.microphone ? 'Stop' : 'Start') + ' Microphone Error: ' + code);
     } else {
@@ -295,7 +295,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async enableCamera() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableCamera(!this.state.camera, this.state.front ? 1 : 2);
+    let code = await rtcEngine?.enableCamera(!this.state.camera, this.state.front ? 1 : 2);
     if (code != 0) {
       RRCToast.show((this.state.camera ? 'Stop' : 'Start') + ' Camera Error: ' + code);
       RRCLoading.hide();
@@ -305,14 +305,14 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
   async publishAudio(audio: boolean) {
     RRCLoading.show();
     if (!audio) {
-      let code = await RCRTCEngine.publish(RCRTCMediaType.Audio);
+      let code = await rtcEngine?.publish(RCRTCMediaType.Audio);
       if (code != 0) {
         this.setState({ audio: false })
         RRCToast.show('Publish Audio Error: ' + code);
         RRCLoading.hide();
       }
     } else {
-      let code = await RCRTCEngine.unpublish(RCRTCMediaType.Audio);
+      let code = await rtcEngine?.unpublish(RCRTCMediaType.Audio);
       if (code != 0) {
         this.setState({ audio: true })
         RRCToast.show('Unpublish Audio Error: ' + code);
@@ -325,14 +325,14 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
   async publishVideo(video: boolean) {
     RRCLoading.show();
     if (!video) {
-      let code = await RCRTCEngine.publish(RCRTCMediaType.Video);
+      let code = await rtcEngine?.publish(RCRTCMediaType.Video);
       if (code != 0) {
         this.setState({ video: false })
         RRCToast.show('Publish Video Error: ' + code);
         RRCLoading.hide();
       }
     } else {
-      let code = await RCRTCEngine.unpublish(RCRTCMediaType.Video);
+      let code = await rtcEngine?.unpublish(RCRTCMediaType.Video);
       if (code != 0) {
         this.setState({ video: true })
         RRCToast.show('Unpublish Video Error: ' + code);
@@ -343,7 +343,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async switchCamera() {
     RRCLoading.show();
-    let code = await RCRTCEngine.switchCamera();
+    let code = await rtcEngine?.switchCamera();
     if (code != 0) {
       RRCToast.show('Switch Camera Error: ' + code);
       RRCLoading.hide();
@@ -352,7 +352,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async enableSpeaker() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableSpeaker(!this.state.speaker);
+    let code = await rtcEngine?.enableSpeaker(!this.state.speaker);
     if (code != 0) {
       RRCToast.show((this.state.speaker ? 'Stop' : 'Start') + ' Speaker Error: ' + code);
     } else {
@@ -364,7 +364,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
   async audioSubscribe(item: Util.User) {
     RRCLoading.show();
 
-    let code = await RCRTCEngine.subscribe(item.id, RCRTCMediaType.Audio, false);
+    let code = await rtcEngine?.subscribe(item.id, RCRTCMediaType.Audio, false);
     if (code != 0) {
       RRCToast.show('Subscribe Audio Error: ' + code);
       RRCLoading.hide();
@@ -373,7 +373,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async audioUnSubscribe(item: Util.User) {
     RRCLoading.show();
-    let code = await RCRTCEngine.unsubscribe(item.id, RCRTCMediaType.Audio);
+    let code = await rtcEngine?.unsubscribe(item.id, RCRTCMediaType.Audio);
     if (code != 0) {
       RRCToast.show('Unsubscribe Audio Error: ' + code);
       RRCLoading.hide();
@@ -383,7 +383,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async videoSubscribe(item: Util.User) {
     RRCLoading.show();
-    let code = await RCRTCEngine.subscribe(item.id, RCRTCMediaType.Video, item.subscribeTiny);
+    let code = await rtcEngine?.subscribe(item.id, RCRTCMediaType.Video, item.subscribeTiny);
     if (code != 0) {
       RRCToast.show('Subscribe Video Error: ' + code);
       RRCLoading.hide();
@@ -392,7 +392,7 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
 
   async videoUnSubscribe(item: Util.User) {
     RRCLoading.show();
-    let code = await RCRTCEngine.unsubscribe(item.id, RCRTCMediaType.Video);
+    let code = await rtcEngine?.unsubscribe(item.id, RCRTCMediaType.Video);
     if (code != 0) {
       RRCToast.show('Unsubscribe Video Error: ' + code);
       RRCLoading.hide();
@@ -413,14 +413,17 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
   }
 
   componentWillUnmount() {
+    if (this.isBeautyOpen) {
+      Beauty.closeBeauty().then((value: number) => {})
+    }
     Util.unInit();
-    RCRTCEngine.leaveRoom();
-    RCRTCEngine.unInit();
-    RCRTCEngine.setOnNetworkStatsListener()
-    RCRTCEngine.setOnLocalAudioStatsListener()
-    RCRTCEngine.setOnLocalVideoStatsListener()
-    RCRTCEngine.setOnRemoteAudioStatsListener()
-    RCRTCEngine.setOnRemoteVideoStatsListener()
+    rtcEngine?.leaveRoom();
+    rtcEngine?.setOnNetworkStatsListener()
+    rtcEngine?.setOnLocalAudioStatsListener()
+    rtcEngine?.setOnLocalVideoStatsListener()
+    rtcEngine?.setOnRemoteAudioStatsListener()
+    rtcEngine?.setOnRemoteVideoStatsListener()
+    rtcEngine?.destroy();
   }
 
 
@@ -686,10 +689,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
                 items={Constants.fps}
                 value={this.state.videoConfig.fps}
                 onValueChange={(value) => {
-                  let videoConfig = this.state.videoConfig;
+                  let videoConfig: RCRTCVideoConfig = {...this.state.videoConfig};
                   videoConfig.fps = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
 
@@ -698,10 +701,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
                 items={Constants.resolution}
                 value={this.state.videoConfig.resolution}
                 onValueChange={(value) => {
-                  let videoConfig = this.state.videoConfig;
+                  let videoConfig: RCRTCVideoConfig = {...this.state.videoConfig};
                   videoConfig.resolution = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
             </View>
@@ -711,10 +714,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
                 items={Constants.minVideoKbps}
                 value={this.state.videoConfig.minBitrate}
                 onValueChange={(value) => {
-                  let videoConfig = this.state.videoConfig;
+                  let videoConfig: RCRTCVideoConfig = {...this.state.videoConfig};
                   videoConfig.minBitrate = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
             </View>
@@ -724,10 +727,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
                 items={Constants.maxVideoKbps}
                 value={this.state.videoConfig.maxBitrate}
                 onValueChange={(value) => {
-                  let videoConfig = this.state.videoConfig;
+                  let videoConfig: RCRTCVideoConfig = {...this.state.videoConfig};
                   videoConfig.maxBitrate = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
             </View>
@@ -744,10 +747,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
               items={Constants.resolution}
               value={this.state.tinyVideoConfig.resolution}
               onValueChange={(value) => {
-                let videoConfig = this.state.tinyVideoConfig;
+                let videoConfig: RCRTCVideoConfig = {...this.state.tinyVideoConfig};
                 videoConfig.resolution = value
                 this.setState({ tinyVideoConfig: videoConfig })
-                RCRTCEngine.setVideoConfig(videoConfig, true);
+                rtcEngine?.setVideoConfig(videoConfig, true);
               }}
             />
 
@@ -757,10 +760,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
                 items={Constants.tinyMinVideoKbps}
                 value={this.state.tinyVideoConfig.minBitrate}
                 onValueChange={(value) => {
-                  let videoConfig = this.state.tinyVideoConfig;
+                  let videoConfig: RCRTCVideoConfig = {...this.state.tinyVideoConfig};
                   videoConfig.minBitrate = value
                   this.setState({ tinyVideoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, true);
+                  rtcEngine?.setVideoConfig(videoConfig, true);
                 }}
               />
 
@@ -769,10 +772,10 @@ class MeetingScreen extends React.Component<MeetingScreenProps, MeetingScreenSta
                 items={Constants.tinyMaxVideoKbps}
                 value={this.state.tinyVideoConfig.maxBitrate}
                 onValueChange={(value) => {
-                  let videoConfig = this.state.tinyVideoConfig;
+                  let videoConfig: RCRTCVideoConfig = {...this.state.tinyVideoConfig};
                   videoConfig.maxBitrate = value
                   this.setState({ tinyVideoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, true);
+                  rtcEngine?.setVideoConfig(videoConfig, true);
                 }}
               />
             </View>

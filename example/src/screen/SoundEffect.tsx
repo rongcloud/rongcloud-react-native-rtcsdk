@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Button, Platform, Text, View } from "react-native";
 import Slider from "@react-native-community/slider";
 import React from 'react';
-import { RCRTCEngine } from '@rongcloud/react-native-rtc';
+import { rtcEngine } from "./Connect";
 import * as FS from 'react-native-fs'
 
 
@@ -60,7 +60,7 @@ class SoundEffectScreen extends React.Component<SoundEffectScreenProps, SoundEff
         }
 
         this.state.effects.forEach(effect => {
-            RCRTCEngine.createAudioEffect(effect.path, effect.id).then(value => {
+            rtcEngine?.createAudioEffect(effect.path, effect.id).then(value => {
                 console.log(`createAudioEffect ${effect.path} ${value}`)
             })
         })
@@ -77,7 +77,7 @@ class SoundEffectScreen extends React.Component<SoundEffectScreenProps, SoundEff
     }
 
     componentWillUnmount() {
-        RCRTCEngine.stopAllAudioEffects()
+        rtcEngine?.stopAllAudioEffects()
     }
 
     renderEffect() {
@@ -124,11 +124,11 @@ class SoundEffectScreen extends React.Component<SoundEffectScreenProps, SoundEff
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-around' }}>
                         <Button title="播放" onPress={() =>
-                            RCRTCEngine.playAudioEffect(effect.id, effect.volume, effect.loop)
+                            rtcEngine?.playAudioEffect(effect.id, effect.volume, effect.loop)
                         } />
-                        <Button title="暂停" onPress={() => RCRTCEngine.pauseAudioEffect(effect.id)}/>
-                        <Button title="恢复" onPress={() => RCRTCEngine.resumeAudioEffect(effect.id)}/>
-                        <Button title="停止" onPress={() => RCRTCEngine.stopAudioEffect(effect.id)}/>
+                        <Button title="暂停" onPress={() => rtcEngine?.pauseAudioEffect(effect.id)}/>
+                        <Button title="恢复" onPress={() => rtcEngine?.resumeAudioEffect(effect.id)}/>
+                        <Button title="停止" onPress={() => rtcEngine?.stopAudioEffect(effect.id)}/>
                     </View>
                 </View>
             )
@@ -142,9 +142,9 @@ class SoundEffectScreen extends React.Component<SoundEffectScreenProps, SoundEff
                 <View style={{ borderColor: 'lightblue', borderWidth: 1, padding: 10 }}>
                     <Text style={{ fontSize: 20, alignSelf: 'center' }}>所有音效总开关</Text>
                     <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-around' }}>
-                        <Button title="暂停" onPress={() => RCRTCEngine.pauseAllAudioEffects()} />
-                        <Button title="恢复" onPress={() => RCRTCEngine.resumeAllAudioEffects()} />
-                        <Button title="停止" onPress={() => RCRTCEngine.stopAllAudioEffects()} />
+                        <Button title="暂停" onPress={() => rtcEngine?.pauseAllAudioEffects()} />
+                        <Button title="恢复" onPress={() => rtcEngine?.resumeAllAudioEffects()} />
+                        <Button title="停止" onPress={() => rtcEngine?.stopAllAudioEffects()} />
                     </View>
                 </View>
                 {

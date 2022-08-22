@@ -5,6 +5,16 @@
 
 #import "ArgumentAdapter.h"
 
+@implementation RCReactNativeRCVersion
+
+static NSString * const version = @"5.1.18";
+
++ (void)load {
+  [RCUtilities setModuleName:@"rtcwrapperrn" version:version];
+}
+
+@end
+
 @interface RCReactNativeRtc() <RCRTCIWEngineDelegate, RCRTCIWStatsDelegate>  {
     RCRTCIWEngine *engine;
     BOOL hasListener;
@@ -31,7 +41,7 @@ SingleInstanceM(Instance);
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(init:(NSDictionary *)setup
+RCT_EXPORT_METHOD(create:(NSDictionary *)setup
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
     if (setup) {
@@ -44,12 +54,11 @@ RCT_EXPORT_METHOD(init:(NSDictionary *)setup
     resolve(nil);
 }
 
-RCT_EXPORT_METHOD(unInit:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(destroy) {
     if (engine) {
         [engine destroy];
+        engine = nil;
     }
-    resolve(nil);
 }
 
 RCT_EXPORT_METHOD(joinRoom:(NSString *)roomId
@@ -1702,7 +1711,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 - (NSInteger)setLocalAudioCapturedDelegate:(id<RCRTCIWAudioFrameDelegate>)delegate
 {
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setLocalAudioCapturedDelegate:delegate];
     }
     return code;
@@ -1710,7 +1719,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 
 - (NSInteger)setLocalAudioMixedDelegate:(id<RCRTCIWAudioFrameDelegate>)delegate{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setLocalAudioMixedDelegate:delegate];
     }
     return code;
@@ -1719,7 +1728,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 - (NSInteger)setRemoteAudioReceivedDelegate:(id<RCRTCIWAudioFrameDelegate>)delegate
                                      userId:(NSString *)userId{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setRemoteAudioReceivedDelegate:delegate userId:userId];
     }
     return code;
@@ -1727,7 +1736,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 
 - (NSInteger)setRemoteAudioMixedDelegate:(id<RCRTCIWAudioFrameDelegate>)delegate{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setRemoteAudioMixedDelegate:delegate];
     }
     return code;
@@ -1735,7 +1744,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 
 - (NSInteger)setLocalVideoProcessedDelegate:(id<RCRTCIWSampleBufferVideoFrameDelegate>)delegate {
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setLocalVideoProcessedDelegate:delegate];
     }
     return code;
@@ -1744,7 +1753,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 - (NSInteger)setRemoteVideoProcessedDelegate:(id<RCRTCIWPixelBufferVideoFrameDelegate>)delegate
                                       userId:(NSString *)userId{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setRemoteVideoProcessedDelegate:delegate userId:userId];
     }
     return code;
@@ -1753,7 +1762,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
 - (NSInteger)setLocalCustomVideoProcessedDelegate:(id<RCRTCIWSampleBufferVideoFrameDelegate>)delegate
                                               tag:(NSString *)tag{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setLocalCustomVideoProcessedDelegate:delegate tag:tag];
     }
     return code;
@@ -1763,7 +1772,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
                                             userId:(NSString *)userId
                                                tag:(NSString *)tag{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setRemoteCustomVideoProcessedDelegate:delegate userId:userId tag:tag];
     }
     return code;
@@ -1773,7 +1782,7 @@ RCT_EXPORT_METHOD(leaveSubRoom:(NSString *)roomId
                                            userId:(NSString *)userId
                                               tag:(NSString *)tag{
     NSInteger code = -1;
-    if (engine != nil&&delegate) {
+    if (engine != nil) {
         code = [engine setRemoteCustomAudioReceivedDelegate:delegate userId:userId tag:tag];
     }
     return code;

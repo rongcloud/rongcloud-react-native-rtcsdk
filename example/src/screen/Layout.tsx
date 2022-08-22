@@ -5,9 +5,9 @@ import Radio from "../component/Radio";
 import Pop from "../component/Pop";
 import Picker from "../component/Picker";
 import * as Constants from '../constants'
-import { RCRTCEngine, RCRTCLiveMixLayoutMode, RCRTCLiveMixRenderMode } from '@rongcloud/react-native-rtc';
+import { RCRTCLiveMixLayoutMode, RCRTCLiveMixRenderMode } from '@rongcloud/react-native-rtc';
 import CheckBox from "../component/CheckBox";
-
+import { rtcEngine } from "./Connect";
 
 interface Color {
     color: string,
@@ -73,7 +73,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
             renderMode: RCRTCLiveMixRenderMode.Crop
         }
 
-        RCRTCEngine.setOnLiveMixBackgroundColorSetListener((code: number, message: string) => {
+        rtcEngine?.setOnLiveMixBackgroundColorSetListener((code: number, message: string) => {
             console.log(`OnLiveMixBackgroundColorSetListener code=${code} message=${message}`)
         })
 
@@ -149,7 +149,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                     style={{ alignItems: 'center', marginBottom: 20, marginTop: 20 }} >
                     <ColorRadio colors={this.state.colors}
                         onSelect={index => {
-                            RCRTCEngine.setLiveMixBackgroundColor(this.state.colors[index].value)
+                            rtcEngine?.setLiveMixBackgroundColor(this.state.colors[index].value)
                             this.pop.current?.close()
                         }} />
                 </View>
@@ -167,7 +167,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                         items={tiny ? Constants.minVideoKbps : Constants.maxVideoKbps}
                         value={tiny ? this.state.tinyVideoBitrate : this.state.videoBitrate}
                         onValueChange={(value) => {
-                            RCRTCEngine.setLiveMixVideoBitrate(value, tiny)
+                            rtcEngine?.setLiveMixVideoBitrate(value, tiny)
                             if (tiny)
                                 this.setState({ tinyVideoBitrate: value })
                             else
@@ -182,7 +182,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                         items={Constants.fps}
                         value={tiny ? this.state.tinyVideoFps : this.state.videoFps}
                         onValueChange={(value) => {
-                            RCRTCEngine.setLiveMixVideoFps(value, tiny)
+                            rtcEngine?.setLiveMixVideoFps(value, tiny)
                             if (tiny)
                                 this.setState({ tinyVideoFps: value })
                             else
@@ -200,7 +200,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                         onValueChange={(value) => {
                             const width = Constants.resolution[value].width;
                             const height = Constants.resolution[value].height
-                            RCRTCEngine.setLiveMixVideoResolution(width, height, tiny)
+                            rtcEngine?.setLiveMixVideoResolution(width, height, tiny)
                             if (tiny)
                                 this.setState({ tinyResolution: value })
                             else
@@ -222,7 +222,10 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
             users.push({ id: this.props.route.params!.userId, tag: this.props.route.params!.customTag })
         }
 
-        this.props.navigation.navigate('CustomLayout', { users: users })
+        this.props.navigation.navigate('CustomLayout', { users: users, onBack: () => {
+            this.setState({ mixLayoutMode: RCRTCLiveMixLayoutMode.Custom })
+            rtcEngine?.setLiveMixLayoutMode(RCRTCLiveMixLayoutMode.Custom);
+        } })
     }
 
     setAudio() {
@@ -235,7 +238,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                         items={Constants.liveMixAudioKbps}
                         value={this.state.audioBitrate}
                         onValueChange={(value) => {
-                            RCRTCEngine.setLiveMixAudioBitrate(value)
+                            rtcEngine?.setLiveMixAudioBitrate(value)
                             this.setState({ audioBitrate: value })
                         }}
                     />
@@ -288,7 +291,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                             this.pop.current?.close()
                             const userIds = users.filter((value, index) => userSelected[index]).map(value => value.id)
                             if (userIds.length > 0)
-                                RCRTCEngine.setLiveMixCustomAudios(userIds)
+                                rtcEngine?.setLiveMixCustomAudios(userIds)
                         }} />
 
                 </View>
@@ -310,10 +313,12 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                     ]}
                     value={this.state.mixLayoutMode}
                     onSelect={(value) => {
-                        this.setState({ mixLayoutMode: value })
-                        RCRTCEngine.setLiveMixLayoutMode(value);
-                        if (value == RCRTCLiveMixLayoutMode.Custom)
+                        if (value == RCRTCLiveMixLayoutMode.Custom) {
                             this.setCustomVideo()
+                          } else {
+                            this.setState({ mixLayoutMode: value })
+                            rtcEngine?.setLiveMixLayoutMode(value);
+                          }  
                     }}
                 />
                 <Text style={{ marginTop: 10 }}>合流裁剪模式</Text>
@@ -327,7 +332,7 @@ class LayoutScreen extends React.Component<LayoutScreenProps, LayoutScreenStates
                     value={this.state.renderMode}
                     onSelect={(value) => {
                         this.setState({ renderMode: value })
-                        RCRTCEngine.setLiveMixRenderMode(value)
+                        rtcEngine?.setLiveMixRenderMode(value)
                     }}
                 />
 

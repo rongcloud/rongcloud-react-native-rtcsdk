@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Button, DeviceEventEmitter, FlatList, ListRenderItemInfo, StyleSheet, Text, TextInput, View } from "react-native";
 import React from 'react';
-import { RCRTCEngine } from '@rongcloud/react-native-rtc';
+import { rtcEngine } from "./Connect";
 import {
     RRCToast,
 } from 'react-native-overlayer';
@@ -54,21 +54,21 @@ class SubRoomScreen extends React.Component<SubRoomScreenProps, SubRoomScreenSta
             joinedSubRooms: this.props.route.params!.joinedSubRooms
         }
 
-        RCRTCEngine.setOnJoinSubRoomRequestedListener((roomId: string, userId: string, code: number, message: string) => {
+        rtcEngine?.setOnJoinSubRoomRequestedListener((roomId: string, userId: string, code: number, message: string) => {
             if (code === 0)
                 this.setState({ requested: true })//已发出邀请
         })
 
-        RCRTCEngine.setOnJoinSubRoomRequestCanceledListener((roomId: string, userId: string, code: number, message: string) => {
+        rtcEngine?.setOnJoinSubRoomRequestCanceledListener((roomId: string, userId: string, code: number, message: string) => {
             if (code === 0)
                 this.setState({ requested: false })//已取消邀请
         })
 
-        RCRTCEngine.setOnJoinSubRoomRequestResponseReceivedListener((roomId: string, userId: string, agree: boolean, extra: string) => {
+        rtcEngine?.setOnJoinSubRoomRequestResponseReceivedListener((roomId: string, userId: string, agree: boolean, extra: string) => {
             if (agree)//对方同意
             {
                 RRCToast.show(`${userId}同意了加入房间${roomId}`)
-                RCRTCEngine.joinSubRoom(roomId)//对方同意，我加入房间
+                rtcEngine?.joinSubRoom(roomId)//对方同意，我加入房间
             }
             else {//对方没同意加入
                 RRCToast.show(`${userId}拒绝了加入房间${roomId}`)
@@ -127,11 +127,11 @@ class SubRoomScreen extends React.Component<SubRoomScreenProps, SubRoomScreenSta
 
                 <View style={{ marginTop: 16, flexDirection: 'row', justifyContent: 'space-around' }}>
                     <Button title='邀请' onPress={() => {
-                        RCRTCEngine.requestJoinSubRoom(this.state.roomId, this.state.userId, true, '');
+                        rtcEngine?.requestJoinSubRoom(this.state.roomId, this.state.userId, true, '');
                     }} />
 
                     <Button title='取消邀请' disabled={!this.state.requested || this.state.roomId == '' || this.state.userId == ''} onPress={() => {
-                        RCRTCEngine.cancelJoinSubRoomRequest(this.state.roomId, this.state.userId, '');
+                        rtcEngine?.cancelJoinSubRoomRequest(this.state.roomId, this.state.userId, '');
                     }} />
                 </View>
 
@@ -156,10 +156,10 @@ class SubRoomScreen extends React.Component<SubRoomScreenProps, SubRoomScreenSta
                                             <Text>{item}</Text>
 
                                             <Button title="离开" onPress={() => {
-                                                RCRTCEngine.leaveSubRoom(item, false)
+                                                rtcEngine?.leaveSubRoom(item, false)
                                             }} />
                                             <Button title="离开并解散" onPress={() => {
-                                                RCRTCEngine.leaveSubRoom(item, true)
+                                                rtcEngine?.leaveSubRoom(item, true)
                                                 let jbandedSubRoomsIndex = this.state.bandedSubRooms.indexOf(item);
                                                 if (jbandedSubRoomsIndex != -1) {
                                                     this.state.bandedSubRooms.splice(jbandedSubRoomsIndex, 1);
@@ -192,7 +192,7 @@ class SubRoomScreen extends React.Component<SubRoomScreenProps, SubRoomScreenSta
                                         <Text>{item}</Text>
 
                                         <Button title="加入" onPress={() => {
-                                            RCRTCEngine.joinSubRoom(item)
+                                            rtcEngine?.joinSubRoom(item)
                                         }} />
                                     </View>)
                             }}

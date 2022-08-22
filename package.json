@@ -1,6 +1,6 @@
 {
   "name": "@rongcloud/react-native-rtc",
-  "version": "5.1.17-release.2",
+  "version": "5.1.18",
   "description": "React Native RongCloud Rtc",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

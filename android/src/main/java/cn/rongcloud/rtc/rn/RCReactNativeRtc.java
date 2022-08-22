@@ -70,7 +70,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void init(ReadableMap setup, Promise promise) {
+  public void create(ReadableMap setup, Promise promise) {
     if (setup != null) {
       engine = RCRTCIWEngine.create(context, ArgumentAdapter.toEngineSetup(setup));
     } else {
@@ -82,12 +82,11 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void unInit(Promise promise) {
+  public void destroy() {
     if (engine != null) {
       engine.destroy();
       engine = null;
     }
-    promise.resolve(null);
   }
 
   @ReactMethod

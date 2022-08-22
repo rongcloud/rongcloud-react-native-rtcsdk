@@ -5,7 +5,7 @@ import React, { RefObject } from 'react';
 import Pop from "../component/Pop";
 import * as Util from '../util';
 import * as Config from '../config';
-import { RCRTCEngine } from '@rongcloud/react-native-rtc';
+import { rtcEngine } from "./Connect";
 import { RRCLoading } from 'react-native-overlayer';
 import Clipboard from '@react-native-clipboard/clipboard'
 
@@ -69,12 +69,12 @@ class CdnSettingScreen extends React.Component<CdnSettingScreenProps, CdnSetting
 
     loadCDN(id: string, name: string) {
         RRCLoading.show();
-        RCRTCEngine.getSessionId().then((value) => {
+        rtcEngine?.getSessionId().then((value) => {
             let session = value
             let url = `${Config.host}cdn/${id}/sealLive/${session}`;
 
             Util.get(url, (cdn: Cdn) => {
-                RCRTCEngine.addLiveCdn(cdn.push)
+                rtcEngine?.addLiveCdn(cdn.push)
                 cdn.name = name;
                 cdn.id = id;
                 let cdns = [...this.state.cdns, cdn]

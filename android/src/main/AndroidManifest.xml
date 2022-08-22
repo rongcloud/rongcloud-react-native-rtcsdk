@@ -1,6 +1,9 @@
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="cn.rongcloud.rtc.rn">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.rongcloud.rtc.rn">
+  <application>
+    <meta-data
+      android:name="rc.rtcwrapperrn"
+      android:value="cn.rongcloud.rtc.wrapper.rn.Version" />
+  </application>
 </manifest>
   

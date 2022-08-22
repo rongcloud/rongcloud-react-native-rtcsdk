@@ -24,7 +24,6 @@ import {
   RRCLoading,
 } from 'react-native-overlayer';
 import {
-  RCRTCEngine,
   RCReactNativeRtcView,
   RCRTCMediaType,
   RCRTCCamera,
@@ -41,6 +40,7 @@ import {
   RCRTCVideoResolution,
   RCRTCErrorCode
 } from '@rongcloud/react-native-rtc'
+import { rtcEngine } from './Connect';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -142,19 +142,19 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     this.localtag = null;
     this.customViewTag = null;
 
-    RCRTCEngine.setVideoConfig(defaultVideoConfig, false);
-    RCRTCEngine.setVideoConfig(defaultTinyVideoConfig, true);
-    RCRTCEngine.enableMicrophone(this.state.microphone);
-    RCRTCEngine.enableSpeaker(this.state.speaker)
-    RCRTCEngine.setOnEnableCameraListener((enable: boolean, code: number, message: string) => {
+    rtcEngine?.setVideoConfig(defaultVideoConfig, false);
+    rtcEngine?.setVideoConfig(defaultTinyVideoConfig, true);
+    rtcEngine?.enableMicrophone(this.state.microphone);
+    rtcEngine?.enableSpeaker(this.state.speaker)
+    rtcEngine?.setOnEnableCameraListener((enable: boolean, code: number, message: string) => {
       if (code != 0)
         RRCToast.show((enable ? 'Stop' : 'Start') + ' Camera Error: ' + code + ', message: ' + message);
       else {
         if (enable) {
           if (this.localtag)
-            RCRTCEngine.setLocalView(this.localtag);
+            rtcEngine?.setLocalView(this.localtag);
         } else {
-          RCRTCEngine.removeLocalView();
+          rtcEngine?.removeLocalView();
         }
         this.setState({ camera: enable });
       }
@@ -162,7 +162,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
 
-    RCRTCEngine.setOnPublishedListener((type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnPublishedListener((type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0) RRCToast.show('Publish Error: ' + code + ', message: ' + message);
       else {
         let state: any = {};
@@ -185,7 +185,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
 
-    RCRTCEngine.setOnUnpublishedListener((type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnUnpublishedListener((type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Publish  Error: ' + code + ', message: ' + message);
       else {
@@ -209,7 +209,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
 
-    RCRTCEngine.setOnSwitchCameraListener((camera: RCRTCCamera, code: number, message: string) => {
+    rtcEngine?.setOnSwitchCameraListener((camera: RCRTCCamera, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Switch Camera Error: ' + code + ', message: ' + message);
       else
@@ -218,13 +218,13 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
 
-    RCRTCEngine.setOnSubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnSubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Subscribe ' + id + ' ' + ' Error: ' + code + ', message: ' + message);
       else {
         let user = Util.users.get(id);
         if (type != RCRTCMediaType.Audio)
-          RCRTCEngine.setRemoteView(id, user!.viewTag!);
+          rtcEngine?.setRemoteView(id, user!.viewTag!);
         if (user) {
           switch (type) {
             case 0:
@@ -245,12 +245,12 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
 
-    RCRTCEngine.setOnUnsubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnUnsubscribedListener((id: string, type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0)
         RRCToast.show('Unsubscribe ' + id + ' ' + ' Error: ' + code + ', message: ' + message);
       else {
         if (type != RCRTCMediaType.Audio)
-          RCRTCEngine.removeRemoteView(id);
+          rtcEngine?.removeRemoteView(id);
         let user = Util.users.get(id);
         if (user) {
           switch (type) {
@@ -270,22 +270,22 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       }
       RRCLoading.hide();
     })
-    RCRTCEngine.setOnNetworkStatsListener((stats: RCRTCNetworkStats) => {
+    rtcEngine?.setOnNetworkStatsListener((stats: RCRTCNetworkStats) => {
       this.setState({ networkStats: stats })
     })
 
-    RCRTCEngine.setOnLocalAudioStatsListener((stats: RCRTCLocalAudioStats) => {
+    rtcEngine?.setOnLocalAudioStatsListener((stats: RCRTCLocalAudioStats) => {
       this.setState({ localAudioStats: stats })
     })
 
-    RCRTCEngine.setOnLocalVideoStatsListener((stats: RCRTCLocalVideoStats) => {
+    rtcEngine?.setOnLocalVideoStatsListener((stats: RCRTCLocalVideoStats) => {
       if (stats.tiny)
         this.setState({ localTinyVideoStats: stats })
       else
         this.setState({ localVideoStats: stats })
     })
 
-    RCRTCEngine.setOnRemoteAudioStatsListener((roomId: string, userId: string, stats: RCRTCRemoteAudioStats) => {
+    rtcEngine?.setOnRemoteAudioStatsListener((roomId: string, userId: string, stats: RCRTCRemoteAudioStats) => {
       const user = Util.users.get(userId)
       if (user) {
         user.remoteAudioStats = stats;
@@ -293,7 +293,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       }
     })
 
-    RCRTCEngine.setOnRemoteVideoStatsListener((roomId: string, userId: string, stats: RCRTCRemoteVideoStats) => {
+    rtcEngine?.setOnRemoteVideoStatsListener((roomId: string, userId: string, stats: RCRTCRemoteVideoStats) => {
       const user = Util.users.get(userId)
       if (user) {
         user.remoteVideoStats = stats;
@@ -310,22 +310,22 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
 
 
 
-    RCRTCEngine.setOnJoinSubRoomRequestRespondedListener((roomId: string, userId: string, agree: boolean, code: number, message: string) => {
+    rtcEngine?.setOnJoinSubRoomRequestRespondedListener((roomId: string, userId: string, agree: boolean, code: number, message: string) => {
       //responseJoinSubRoomRequest的回调，
       if (agree)//我已同意对方邀请，加入房间
-        RCRTCEngine.joinSubRoom(roomId)
+        rtcEngine?.joinSubRoom(roomId)
     })
 
-    RCRTCEngine.setOnJoinSubRoomRequestReceivedListener((roomId: string, userId: string, extra: string) => {
+    rtcEngine?.setOnJoinSubRoomRequestReceivedListener((roomId: string, userId: string, extra: string) => {
       this.responseSubRoom(roomId, userId)
     })
 
-    RCRTCEngine.setOnCancelJoinSubRoomRequestReceivedListener((roomId: string, userId: string, extra: string) => {
+    rtcEngine?.setOnCancelJoinSubRoomRequestReceivedListener((roomId: string, userId: string, extra: string) => {
       RRCToast.show(`${userId}已取消邀请`)
       this.pop.current?.close()//关闭弹窗
     })
 
-    RCRTCEngine.setOnSubRoomJoinedListener((roomId: string, code: number, message: string) => {
+    rtcEngine?.setOnSubRoomJoinedListener((roomId: string, code: number, message: string) => {
       let joinedSubRooms = this.state.joinedSubRooms
       if (!joinedSubRooms.includes(roomId))
         this.state.joinedSubRooms.push(roomId)
@@ -335,7 +335,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       })
     })
 
-    RCRTCEngine.setOnSubRoomLeftListener((roomId: string, code: number, message: string) => {
+    rtcEngine?.setOnSubRoomLeftListener((roomId: string, code: number, message: string) => {
       let joinedSubRooms = this.state.joinedSubRooms
       let joinedSubRoomsIndex = joinedSubRooms.indexOf(roomId);
       if (joinedSubRoomsIndex != -1) {
@@ -347,7 +347,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       })
     })
 
-    RCRTCEngine.setOnSubRoomBandedListener((roomId: string) => {
+    rtcEngine?.setOnSubRoomBandedListener((roomId: string) => {
       let bandedSubRooms = this.state.bandedSubRooms
       if (!bandedSubRooms.includes(roomId))
         this.state.bandedSubRooms.push(roomId)
@@ -357,7 +357,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       })
     })
 
-    RCRTCEngine.setOnSubRoomDisbandListener((roomId: string, userId: string) => {
+    rtcEngine?.setOnSubRoomDisbandListener((roomId: string, userId: string) => {
       let bandedSubRooms = this.state.bandedSubRooms
       let jbandedSubRoomsIndex = bandedSubRooms.indexOf(roomId);
       if (jbandedSubRoomsIndex != -1) {
@@ -370,29 +370,29 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
     //发布自定义视频回调
-    RCRTCEngine.setOnCustomStreamPublishedListener((tag: string, code: number, message: string) => {
+    rtcEngine?.setOnCustomStreamPublishedListener((tag: string, code: number, message: string) => {
       if (tag === this.state.customVideoTag && code === 0) {
         this.setState({ customVideoPublished: true })
-        RCRTCEngine.setLocalCustomStreamView(tag, this.customViewTag!)
+        rtcEngine?.setLocalCustomStreamView(tag, this.customViewTag!)
       }
     })
 
     //取消发布自定义视频回调
-    RCRTCEngine.setOnCustomStreamUnpublishedListener((tag: string, code: number, message: string) => {
+    rtcEngine?.setOnCustomStreamUnpublishedListener((tag: string, code: number, message: string) => {
       if (tag === this.state.customVideoTag && code === 0) {
         this.setState({ customVideoPublished: false })
-        RCRTCEngine.removeLocalCustomStreamView(tag);
+        rtcEngine?.removeLocalCustomStreamView(tag);
       }
     })
 
     //本地自定义流发布结束回调
-    RCRTCEngine.setOnCustomStreamPublishFinishedListener((tag: string) => {
+    rtcEngine?.setOnCustomStreamPublishFinishedListener((tag: string) => {
       this.setState({ customVideoPublished: false })
-      RCRTCEngine.removeLocalCustomStreamView(tag);
+      rtcEngine?.removeLocalCustomStreamView(tag);
     })
 
     //远端发布自定义视频
-    RCRTCEngine.setOnRemoteCustomStreamPublishedListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType) => {
+    rtcEngine?.setOnRemoteCustomStreamPublishedListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType) => {
       Util.users.delete(tag);
       let customUser = {
         id: userId,
@@ -425,25 +425,25 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
 
     //远端取消发布自定义视频
-    RCRTCEngine.setOnRemoteCustomStreamUnpublishedListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType) => {
+    rtcEngine?.setOnRemoteCustomStreamUnpublishedListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType) => {
       console.log('OnRemoteCustomStreamUnpublished')
       Util.users.delete(tag);
     })
     //远端自定义视频首帧
-    RCRTCEngine.setOnRemoteCustomStreamFirstFrameListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType) => {
+    rtcEngine?.setOnRemoteCustomStreamFirstFrameListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType) => {
       console.log('OnRemoteCustomStreamFirstFrame')
     })
     //远端用户开关自定义流操作回调
-    RCRTCEngine.setOnRemoteCustomStreamStateChangedListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType, disabled: boolean) => {
+    rtcEngine?.setOnRemoteCustomStreamStateChangedListener((roomId: string, userId: string, tag: string, type: RCRTCMediaType, disabled: boolean) => {
       console.log('OnRemoteCustomStreamStateChanged')
     })
 
-    RCRTCEngine.setOnCustomStreamSubscribedListener((userId: string, tag: string, type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnCustomStreamSubscribedListener((userId: string, tag: string, type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0) {
         RRCToast.show('Subscribe ' + tag + ' ' + ' Error: ' + code + ', message: ' + message);
       } else {
         let user = Util.users.get(tag);
-        RCRTCEngine.setRemoteCustomStreamView(userId, tag, user!.viewTag!)
+        rtcEngine?.setRemoteCustomStreamView(userId, tag, user!.viewTag!)
         if (user) {
           switch (type) {
             case 0:
@@ -463,11 +463,11 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       RRCLoading.hide();
     })
 
-    RCRTCEngine.setOnCustomStreamUnsubscribedListener((userId: string, tag: string, type: RCRTCMediaType, code: number, message: string) => {
+    rtcEngine?.setOnCustomStreamUnsubscribedListener((userId: string, tag: string, type: RCRTCMediaType, code: number, message: string) => {
       if (code != 0) {
         RRCToast.show('Unsubscribe ' + tag + ' ' + ' Error: ' + code + ', message: ' + message);
       } else {
-        RCRTCEngine.removeRemoteCustomStreamView(userId, tag);
+        rtcEngine?.removeRemoteCustomStreamView(userId, tag);
         let user = Util.users.get(tag);
         if (user) {
           switch (type) {
@@ -488,14 +488,14 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       RRCLoading.hide();
     })
 
-    RCRTCEngine.setOnRemoteCustomAudioStatsListener((roomId: string, userId: string, tag: string, stats: RCRTCRemoteAudioStats) => {
+    rtcEngine?.setOnRemoteCustomAudioStatsListener((roomId: string, userId: string, tag: string, stats: RCRTCRemoteAudioStats) => {
       const user = Util.users.get(tag)
       if (user) {
         user.remoteAudioStats = stats;
         this.setState({ refresh: {} })
       }
     })
-    RCRTCEngine.setOnRemoteCustomVideoStatsListener((roomId: string, userId: string, tag: string, stats: RCRTCRemoteVideoStats) => {
+    rtcEngine?.setOnRemoteCustomVideoStatsListener((roomId: string, userId: string, tag: string, stats: RCRTCRemoteVideoStats) => {
       const user = Util.users.get(tag)
       if (user) {
         user.remoteVideoStats = stats;
@@ -514,12 +514,12 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
         <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'flex-end' }}>
           <Button title="OK" onPress={() => {
             this.pop.current?.close()
-            RCRTCEngine.responseJoinSubRoomRequest(roomId, userId, true, true, '');
+            rtcEngine?.responseJoinSubRoomRequest(roomId, userId, true, true, '');
           }} />
           <View style={{ width: 30 }} />
           <Button title="Cancel" onPress={() => {
             this.pop.current?.close()
-            RCRTCEngine.responseJoinSubRoomRequest(roomId, userId, false, false, '');
+            rtcEngine?.responseJoinSubRoomRequest(roomId, userId, false, false, '');
           }} />
         </View>
       </View>)
@@ -528,7 +528,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
 
   async enableMicrophone() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableMicrophone(!this.state.microphone);
+    let code = await rtcEngine?.enableMicrophone(!this.state.microphone);
     if (code != 0) {
       RRCToast.show((this.state.microphone ? 'Stop' : 'Start') + ' Microphone Error: ' + code);
     } else {
@@ -539,7 +539,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
 
   async enableCamera() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableCamera(!this.state.camera, this.state.front ? 1 : 2);
+    let code = await rtcEngine?.enableCamera(!this.state.camera, this.state.front ? 1 : 2);
     if (code != 0) {
       RRCToast.show((this.state.camera ? 'Stop' : 'Start') + ' Camera Error: ' + code);
       RRCLoading.hide();
@@ -549,14 +549,14 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
   async publishAudio(audio: boolean) {
     RRCLoading.show();
     if (!audio) {
-      let code = await RCRTCEngine.publish(RCRTCMediaType.Audio);
+      let code = await rtcEngine?.publish(RCRTCMediaType.Audio);
       if (code != 0) {
         this.setState({ audio: false })
         RRCToast.show('Publish Audio Error: ' + code);
         RRCLoading.hide();
       }
     } else {
-      let code = await RCRTCEngine.unpublish(RCRTCMediaType.Audio);
+      let code = await rtcEngine?.unpublish(RCRTCMediaType.Audio);
       if (code != 0) {
         this.setState({ audio: true })
         RRCToast.show('Unpublish Audio Error: ' + code);
@@ -569,14 +569,14 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
   async publishVideo(video: boolean) {
     RRCLoading.show();
     if (!video) {
-      let code = await RCRTCEngine.publish(RCRTCMediaType.Video);
+      let code = await rtcEngine?.publish(RCRTCMediaType.Video);
       if (code != 0) {
         this.setState({ video: false })
         RRCToast.show('Publish Video Error: ' + code);
         RRCLoading.hide();
       }
     } else {
-      let code = await RCRTCEngine.unpublish(RCRTCMediaType.Video);
+      let code = await rtcEngine?.unpublish(RCRTCMediaType.Video);
       if (code != 0) {
         this.setState({ video: true })
         RRCToast.show('Unpublish Video Error: ' + code);
@@ -587,7 +587,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
 
   async switchCamera() {
     RRCLoading.show();
-    let code = await RCRTCEngine.switchCamera();
+    let code = await rtcEngine?.switchCamera();
     if (code != 0) {
       RRCToast.show('Switch Camera Error: ' + code);
       RRCLoading.hide();
@@ -596,7 +596,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
 
   async enableSpeaker() {
     RRCLoading.show();
-    let code = await RCRTCEngine.enableSpeaker(!this.state.speaker);
+    let code = await rtcEngine?.enableSpeaker(!this.state.speaker);
     if (code != 0) {
       RRCToast.show((this.state.speaker ? 'Stop' : 'Start') + ' Speaker Error: ' + code);
     } else {
@@ -609,9 +609,9 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     RRCLoading.show();
     let code = 0;
     if (item.customTag)
-      code = await RCRTCEngine.subscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Audio, false)
+      code = await rtcEngine?.subscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Audio, false)
     else
-      code = await RCRTCEngine.subscribe(item.id, RCRTCMediaType.Audio, false);
+      code = await rtcEngine?.subscribe(item.id, RCRTCMediaType.Audio, false);
     if (code != 0) {
       RRCToast.show('Subscribe Audio Error: ' + code);
       RRCLoading.hide();
@@ -622,9 +622,9 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     RRCLoading.show();
     let code = 0;
     if (item.customTag)
-      code = await RCRTCEngine.unsubscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Audio)
+      code = await rtcEngine?.unsubscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Audio)
     else
-      code = await RCRTCEngine.unsubscribe(item.id, RCRTCMediaType.Audio);
+      code = await rtcEngine?.unsubscribe(item.id, RCRTCMediaType.Audio);
     if (code != 0) {
       RRCToast.show('Unsubscribe Audio Error: ' + code);
       RRCLoading.hide();
@@ -636,9 +636,9 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     RRCLoading.show();
     let code = 0;
     if (item.customTag)
-      code = await RCRTCEngine.subscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Video, item.subscribeTiny)
+      code = await rtcEngine?.subscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Video, item.subscribeTiny)
     else
-      code = await RCRTCEngine.subscribe(item.id, RCRTCMediaType.Video, item.subscribeTiny);
+      code = await rtcEngine?.subscribe(item.id, RCRTCMediaType.Video, item.subscribeTiny);
     if (code != 0) {
       RRCToast.show('Subscribe Video Error: ' + code);
       RRCLoading.hide();
@@ -649,9 +649,9 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     RRCLoading.show();
     let code = 0;
     if (item.customTag)
-      code = await RCRTCEngine.unsubscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Video);
+      code = await rtcEngine?.unsubscribeCustomStream(item.id, item.customTag, RCRTCMediaType.Video);
     else
-      code = await RCRTCEngine.unsubscribe(item.id, RCRTCMediaType.Video);
+      code = await rtcEngine?.unsubscribe(item.id, RCRTCMediaType.Video);
     if (code != 0) {
       RRCToast.show('Unsubscribe Video Error: ' + code);
       RRCLoading.hide();
@@ -673,17 +673,17 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
 
   componentWillUnmount() {
     Util.unInit();
-    RCRTCEngine.leaveRoom();
-    RCRTCEngine.unInit();
-    RCRTCEngine.setOnNetworkStatsListener()
-    RCRTCEngine.setOnLocalAudioStatsListener()
-    RCRTCEngine.setOnLocalVideoStatsListener()
-    RCRTCEngine.setOnRemoteAudioStatsListener()
-    RCRTCEngine.setOnRemoteVideoStatsListener()
+    rtcEngine?.leaveRoom();
+    rtcEngine?.setOnNetworkStatsListener()
+    rtcEngine?.setOnLocalAudioStatsListener()
+    rtcEngine?.setOnLocalVideoStatsListener()
+    rtcEngine?.setOnRemoteAudioStatsListener()
+    rtcEngine?.setOnRemoteVideoStatsListener()
 
     if (this.state.customVideoPublished) {
-      RCRTCEngine.unpublishCustomStream(this.state.customVideoTag)
+      rtcEngine?.unpublishCustomStream(this.state.customVideoTag)
     }
+    rtcEngine?.destroy();
   }
 
 
@@ -964,7 +964,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                   let videoConfig = { ...this.state.videoConfig };
                   videoConfig.fps = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
 
@@ -976,7 +976,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                   let videoConfig = { ...this.state.videoConfig };
                   videoConfig.resolution = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
             </View>
@@ -989,7 +989,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                   let videoConfig = { ...this.state.videoConfig };
                   videoConfig.minBitrate = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
             </View>
@@ -1002,7 +1002,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                   let videoConfig = { ...this.state.videoConfig };
                   videoConfig.maxBitrate = value
                   this.setState({ videoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, false);
+                  rtcEngine?.setVideoConfig(videoConfig, false);
                 }}
               />
             </View>
@@ -1055,18 +1055,18 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
               <View style={{}}>
                 <Button title={this.state.customVideoPublished ? '取消发布' : '发布'} onPress={() => {
                   if (this.state.customVideoPublished) {
-                    RCRTCEngine.unpublishCustomStream(this.state.customVideoTag)
+                    rtcEngine?.unpublishCustomStream(this.state.customVideoTag)
                   }
                   else {
-                    let p = RCRTCEngine.createCustomStreamFromFile(this.state.customVideoFile, this.state.customVideoTag, true, true);
+                    let p = rtcEngine?.createCustomStreamFromFile(this.state.customVideoFile, this.state.customVideoTag, true, true);
                     p.then(code => {
                       if (code === RCRTCErrorCode.Success)
-                        return RCRTCEngine.setCustomStreamVideoConfig(this.state.customVideoTag, this.state.customVideoConfig);
+                        return rtcEngine?.setCustomStreamVideoConfig(this.state.customVideoTag, this.state.customVideoConfig);
                       else
                         return -1
                     }).then(code => {
                       if (code === RCRTCErrorCode.Success)
-                        RCRTCEngine.publishCustomStream(this.state.customVideoTag)
+                        rtcEngine?.publishCustomStream(this.state.customVideoTag)
                     })
                   }
                 }} />
@@ -1136,7 +1136,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                 let videoConfig = { ...this.state.tinyVideoConfig };
                 videoConfig.resolution = value
                 this.setState({ tinyVideoConfig: videoConfig })
-                RCRTCEngine.setVideoConfig(videoConfig, true);
+                rtcEngine?.setVideoConfig(videoConfig, true);
               }}
             />
 
@@ -1149,7 +1149,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                   let videoConfig = { ...this.state.tinyVideoConfig };
                   videoConfig.minBitrate = value
                   this.setState({ tinyVideoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, true);
+                  rtcEngine?.setVideoConfig(videoConfig, true);
                 }}
               />
 
@@ -1161,7 +1161,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                   let videoConfig = { ...this.state.tinyVideoConfig };
                   videoConfig.maxBitrate = value
                   this.setState({ tinyVideoConfig: videoConfig })
-                  RCRTCEngine.setVideoConfig(videoConfig, true);
+                  rtcEngine?.setVideoConfig(videoConfig, true);
                 }}
               />
             </View>

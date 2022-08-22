@@ -1,6 +1,7 @@
 import {
-  RCRTCEngine, RCRTCMediaType, RCRTCRemoteAudioStats, RCRTCRemoteVideoStats, RCRTCViewFitType
+  RCRTCMediaType, RCRTCRemoteAudioStats, RCRTCRemoteVideoStats, RCRTCViewFitType
 } from '@rongcloud/react-native-rtc'
+import { rtcEngine } from './screen/Connect';
 
 export interface User {
   id: string,
@@ -21,7 +22,7 @@ let onRefresh: Function | null = null;
 
 
 export const init = () => {
-  RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
+  rtcEngine?.setOnUserJoinedListener((roomId: string, userId: string) => {
     users.delete(userId);
     users.set(userId, {
       id: userId,
@@ -42,14 +43,14 @@ export const init = () => {
   })
 
 
-  RCRTCEngine.setOnUserOfflineListener((roomId: string, userId: string) => {
+  rtcEngine?.setOnUserOfflineListener((roomId: string, userId: string) => {
     users.delete(userId);
     if (onRefresh != null) {
       onRefresh();
     }
   })
 
-  RCRTCEngine.setOnUserLeftListener((roomId: string, userId: string) => {
+  rtcEngine?.setOnUserLeftListener((roomId: string, userId: string) => {
     users.delete(userId);
     if (onRefresh != null) {
       onRefresh();
@@ -57,7 +58,7 @@ export const init = () => {
   })
 
 
-  RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
+  rtcEngine?.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
     let user = users.get(userId);
     if (user) {
       switch (type) {
@@ -78,7 +79,7 @@ export const init = () => {
     }
   })
 
-  RCRTCEngine.setOnRemoteUnpublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
+  rtcEngine?.setOnRemoteUnpublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
     let user = users.get(userId);
     if (user) {
       switch (type) {

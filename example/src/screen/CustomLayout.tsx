@@ -4,7 +4,8 @@ import { Alert, Button, DeviceEventEmitter, FlatList, Image, ListRenderItemInfo,
 import React, { RefObject } from 'react';
 import Pop from "../component/Pop";
 import Picker from "../component/Picker";
-import { RCRTCCustomLayout, RCRTCEngine, RCRTCStreamType } from '@rongcloud/react-native-rtc';
+import { RCRTCCustomLayout, RCRTCStreamType } from '@rongcloud/react-native-rtc';
+import { rtcEngine } from "./Connect";
 
 
 
@@ -175,8 +176,11 @@ class CustomLayoutScreen extends React.Component<CustomLayoutScreenProps, Custom
                 <View style={{ width: 30 }}></View>
                 <Button title="提交" onPress={() => {
                     if (customLayouts.length > 0) {
-                        RCRTCEngine.setLiveMixCustomLayouts(customLayouts);
+                        rtcEngine?.setLiveMixCustomLayouts(customLayouts);
                         DeviceEventEmitter.emit('OnMixLayoutModeChange')
+                        if (this.props.route.params?.onBack) {
+                            this.props.route.params?.onBack()
+                        }
                         this.props.navigation.goBack()
                     }
                     else

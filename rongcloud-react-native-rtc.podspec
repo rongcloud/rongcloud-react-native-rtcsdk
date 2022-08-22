@@ -15,10 +15,10 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm}"
   
-  s.vendored_frameworks = 'ios/Frameworks/*.framework'
+  s.vendored_frameworks = 'ios/Frameworks/*.xcframework'
 
   s.dependency "React-Core"
-  s.dependency 'RongCloudIM/IMLib', '5.1.3.5'
+  s.dependency 'RongCloudIM/IMLib', '5.2.4'
   s.dependency 'RongCloudRTC/RongRTCLib', '5.1.17'
   
 end
