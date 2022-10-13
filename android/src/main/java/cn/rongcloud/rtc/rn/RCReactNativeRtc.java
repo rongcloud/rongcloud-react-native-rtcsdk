@@ -1,13 +1,32 @@
 package cn.rongcloud.rtc.rn;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.FrameLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import cn.rongcloud.rtc.wrapper.RCRTCIWEngine;
+import cn.rongcloud.rtc.wrapper.RCRTCIWView;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWCamera;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWLocalAudioStats;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWLocalVideoStats;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWMediaType;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWNetworkProbeStats;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWNetworkStats;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWRemoteAudioStats;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWRemoteVideoStats;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWRole;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWVideoFps;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWListener;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWNetworkProbeListener;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnReadableAudioFrameListener;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnReadableVideoFrameListener;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnWritableAudioFrameListener;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnWritableVideoFrameListener;
+import cn.rongcloud.rtc.wrapper.listener.RCRTCIWStatusListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -15,41 +34,25 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableNativeMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.NativeViewHierarchyManager;
 import com.facebook.react.uimanager.UIBlock;
 import com.facebook.react.uimanager.UIManagerModule;
-
+import io.rong.imlib.model.Message;
+import io.rong.message.utils.BitmapUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import cn.rongcloud.rtc.wrapper.RCRTCIWEngine;
-import cn.rongcloud.rtc.wrapper.RCRTCIWView;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWCamera;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWLocalAudioStats;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWLocalVideoStats;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWMediaType;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWNetworkStats;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWRemoteAudioStats;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWRemoteVideoStats;
-import cn.rongcloud.rtc.wrapper.constants.RCRTCIWRole;
-import cn.rongcloud.rtc.wrapper.listener.RCRTCIWListener;
-import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnReadableAudioFrameListener;
-import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnReadableVideoFrameListener;
-import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnWritableAudioFrameListener;
-import cn.rongcloud.rtc.wrapper.listener.RCRTCIWOnWritableVideoFrameListener;
-import cn.rongcloud.rtc.wrapper.listener.RCRTCIWStatusListener;
-import io.rong.imlib.model.Message;
 
 public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   private static RCReactNativeRtc _instance = null;
 
   protected static RCReactNativeRtc getInstance(ReactApplicationContext reactContext) {
-    if (_instance == null)
-      _instance = new RCReactNativeRtc(reactContext);
+    if (_instance == null) _instance = new RCReactNativeRtc(reactContext);
     return _instance;
   }
 
@@ -62,11 +65,19 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     this.context = reactContext;
   }
 
-
   @Override
   @NonNull
   public String getName() {
     return "RCReactNativeRtc";
+  }
+
+  private boolean check_engine(Promise promise) {
+    if (engine == null) {
+      promise.reject(String.valueOf(-1), "engine is null");
+      return false;
+    }
+
+    return true;
   }
 
   @ReactMethod
@@ -146,7 +157,6 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     }
     promise.resolve(code);
   }
-
 
   @ReactMethod
   public void unsubscribe(String id, Integer type, Promise promise) {
@@ -309,7 +319,9 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   public void setCameraExposurePositionInPreview(Integer orientation, Promise promise) {
     int code = -1;
     if (engine != null) {
-      code = engine.setCameraCaptureOrientation(ArgumentAdapter.toCameraCaptureOrientation(orientation));
+      code =
+          engine.setCameraCaptureOrientation(
+              ArgumentAdapter.toCameraCaptureOrientation(orientation));
     }
     promise.resolve(code);
   }
@@ -318,21 +330,21 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   public void setLocalView(final int tag, final Promise promise) {
     UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
     assert manager != null;
-    manager.addUIBlock(new UIBlock() {
-      @Override
-      public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
-        int code = -1;
+    manager.addUIBlock(
+        new UIBlock() {
+          @Override
+          public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            int code = -1;
 
+            FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
+            RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
 
-        FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
-        RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
-
-        if (engine != null) {
-          code = engine.setLocalView(nativeView);
-        }
-        promise.resolve(code);
-      }
-    });
+            if (engine != null) {
+              code = engine.setLocalView(nativeView);
+            }
+            promise.resolve(code);
+          }
+        });
   }
 
   @ReactMethod
@@ -348,20 +360,21 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   public void setRemoteView(final String id, final int tag, final Promise promise) {
     UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
     assert manager != null;
-    manager.addUIBlock(new UIBlock() {
-      @Override
-      public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
-        int code = -1;
-        // View nativeView = nativeViewHierarchyManager.resolveView(tag);
+    manager.addUIBlock(
+        new UIBlock() {
+          @Override
+          public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            int code = -1;
+            // View nativeView = nativeViewHierarchyManager.resolveView(tag);
 
-        FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
-        RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
-        if (engine != null) {
-          code = engine.setRemoteView(id, (RCRTCIWView) nativeView);
-        }
-        promise.resolve(code);
-      }
-    });
+            FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
+            RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
+            if (engine != null) {
+              code = engine.setRemoteView(id, (RCRTCIWView) nativeView);
+            }
+            promise.resolve(code);
+          }
+        });
   }
 
   @ReactMethod
@@ -377,18 +390,19 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   public void setLiveMixView(final int tag, final Promise promise) {
     UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
     assert manager != null;
-    manager.addUIBlock(new UIBlock() {
-      @Override
-      public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
-        int code = -1;
-        FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
-        RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
-        if (engine != null) {
-          code = engine.setLiveMixView((RCRTCIWView) nativeView);
-        }
-        promise.resolve(code);
-      }
-    });
+    manager.addUIBlock(
+        new UIBlock() {
+          @Override
+          public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            int code = -1;
+            FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
+            RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
+            if (engine != null) {
+              code = engine.setLiveMixView((RCRTCIWView) nativeView);
+            }
+            promise.resolve(code);
+          }
+        });
   }
 
   @ReactMethod
@@ -523,7 +537,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setLiveMixVideoResolution(Integer width, Integer height, Boolean tiny, Promise promise) {
+  public void setLiveMixVideoResolution(
+      Integer width, Integer height, Boolean tiny, Promise promise) {
     int code = -1;
     if (engine != null) {
       code = engine.setLiveMixVideoResolution(width, height, tiny);
@@ -655,7 +670,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void startAudioMixing(String path, Integer mode, Boolean playback, Integer loop, Promise promise) {
+  public void startAudioMixing(
+      String path, Integer mode, Boolean playback, Integer loop, Promise promise) {
     int code = -1;
     if (engine != null) {
       URI uri = null;
@@ -777,13 +793,12 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     promise.resolve(code);
   }
 
-
   @ReactMethod
-  public void createCustomStreamFromFile(String path, String tag, Boolean replace, Boolean playback, Promise promise) {
+  public void createCustomStreamFromFile(
+      String path, String tag, Boolean replace, Boolean playback, Promise promise) {
     int code = -1;
     if (engine != null) {
-      if (path.startsWith("content://") || path.startsWith("file://"))
-        path = getRealPath(path);
+      if (path.startsWith("content://") || path.startsWith("file://")) path = getRealPath(path);
       URI uri = null;
       try {
         uri = new URI(path);
@@ -817,19 +832,20 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   public void setLocalCustomStreamView(String tag, final int view, Promise promise) {
     UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
     assert manager != null;
-    manager.addUIBlock(new UIBlock() {
-      @Override
-      public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
-        int code = -1;
-        //View nativeView = nativeViewHierarchyManager.resolveView(view);
-        FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(view);
-        RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
-        if (engine != null) {
-          code = engine.setLocalCustomStreamView(tag, (RCRTCIWView) nativeView);
-        }
-        promise.resolve(code);
-      }
-    });
+    manager.addUIBlock(
+        new UIBlock() {
+          @Override
+          public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            int code = -1;
+            // View nativeView = nativeViewHierarchyManager.resolveView(view);
+            FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(view);
+            RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
+            if (engine != null) {
+              code = engine.setLocalCustomStreamView(tag, (RCRTCIWView) nativeView);
+            }
+            promise.resolve(code);
+          }
+        });
   }
 
   @ReactMethod
@@ -860,7 +876,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void muteRemoteCustomStream(String userId, String tag, int type, Boolean mute, Promise promise) {
+  public void muteRemoteCustomStream(
+      String userId, String tag, int type, Boolean mute, Promise promise) {
     int code = -1;
     if (engine != null) {
       code = engine.muteRemoteCustomStream(userId, tag, ArgumentAdapter.toMediaType(type), mute);
@@ -869,21 +886,23 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setRemoteCustomStreamView(String userId, String tag, final int view, Promise promise) {
+  public void setRemoteCustomStreamView(
+      String userId, String tag, final int view, Promise promise) {
     UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
     assert manager != null;
-    manager.addUIBlock(new UIBlock() {
-      @Override
-      public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
-        int code = -1;
-        FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(view);
-        RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
-        if (engine != null) {
-          code = engine.setRemoteCustomStreamView(userId, tag, (RCRTCIWView) nativeView);
-        }
-        promise.resolve(code);
-      }
-    });
+    manager.addUIBlock(
+        new UIBlock() {
+          @Override
+          public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            int code = -1;
+            FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(view);
+            RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
+            if (engine != null) {
+              code = engine.setRemoteCustomStreamView(userId, tag, (RCRTCIWView) nativeView);
+            }
+            promise.resolve(code);
+          }
+        });
   }
 
   @ReactMethod
@@ -896,7 +915,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void subscribeCustomStream(String userId, String tag, int type, Boolean tiny, Promise promise) {
+  public void subscribeCustomStream(
+      String userId, String tag, int type, Boolean tiny, Promise promise) {
     int code = -1;
     if (engine != null) {
       code = engine.subscribeCustomStream(userId, tag, ArgumentAdapter.toMediaType(type), tiny);
@@ -914,7 +934,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void requestJoinSubRoom(String roomId, String userId, Boolean autoLayout, String extra, Promise promise) {
+  public void requestJoinSubRoom(
+      String roomId, String userId, Boolean autoLayout, String extra, Promise promise) {
     int code = -1;
     if (engine != null) {
       code = engine.requestJoinSubRoom(roomId, userId, autoLayout, extra);
@@ -923,7 +944,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void cancelJoinSubRoomRequest(String roomId, String userId, String extra, Promise promise) {
+  public void cancelJoinSubRoomRequest(
+      String roomId, String userId, String extra, Promise promise) {
     int code = -1;
     if (engine != null) {
       code = engine.cancelJoinSubRoomRequest(roomId, userId, extra);
@@ -932,7 +954,13 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void responseJoinSubRoomRequest(String roomId, String userId, Boolean agree, Boolean autoLayout, String extra, Promise promise) {
+  public void responseJoinSubRoomRequest(
+      String roomId,
+      String userId,
+      Boolean agree,
+      Boolean autoLayout,
+      String extra,
+      Promise promise) {
     int code = -1;
     if (engine != null) {
       code = engine.responseJoinSubRoomRequest(roomId, userId, agree, autoLayout, extra);
@@ -958,6 +986,55 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     promise.resolve(code);
   }
 
+  @ReactMethod
+  public void setLiveMixInnerCdnStreamView(final int tag, final Promise promise) {
+    UIManagerModule manager = context.getNativeModule(UIManagerModule.class);
+    assert manager != null;
+    manager.addUIBlock(
+        new UIBlock() {
+          @Override
+          public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+            int code = -1;
+
+            FrameLayout layout = (FrameLayout) nativeViewHierarchyManager.resolveView(tag);
+            RCRTCIWView nativeView = (RCRTCIWView) layout.getChildAt(0);
+
+            if (engine != null) {
+              code = engine.setLiveMixInnerCdnStreamView(nativeView);
+            }
+            promise.resolve(code);
+          }
+        });
+  }
+
+  @ReactMethod
+  public void setWatermark(String imagePath, ReadableMap position, Double zoom, Promise promise) {
+    int code = -1;
+    if (engine != null) {
+      if (!imagePath.startsWith("file://")) {
+        imagePath = "file://" + imagePath;
+      }
+      Bitmap imageBitMap = BitmapUtil.getFactoryBitmap(context, Uri.parse(imagePath));
+      ReadableNativeMap map = (ReadableNativeMap) position;
+      HashMap hashMap = map.toHashMap();
+      PointF point = new PointF();
+      Double x = (Double) hashMap.get("x");
+      Double y = (Double) hashMap.get("y");
+      point.x = x.floatValue();
+      point.y = y.floatValue();
+      code = engine.setWatermark(imageBitMap, point, zoom.floatValue());
+    }
+    promise.resolve(code);
+  }
+
+  @ReactMethod
+  public void startNetworkProbe(Promise promise) {
+    int code = -1;
+    if (engine != null) {
+      code = engine.startNetworkProbe(new NetworkProbeListenerImpl());
+    }
+    promise.resolve(code);
+  }
 
   public int setLocalAudioCapturedListener(RCRTCIWOnWritableAudioFrameListener listener) {
     int code = -1;
@@ -975,7 +1052,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     return code;
   }
 
-  public int setRemoteAudioReceivedListener(String userId, RCRTCIWOnReadableAudioFrameListener listener) {
+  public int setRemoteAudioReceivedListener(
+      String userId, RCRTCIWOnWritableAudioFrameListener listener) {
     int code = -1;
     if (engine != null) {
       code = engine.setRemoteAudioReceivedListener(userId, listener);
@@ -999,7 +1077,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     return code;
   }
 
-  public int setRemoteVideoProcessedListener(String userId, RCRTCIWOnReadableVideoFrameListener listener) {
+  public int setRemoteVideoProcessedListener(
+      String userId, RCRTCIWOnReadableVideoFrameListener listener) {
     int code = -1;
     if (engine != null) {
       code = engine.setRemoteVideoProcessedListener(userId, listener);
@@ -1007,7 +1086,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     return code;
   }
 
-  public int setLocalCustomVideoProcessedListener(String tag, RCRTCIWOnWritableVideoFrameListener listener) {
+  public int setLocalCustomVideoProcessedListener(
+      String tag, RCRTCIWOnWritableVideoFrameListener listener) {
     int code = -1;
     if (engine != null) {
       code = engine.setLocalCustomVideoProcessedListener(tag, listener);
@@ -1015,7 +1095,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     return code;
   }
 
-  public int setRemoteCustomVideoProcessedListener(String userId, String tag, RCRTCIWOnReadableVideoFrameListener listener) {
+  public int setRemoteCustomVideoProcessedListener(
+      String userId, String tag, RCRTCIWOnReadableVideoFrameListener listener) {
     int code = -1;
     if (engine != null) {
       code = engine.setRemoteCustomVideoProcessedListener(userId, tag, listener);
@@ -1023,12 +1104,127 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
     return code;
   }
 
-  public int setRemoteCustomAudioReceivedListener(String userId, String tag, RCRTCIWOnReadableAudioFrameListener listener) {
+  public int setRemoteCustomAudioReceivedListener(
+      String userId, String tag, RCRTCIWOnReadableAudioFrameListener listener) {
     int code = -1;
     if (engine != null) {
       code = engine.setRemoteCustomAudioReceivedListener(userId, tag, listener);
     }
     return code;
+  }
+
+  @ReactMethod
+  public void muteAllRemoteAudioStreams(boolean mute, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.muteAllRemoteAudioStreams(mute);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void switchLiveRole(int role, Promise promise) {
+    RCRTCIWRole _role = RCRTCIWRole.values()[role];
+    if (!check_engine(promise)) return;
+    int r = engine.switchLiveRole(_role);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void enableLiveMixInnerCdnStream(boolean enable, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.enableLiveMixInnerCdnStream(enable);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void subscribeLiveMixInnerCdnStream(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.subscribeLiveMixInnerCdnStream();
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void unsubscribeLiveMixInnerCdnStream(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.unsubscribeLiveMixInnerCdnStream();
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void removeLiveMixInnerCdnStreamView(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.removeLiveMixInnerCdnStreamView();
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void setLocalLiveMixInnerCdnVideoResolution(int width, int height, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.setLocalLiveMixInnerCdnVideoResolution(width, height);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void setLocalLiveMixInnerCdnVideoFps(int fps, Promise promise) {
+    RCRTCIWVideoFps _fps = RCRTCIWVideoFps.values()[fps];
+    if (!check_engine(promise)) return;
+    int r = engine.setLocalLiveMixInnerCdnVideoFps(_fps);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void muteLiveMixInnerCdnStream(boolean mute, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.muteLiveMixInnerCdnStream(mute);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void removeWatermark(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.removeWatermark();
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void stopNetworkProbe(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.stopNetworkProbe();
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void startEchoTest(int timeInterval, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.startEchoTest(timeInterval);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void stopEchoTest(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.stopEchoTest();
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void enableSei(boolean enable, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.enableSei(enable);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void sendSei(String sei, Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.sendSei(sei);
+    promise.resolve(r);
+  }
+
+  @ReactMethod
+  public void preconnectToMediaServer(Promise promise) {
+    if (!check_engine(promise)) return;
+    int r = engine.preconnectToMediaServer();
+    promise.resolve(r);
   }
 
   private class ListenerImpl extends RCRTCIWListener {
@@ -1037,7 +1233,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnError", arguments);
+      sendEvent("IRCRTCIWListener:onError", arguments);
     }
 
     @Override
@@ -1045,7 +1241,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("id", id);
       arguments.putString("message", message);
-      sendEvent("Engine:OnKicked", arguments);
+      sendEvent("IRCRTCIWListener:onKicked", arguments);
     }
 
     @Override
@@ -1053,7 +1249,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnRoomJoined", arguments);
+      sendEvent("IRCRTCIWListener:onRoomJoined", arguments);
     }
 
     @Override
@@ -1061,7 +1257,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnRoomLeft", arguments);
+      sendEvent("IRCRTCIWListener:onRoomLeft", arguments);
     }
 
     @Override
@@ -1070,7 +1266,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnPublished", arguments);
+      sendEvent("IRCRTCIWListener:onPublished", arguments);
     }
 
     @Override
@@ -1079,7 +1275,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnUnpublished", arguments);
+      sendEvent("IRCRTCIWListener:onUnpublished", arguments);
     }
 
     @Override
@@ -1089,7 +1285,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnSubscribed", arguments);
+      sendEvent("IRCRTCIWListener:onSubscribed", arguments);
     }
 
     @Override
@@ -1099,7 +1295,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnUnsubscribed", arguments);
+      sendEvent("IRCRTCIWListener:onUnsubscribed", arguments);
     }
 
     @Override
@@ -1108,7 +1304,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixSubscribed", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixSubscribed", arguments);
     }
 
     @Override
@@ -1117,7 +1313,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixUnsubscribed", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixUnsubscribed", arguments);
     }
 
     @Override
@@ -1126,7 +1322,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putBoolean("enable", enable);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnCameraEnabled", arguments);
+      sendEvent("IRCRTCIWListener:onCameraEnabled", arguments);
     }
 
     @Override
@@ -1135,7 +1331,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("camera", camera.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnCameraSwitched", arguments);
+      sendEvent("IRCRTCIWListener:onCameraSwitched", arguments);
     }
 
     @Override
@@ -1144,7 +1340,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("url", url);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveCdnAdded", arguments);
+      sendEvent("IRCRTCIWListener:onLiveCdnAdded", arguments);
     }
 
     @Override
@@ -1153,7 +1349,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("url", url);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveCdnRemoved", arguments);
+      sendEvent("IRCRTCIWListener:onLiveCdnRemoved", arguments);
     }
 
     @Override
@@ -1161,7 +1357,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixLayoutModeSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixLayoutModeSet", arguments);
     }
 
     @Override
@@ -1169,7 +1365,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixRenderModeSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixRenderModeSet", arguments);
     }
 
     @Override
@@ -1177,7 +1373,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixCustomLayoutsSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixCustomLayoutsSet", arguments);
     }
 
     @Override
@@ -1185,7 +1381,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixCustomAudiosSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixCustomAudiosSet", arguments);
     }
 
     @Override
@@ -1193,7 +1389,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixAudioBitrateSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixAudioBitrateSet", arguments);
     }
 
     @Override
@@ -1202,9 +1398,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putBoolean("tiny", tiny);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixVideoBitrateSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixVideoBitrateSet", arguments);
     }
-
 
     @Override
     public void onLiveMixVideoResolutionSet(boolean tiny, int code, String message) {
@@ -1212,9 +1407,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putBoolean("tiny", tiny);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixVideoResolutionSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixVideoResolutionSet", arguments);
     }
-
 
     @Override
     public void onLiveMixVideoFpsSet(boolean tiny, int code, String message) {
@@ -1222,9 +1416,8 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putBoolean("tiny", tiny);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixVideoFpsSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixVideoFpsSet", arguments);
     }
-
 
     @Override
     public void onAudioEffectCreated(int id, int code, String message) {
@@ -1232,32 +1425,32 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("id", id);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnAudioEffectCreated", arguments);
+      sendEvent("IRCRTCIWListener:onAudioEffectCreated", arguments);
     }
 
     @Override
     public void onAudioEffectFinished(final int id) {
-      sendEvent("Engine:OnAudioEffectFinished", id);
+      sendEvent("IRCRTCIWListener:onAudioEffectFinished", id);
     }
 
     @Override
     public void onAudioMixingStarted() {
-      sendEvent("Engine:OnAudioMixingStarted", null);
+      sendEvent("IRCRTCIWListener:onAudioMixingStarted", null);
     }
 
     @Override
     public void onAudioMixingPaused() {
-      sendEvent("Engine:OnAudioMixingPaused", null);
+      sendEvent("IRCRTCIWListener:onAudioMixingPaused", null);
     }
 
     @Override
     public void onAudioMixingStopped() {
-      sendEvent("Engine:OnAudioMixingStopped", null);
+      sendEvent("IRCRTCIWListener:onAudioMixingStopped", null);
     }
 
     @Override
     public void onAudioMixingFinished() {
-      sendEvent("Engine:OnAudioMixingFinished", null);
+      sendEvent("IRCRTCIWListener:onAudioMixingFinished", null);
     }
 
     @Override
@@ -1265,7 +1458,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
-      sendEvent("Engine:OnUserJoined", arguments);
+      sendEvent("IRCRTCIWListener:onUserJoined", arguments);
     }
 
     @Override
@@ -1273,7 +1466,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
-      sendEvent("Engine:OnUserOffline", arguments);
+      sendEvent("IRCRTCIWListener:onUserOffline", arguments);
     }
 
     @Override
@@ -1281,7 +1474,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
-      sendEvent("Engine:OnUserLeft", arguments);
+      sendEvent("IRCRTCIWListener:onUserLeft", arguments);
     }
 
     @Override
@@ -1290,7 +1483,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("type", type.ordinal());
-      sendEvent("Engine:OnRemotePublished", arguments);
+      sendEvent("IRCRTCIWListener:onRemotePublished", arguments);
     }
 
     @Override
@@ -1299,27 +1492,28 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("type", type.ordinal());
-      sendEvent("Engine:OnRemoteUnpublished", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteUnpublished", arguments);
     }
 
     @Override
     public void onRemoteLiveMixPublished(final RCRTCIWMediaType type) {
-      sendEvent("Engine:OnRemoteLiveMixPublished", type.ordinal());
+      sendEvent("IRCRTCIWListener:onRemoteLiveMixPublished", type.ordinal());
     }
 
     @Override
     public void onRemoteLiveMixUnpublished(final RCRTCIWMediaType type) {
-      sendEvent("Engine:OnRemoteLiveMixUnpublished", type.ordinal());
+      sendEvent("IRCRTCIWListener:onRemoteLiveMixUnpublished", type.ordinal());
     }
 
     @Override
-    public void onRemoteStateChanged(String roomId, String userId, RCRTCIWMediaType type, boolean disabled) {
+    public void onRemoteStateChanged(
+        String roomId, String userId, RCRTCIWMediaType type, boolean disabled) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("type", type.ordinal());
       arguments.putBoolean("disabled", disabled);
-      sendEvent("Engine:OnRemoteStateChanged", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteStateChanged", arguments);
     }
 
     @Override
@@ -1328,17 +1522,17 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("type", type.ordinal());
-      sendEvent("Engine:OnRemoteFirstFrame", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteFirstFrame", arguments);
     }
 
     @Override
     public void onRemoteLiveMixFirstFrame(final RCRTCIWMediaType type) {
-      sendEvent("Engine:OnRemoteLiveMixFirstFrame", type.ordinal());
+      sendEvent("IRCRTCIWListener:onRemoteLiveMixFirstFrame", type.ordinal());
     }
 
     @Override
     public void onMessageReceived(String roomId, Message message) {
-      // TODO sendEvent("Engine:OnMessageReceived", argument);
+      // TODO sendEvent("IRCRTCIWListener:onMessageReceived", argument);
     }
 
     @Override
@@ -1346,7 +1540,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveMixBackgroundColorSet", arguments);
+      sendEvent("IRCRTCIWListener:onLiveMixBackgroundColorSet", arguments);
     }
 
     @Override
@@ -1355,12 +1549,12 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("tag", tag);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnCustomStreamPublished", arguments);
+      sendEvent("IRCRTCIWListener:onCustomStreamPublished", arguments);
     }
 
     @Override
     public void onCustomStreamPublishFinished(String tag) {
-      sendEvent("Engine:OnCustomStreamPublishFinished", tag);
+      sendEvent("IRCRTCIWListener:onCustomStreamPublishFinished", tag);
     }
 
     @Override
@@ -1369,70 +1563,76 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("tag", tag);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnCustomStreamUnpublished", arguments);
+      sendEvent("IRCRTCIWListener:onCustomStreamUnpublished", arguments);
     }
 
     @Override
-    public void onRemoteCustomStreamPublished(String roomId, String userId, String tag, RCRTCIWMediaType type) {
+    public void onRemoteCustomStreamPublished(
+        String roomId, String userId, String tag, RCRTCIWMediaType type) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("type", type.ordinal());
-      sendEvent("Engine:OnRemoteCustomStreamPublished", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteCustomStreamPublished", arguments);
     }
 
     @Override
-    public void onRemoteCustomStreamUnpublished(String roomId, String userId, String tag, RCRTCIWMediaType type) {
+    public void onRemoteCustomStreamUnpublished(
+        String roomId, String userId, String tag, RCRTCIWMediaType type) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("type", type.ordinal());
-      sendEvent("Engine:OnRemoteCustomStreamUnpublished", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteCustomStreamUnpublished", arguments);
     }
 
     @Override
-    public void onRemoteCustomStreamStateChanged(String roomId, String userId, String tag, RCRTCIWMediaType type, boolean disabled) {
+    public void onRemoteCustomStreamStateChanged(
+        String roomId, String userId, String tag, RCRTCIWMediaType type, boolean disabled) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("type", type.ordinal());
       arguments.putBoolean("disabled", disabled);
-      sendEvent("Engine:OnRemoteCustomStreamStateChanged", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteCustomStreamStateChanged", arguments);
     }
 
     @Override
-    public void onRemoteCustomStreamFirstFrame(String roomId, String userId, String tag, RCRTCIWMediaType type) {
+    public void onRemoteCustomStreamFirstFrame(
+        String roomId, String userId, String tag, RCRTCIWMediaType type) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("type", type.ordinal());
-      sendEvent("Engine:OnRemoteCustomStreamFirstFrame", arguments);
+      sendEvent("IRCRTCIWListener:onRemoteCustomStreamFirstFrame", arguments);
     }
 
     @Override
-    public void onCustomStreamSubscribed(String userId, String tag, RCRTCIWMediaType type, int code, String message) {
+    public void onCustomStreamSubscribed(
+        String userId, String tag, RCRTCIWMediaType type, int code, String message) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnCustomStreamSubscribed", arguments);
+      sendEvent("IRCRTCIWListener:onCustomStreamSubscribed", arguments);
     }
 
     @Override
-    public void onCustomStreamUnsubscribed(String userId, String tag, RCRTCIWMediaType type, int code, String message) {
+    public void onCustomStreamUnsubscribed(
+        String userId, String tag, RCRTCIWMediaType type, int code, String message) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("type", type.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnCustomStreamUnsubscribed", arguments);
+      sendEvent("IRCRTCIWListener:onCustomStreamUnsubscribed", arguments);
     }
 
     @Override
@@ -1442,28 +1642,30 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("userId", userId);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnJoinSubRoomRequested", arguments);
+      sendEvent("IRCRTCIWListener:onJoinSubRoomRequested", arguments);
     }
 
     @Override
-    public void onJoinSubRoomRequestCanceled(String roomId, String userId, int code, String message) {
+    public void onJoinSubRoomRequestCanceled(
+        String roomId, String userId, int code, String message) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnJoinSubRoomRequestCanceled", arguments);
+      sendEvent("IRCRTCIWListener:onJoinSubRoomRequestCanceled", arguments);
     }
 
     @Override
-    public void onJoinSubRoomRequestResponded(String roomId, String userId, boolean agree, int code, String message) {
+    public void onJoinSubRoomRequestResponded(
+        String roomId, String userId, boolean agree, int code, String message) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("code", code);
       arguments.putBoolean("agree", agree);
       arguments.putString("message", message);
-      sendEvent("Engine:OnJoinSubRoomRequestResponded", arguments);
+      sendEvent("IRCRTCIWListener:onJoinSubRoomRequestResponded", arguments);
     }
 
     @Override
@@ -1472,7 +1674,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("extra", extra);
-      sendEvent("Engine:OnJoinSubRoomRequestReceived", arguments);
+      sendEvent("IRCRTCIWListener:onJoinSubRoomRequestReceived", arguments);
     }
 
     @Override
@@ -1481,17 +1683,18 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("extra", extra);
-      sendEvent("Engine:OnCancelJoinSubRoomRequestReceived", arguments);
+      sendEvent("IRCRTCIWListener:onCancelJoinSubRoomRequestReceived", arguments);
     }
 
     @Override
-    public void onJoinSubRoomRequestResponseReceived(String roomId, String userId, boolean agree, String extra) {
+    public void onJoinSubRoomRequestResponseReceived(
+        String roomId, String userId, boolean agree, String extra) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putBoolean("agree", agree);
       arguments.putString("extra", extra);
-      sendEvent("Engine:OnJoinSubRoomRequestResponseReceived", arguments);
+      sendEvent("IRCRTCIWListener:onJoinSubRoomRequestResponseReceived", arguments);
     }
 
     @Override
@@ -1500,7 +1703,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnSubRoomJoined", arguments);
+      sendEvent("IRCRTCIWListener:onSubRoomJoined", arguments);
     }
 
     @Override
@@ -1509,12 +1712,12 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnSubRoomLeft", arguments);
+      sendEvent("IRCRTCIWListener:onSubRoomLeft", arguments);
     }
 
     @Override
     public void onSubRoomBanded(String roomId) {
-      sendEvent("Engine:OnSubRoomBanded", roomId);
+      sendEvent("IRCRTCIWListener:onSubRoomBanded", roomId);
     }
 
     @Override
@@ -1522,7 +1725,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
-      sendEvent("Engine:OnSubRoomDisband", arguments);
+      sendEvent("IRCRTCIWListener:onSubRoomDisband", arguments);
     }
 
     @Override
@@ -1531,35 +1734,191 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putInt("current", current.ordinal());
       arguments.putInt("code", code);
       arguments.putString("message", message);
-      sendEvent("Engine:OnLiveRoleSwitched", arguments);
+      sendEvent("IRCRTCIWListener:onLiveRoleSwitched", arguments);
     }
 
     @Override
     public void onRemoteLiveRoleSwitched(String roomId, String userId, RCRTCIWRole role) {
+      String eventName = "IRCRTCIWListener:onRemoteLiveRoleSwitched";
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putInt("role", role.ordinal());
-      sendEvent("Engine:OnRemoteLiveRoleSwitched", arguments);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onLiveMixInnerCdnStreamEnabled(boolean enable, int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onLiveMixInnerCdnStreamEnabled";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putBoolean("enable", enable);
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onRemoteLiveMixInnerCdnStreamPublished() {
+      String eventName = "IRCRTCIWListener:onRemoteLiveMixInnerCdnStreamPublished";
+      WritableMap arguments = Arguments.createMap();
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onRemoteLiveMixInnerCdnStreamUnpublished() {
+      String eventName = "IRCRTCIWListener:onRemoteLiveMixInnerCdnStreamUnpublished";
+      WritableMap arguments = Arguments.createMap();
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onLiveMixInnerCdnStreamSubscribed(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onLiveMixInnerCdnStreamSubscribed";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onLiveMixInnerCdnStreamUnsubscribed(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onLiveMixInnerCdnStreamUnsubscribed";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onLocalLiveMixInnerCdnVideoResolutionSet(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onLocalLiveMixInnerCdnVideoResolutionSet";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onLocalLiveMixInnerCdnVideoFpsSet(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onLocalLiveMixInnerCdnVideoFpsSet";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onWatermarkSet(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onWatermarkSet";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onWatermarkRemoved(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onWatermarkRemoved";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onNetworkProbeStarted(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onNetworkProbeStarted";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onNetworkProbeStopped(int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onNetworkProbeStopped";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onSeiEnabled(boolean enable, int code, String errMsg) {
+      String eventName = "IRCRTCIWListener:onSeiEnabled";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putBoolean("enable", enable);
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onSeiReceived(String roomId, String userId, String sei) {
+      String eventName = "IRCRTCIWListener:onSeiReceived";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putString("roomId", roomId);
+      arguments.putString("userId", userId);
+      arguments.putString("sei", sei);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
+    }
+
+    @Override
+    public void onLiveMixSeiReceived(String sei) {
+      String eventName = "IRCRTCIWListener:onLiveMixSeiReceived";
+      WritableMap arguments = Arguments.createMap();
+      arguments.putString("sei", sei);
+      context
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit(eventName, arguments);
     }
   }
 
   private class StatsListenerImpl extends RCRTCIWStatusListener {
     @Override
     public void onNetworkStats(RCRTCIWNetworkStats stats) {
-      sendEvent("Stats:OnNetworkStats", ArgumentAdapter.fromNetworkStats(stats));
+      sendEvent("IRCRTCIWStatsListener:OnNetworkStats", ArgumentAdapter.fromNetworkStats(stats));
     }
 
     @Override
     public void onLocalAudioStats(RCRTCIWLocalAudioStats stats) {
-      sendEvent("Stats:OnLocalAudioStats", ArgumentAdapter.fromLocalAudioStats(stats));
+      sendEvent(
+          "IRCRTCIWStatsListener:OnLocalAudioStats", ArgumentAdapter.fromLocalAudioStats(stats));
     }
 
     @Override
     public void onLocalVideoStats(RCRTCIWLocalVideoStats stats) {
-      sendEvent("Stats:OnLocalVideoStats", ArgumentAdapter.fromLocalVideoStats(stats));
+      sendEvent(
+          "IRCRTCIWStatsListener:OnLocalVideoStats", ArgumentAdapter.fromLocalVideoStats(stats));
     }
-
 
     @Override
     public void onRemoteAudioStats(String roomId, String userId, RCRTCIWRemoteAudioStats stats) {
@@ -1567,7 +1926,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putMap("stats", ArgumentAdapter.fromRemoteAudioStats(stats));
-      sendEvent("Stats:OnRemoteAudioStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnRemoteAudioStats", arguments);
     }
 
     @Override
@@ -1576,17 +1935,19 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putMap("stats", ArgumentAdapter.fromRemoteVideoStats(stats));
-      sendEvent("Stats:OnRemoteVideoStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnRemoteVideoStats", arguments);
     }
 
     @Override
     public void onLiveMixAudioStats(RCRTCIWRemoteAudioStats stats) {
-      sendEvent("Stats:OnLiveMixAudioStats", ArgumentAdapter.fromRemoteAudioStats(stats));
+      sendEvent(
+          "IRCRTCIWStatsListener:OnLiveMixAudioStats", ArgumentAdapter.fromRemoteAudioStats(stats));
     }
 
     @Override
     public void onLiveMixVideoStats(RCRTCIWRemoteVideoStats stats) {
-      sendEvent("Stats:OnLiveMixVideoStats", ArgumentAdapter.fromRemoteVideoStats(stats));
+      sendEvent(
+          "IRCRTCIWStatsListener:OnLiveMixVideoStats", ArgumentAdapter.fromRemoteVideoStats(stats));
     }
 
     @Override
@@ -1594,7 +1955,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("userId", userId);
       arguments.putInt("volume", volume);
-      sendEvent("Stats:OnLiveMixMemberAudioStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnLiveMixMemberAudioStats", arguments);
     }
 
     @Override
@@ -1603,7 +1964,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putInt("volume", volume);
-      sendEvent("Stats:OnLiveMixMemberCustomAudioStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnLiveMixMemberCustomAudioStats", arguments);
     }
 
     @Override
@@ -1611,7 +1972,7 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("tag", tag);
       arguments.putMap("stats", ArgumentAdapter.fromLocalAudioStats(stats));
-      sendEvent("Stats:OnLocalCustomAudioStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnLocalCustomAudioStats", arguments);
     }
 
     @Override
@@ -1619,38 +1980,62 @@ public class RCReactNativeRtc extends ReactContextBaseJavaModule {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("tag", tag);
       arguments.putMap("stats", ArgumentAdapter.fromLocalVideoStats(stats));
-      sendEvent("Stats:OnLocalCustomVideoStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnLocalCustomVideoStats", arguments);
     }
 
     @Override
-    public void onRemoteCustomAudioStats(String roomId, String userId, String tag, RCRTCIWRemoteAudioStats stats) {
+    public void onRemoteCustomAudioStats(
+        String roomId, String userId, String tag, RCRTCIWRemoteAudioStats stats) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putMap("stats", ArgumentAdapter.fromRemoteAudioStats(stats));
-      sendEvent("Stats:OnRemoteCustomAudioStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnRemoteCustomAudioStats", arguments);
     }
 
     @Override
-    public void onRemoteCustomVideoStats(String roomId, String userId, String tag, RCRTCIWRemoteVideoStats stats) {
+    public void onRemoteCustomVideoStats(
+        String roomId, String userId, String tag, RCRTCIWRemoteVideoStats stats) {
       WritableMap arguments = Arguments.createMap();
       arguments.putString("roomId", roomId);
       arguments.putString("userId", userId);
       arguments.putString("tag", tag);
       arguments.putMap("stats", ArgumentAdapter.fromRemoteVideoStats(stats));
-      sendEvent("Stats:OnRemoteCustomVideoStats", arguments);
+      sendEvent("IRCRTCIWStatsListener:OnRemoteCustomVideoStats", arguments);
+    }
+  }
+
+  private class NetworkProbeListenerImpl extends RCRTCIWNetworkProbeListener {
+    @Override
+    public void onNetworkProbeUpLinkStats(RCRTCIWNetworkProbeStats stats) {
+      WritableMap arguments = ArgumentAdapter.fromNetworkProbeStats(stats);
+      sendEvent("IRCRTCIWListener:onNetworkProbeUpLinkStats", arguments);
+    }
+
+    @Override
+    public void onNetworkProbeDownLinkStats(RCRTCIWNetworkProbeStats stats) {
+      WritableMap arguments = ArgumentAdapter.fromNetworkProbeStats(stats);
+      sendEvent("IRCRTCIWListener:onNetworkProbeDownLinkStats", arguments);
+    }
+
+    @Override
+    public void onNetworkProbeFinished(int code, String errMsg) {
+      WritableMap arguments = Arguments.createMap();
+      arguments.putInt("code", code);
+      arguments.putString("errMsg", errMsg);
+      sendEvent("IRCRTCIWListener:onNetworkProbeFinished", arguments);
     }
   }
 
   private void sendEvent(String event, @Nullable WritableMap arguments) {
-    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-      .emit(event, arguments);
+    context
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit(event, arguments);
   }
 
   private void sendEvent(String event, @Nullable Object object) {
-    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-      .emit(event, object);
+    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(event, object);
   }
 
   private String getRealPath(String file) {

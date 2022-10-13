@@ -22,8 +22,11 @@ import CdnSettingScreen from './screen/CdnSetting';
 import CustomLayoutScreen from './screen/CustomLayout';
 import AudienceScreen from './screen/Audience';
 import SubRoomScreen from './screen/SubRoom';
-import { Logger } from '@rongcloud/react-native-rtc';
-
+import { logger } from '@rongcloud/react-native-rtc';
+import EquipmentTestingScreen from './screen/EquipmentTesting';
+import NetworkDetectionScreen from './screen/NetworkDetection';
+import SetWatermarkScreen from './screen/SetWatermark';
+import SeiConfigScreen from './screen/SeiConfig';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +35,7 @@ class App extends React.Component {
 
   constructor(props: any) {
     super(props)
-    Logger.enable = true
+    logger.enable = true
   }
 
   render() {
@@ -54,6 +57,10 @@ class App extends React.Component {
           <Stack.Screen name='CustomLayout' component={CustomLayoutScreen} />
 
           <Stack.Screen name='SubRoom' component={SubRoomScreen} />
+          <Stack.Screen name='EquipmentTesting' component={EquipmentTestingScreen} options={{title: '麦克风&扬声器检测'}} />
+          <Stack.Screen name='NetworkDetection' component={NetworkDetectionScreen} options={{title: '网络探测'}} />
+          <Stack.Screen name='SetWatermark' component={SetWatermarkScreen} options={{title: '设置水印'}} />
+          <Stack.Screen name='SeiConfig' component={SeiConfigScreen} options={{title: 'SEI功能配置'}} />
 
         </Stack.Navigator>
       </NavigationContainer>

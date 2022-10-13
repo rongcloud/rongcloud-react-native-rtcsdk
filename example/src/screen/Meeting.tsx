@@ -72,7 +72,7 @@ interface MeetingScreenStates {
 const defaultVideoConfig = {
   minBitrate: 500,
   maxBitrate: 2200,
-  fps: RCRTCVideoFps.Fps25,
+  fps: RCRTCVideoFps.FPS_24,
   resolution: RCRTCVideoResolution.Resolution_720x1280,
 }
 

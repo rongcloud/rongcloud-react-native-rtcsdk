@@ -35,6 +35,7 @@ import cn.rongcloud.rtc.wrapper.setup.RCRTCIWAudioSetup;
 import cn.rongcloud.rtc.wrapper.setup.RCRTCIWEngineSetup;
 import cn.rongcloud.rtc.wrapper.setup.RCRTCIWRoomSetup;
 import cn.rongcloud.rtc.wrapper.setup.RCRTCIWVideoSetup;
+import cn.rongcloud.rtc.wrapper.constants.RCRTCIWNetworkProbeStats;
 
 final class ArgumentAdapter {
   private ArgumentAdapter() {
@@ -219,6 +220,14 @@ final class ArgumentAdapter {
     map.putInt("sendBitrate", stats.getSendBitrate());
     map.putInt("receiveBitrate", stats.getReceiveBitrate());
     map.putInt("rtt", stats.getRtt());
+    return map;
+  }
+
+  static WritableMap fromNetworkProbeStats(@NonNull RCRTCIWNetworkProbeStats stats) {
+    WritableMap map = Arguments.createMap();
+    map.putInt("qualityLevel", stats.getQualityLevel().ordinal());
+    map.putInt("rtt", stats.getRtt());
+    map.putDouble("packetLostRate", stats.getPacketLostRate());
     return map;
   }
 

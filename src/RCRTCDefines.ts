@@ -197,16 +197,35 @@ export interface RCRTCCustomLayout {
      * 自定义视频tag
      * 默认值：null
      */
-    tag?:string,
+    tag?: string,
 
-    /**
-     * 自定义视频类型
-     * 默认值：RCRTCStreamType.NORMAL
-     */
-    type?:RCRTCStreamType
+        /**
+         * 自定义视频类型
+         * 默认值：RCRTCStreamType.NORMAL
+         */
+        type?: RCRTCStreamType
 }
 
+/**
+ * 配置位置和大小
+ */
+export interface RCRTCIWRect {
 
+    /**
+     * 水印 x 坐标 取值范围 0~1 浮点数。
+     */
+    x?: number;
+
+    /**
+     * 水印 y 坐标 取值范围 0~1 浮点数。
+     */
+    y?: number;
+
+    /**
+     * 水印的宽度
+     */
+    width?: number;
+}
 
 /**
  * 错误码
@@ -262,7 +281,7 @@ export enum RCRTCErrorCode {
     CustomFileOpenError = -20,
 
     /**
-     * 
+     *
      */
     CustomUserNotInLive = -21
 }
@@ -361,6 +380,10 @@ export enum RCRTCRole {
  * 音频通话质量类型
  */
 export enum RCRTCAudioQuality {
+    /**
+     * 游戏音质，编码码率最大值为 16Kbps
+     */
+    Gaming,
 
     /**
      * 人声音质，编码码率最大值为 32Kbps
@@ -397,32 +420,11 @@ export enum RCRTCAudioScenario {
      * 音乐教室模式，提升声音质量，适用对乐器演奏音质要求较高的场景
      */
     MusicClassRoom,
-}
-
-/**
- * 视频帧率
- */
-export enum RCRTCVideoFps {
 
     /**
-     * 每秒 10 帧
+     * 游戏聊天模式
      */
-    Fps10,
-
-    /**
-     * 每秒 15 帧
-     */
-    Fps15,
-
-    /**
-     * 每秒 25 帧
-     */
-    Fps25,
-
-    /**
-     * 每秒 30 帧
-     */
-    Fps30,
+    GamingChatroom
 }
 
 /**
@@ -455,12 +457,12 @@ export enum RCRTCViewFitType {
     /**
      * 满屏显示, 等比例填充, 直到填充满整个视图区域, 其中一个维度的部分区域会被裁剪
      */
-    Cover=1,
+    Cover = 1,
 
     /**
      * 完整显示, 填充黑边, 等比例填充, 直到一个维度到达区域边界
      */
-    Center=2,
+    Center = 2,
 }
 
 /**
@@ -584,4 +586,201 @@ export enum RCRTCStreamType {
     FILE,
     SCREEN,
     CDN
+}
+
+export enum RCRTCIWNetworkQualityLevel {
+    /**
+     *
+     */
+    Excellent,
+    /**
+     *
+     */
+    Good,
+    /**
+     *
+     */
+    Pool,
+    /**
+     *
+     */
+    Bad,
+    /**
+     *
+     */
+    VeryBad,
+    /**
+     *
+     */
+    Down
+}
+
+export interface RCRTCNetworkStats {
+    /**
+     * 网络类型, WLAN 4G
+     */
+    type: RCRTCNetworkType;
+    /**
+     * 网络地址
+     */
+    ip: string;
+    /**
+     * 发送码率
+     */
+    sendBitrate: number;
+    /**
+     * 接收码率
+     */
+    receiveBitrate: number;
+    /**
+     * 发送到服务端往返时间
+     */
+    rtt: number;
+}
+export interface RCRTCLocalAudioStats {
+    /**
+     * 音频编码
+     */
+    codec: RCRTCAudioCodecType;
+    /**
+     * 码率
+     */
+    bitrate: number;
+    /**
+     * 音量, 0 ~ 9 表示音量高低
+     */
+    volume: number;
+    /**
+     * 丢包率
+     */
+    packageLostRate: number;
+    /**
+     * 发送到服务端往返时间
+     */
+    rtt: number;
+}
+
+export interface RCRTCLocalVideoStats {
+    /**
+     * 是否小流
+     */
+    tiny: boolean;
+    /**
+     * 视频编码
+     */
+    codec: RCRTCVideoCodecType;
+    /**
+     * 码率
+     */
+    bitrate: number;
+    /**
+     * 帧率
+     */
+    fps: number;
+    /**
+     * 宽度
+     */
+    width: number;
+    /**
+     * 高度
+     */
+    height: number;
+    /**
+     * 丢包率
+     */
+    packageLostRate: number;
+    /**
+     * 发送到服务端往返时间
+     */
+    rtt: number;
+}
+
+export interface RCRTCRemoteAudioStats extends RCRTCLocalAudioStats {
+}
+
+/**
+ * Omit<RCRTCLocalVideoStats, 'tiny'>： 去除 tiny 属性，生成一个新类型
+ * RCRTCRemoteVideoStats 包含 RCRTCLocalVideoStats 中除了 tiny 之外的所有属性，
+ */
+export interface RCRTCRemoteVideoStats extends Omit<RCRTCLocalVideoStats, 'tiny'> {
+}
+
+export interface RCRTCNetworkProbeStats {
+    /**
+     *
+     */
+    qualityLevel?: RCRTCIWNetworkQualityLevel;
+    /**
+     *
+     */
+    rtt?: number;
+    /**
+     *
+     */
+    packetLostRate?: number;
+}
+
+export interface RCRTCIWPoint {
+    /**
+     *
+     */
+    x?: number;
+
+    /**
+     *
+     */
+    y?: number;
+}
+
+export interface RCRTCIWNetworkProbeStats {
+    /**
+     *
+     */
+    qualityLevel?: RCRTCIWNetworkQualityLevel;
+    /**
+     *
+     */
+    rtt?: number;
+    /**
+     *
+     */
+    packetLostRate?: number;
+}
+export enum RCRTCRole {
+    /**
+     *
+     */
+    MEETING_MEMBER,
+
+    /**
+     *
+     */
+    LIVE_BROADCASTER,
+
+    /**
+     *
+     */
+    LIVE_AUDIENCE
+}
+
+export enum RCRTCVideoFps {
+    /**
+     *
+     */
+    FPS_10,
+
+    /**
+     *
+     */
+    FPS_15,
+
+    /**
+     *
+     */
+    FPS_24,
+
+    /**
+     *
+     */
+    FPS_30
 }

@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = 'ios/Frameworks/*.xcframework'
 
   s.dependency "React-Core"
-  s.dependency 'RongCloudIM/IMLib', '5.2.4'
-  s.dependency 'RongCloudRTC/RongRTCLib', '5.1.17'
+  s.dependency 'RongCloudRTC/RongRTCLib', '5.2.5.2'
+  s.dependency 'RongCloudRTC/RongRTCPlayer', '5.2.5.2'
   
 end

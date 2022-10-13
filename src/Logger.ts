@@ -1,4 +1,4 @@
- class Logger {
+class Logger {
   enable = false
   public readonly tag: string
   /**
@@ -14,10 +14,14 @@
       console.log(`[${this.tag}] ${new Date().toISOString()} ${str}`)
   }
 
+  public logObject(str: string, obj: Object) {
+    this.log(`${str} ${this.toString(obj)}`)
+  }
+
   public toString(obj: any) {
-   return JSON.stringify(obj)
+    return JSON.stringify(obj)
   }
 }
 
-
-export default new Logger('RCRNRtcLib')
+const logger = new Logger('RCRNRtcLib');
+export  {logger}

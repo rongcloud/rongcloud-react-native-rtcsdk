@@ -17,6 +17,11 @@
 		2DCD954D1E0B4F2C00145EB5 /* ReactNativeRtcExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ReactNativeRtcExampleTests.m */; };
 		4C39C56BAD484C67AA576FFA /* libPods-ReactNativeRtcExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3E69C5B9553B26FBA2DF04 /* libPods-ReactNativeRtcExample.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		85E4921A28DB225200DF9975 /* rong_icon_voice.png in Resources */ = {isa = PBXBuildFile; fileRef = 85E4921528DB225100DF9975 /* rong_icon_voice.png */; };
+		85E4921B28DB225200DF9975 /* rong_icon_info.png in Resources */ = {isa = PBXBuildFile; fileRef = 85E4921628DB225100DF9975 /* rong_icon_info.png */; };
+		85E4921C28DB225200DF9975 /* rong_icon_message.png in Resources */ = {isa = PBXBuildFile; fileRef = 85E4921728DB225100DF9975 /* rong_icon_message.png */; };
+		85E4921D28DB225200DF9975 /* rong_icon_more.png in Resources */ = {isa = PBXBuildFile; fileRef = 85E4921828DB225100DF9975 /* rong_icon_more.png */; };
+		85E4921E28DB225200DF9975 /* rong_icon_right.png in Resources */ = {isa = PBXBuildFile; fileRef = 85E4921928DB225100DF9975 /* rong_icon_right.png */; };
 		C60EC8DC27CCC5E4004D8E4F /* GPUImageOutputCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = C60EC8D827CCC5E4004D8E4F /* GPUImageOutputCamera.m */; };
 		C60EC8DD27CCC5E4004D8E4F /* GPUImageHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = C60EC8D927CCC5E4004D8E4F /* GPUImageHandle.m */; };
 		C60EC8DE27CCC5E4004D8E4F /* GPUImageBeautyFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = C60EC8DA27CCC5E4004D8E4F /* GPUImageBeautyFilter.m */; };
@@ -81,6 +86,11 @@
 		2D02E4901E0B4A5D006451C7 /* ReactNativeRtcExample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ReactNativeRtcExample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47F7ED3B7971BE374F7B8635 /* Pods-ReactNativeRtcExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeRtcExample.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeRtcExample/Pods-ReactNativeRtcExample.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ReactNativeRtcExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		85E4921528DB225100DF9975 /* rong_icon_voice.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rong_icon_voice.png; sourceTree = "<group>"; };
+		85E4921628DB225100DF9975 /* rong_icon_info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rong_icon_info.png; sourceTree = "<group>"; };
+		85E4921728DB225100DF9975 /* rong_icon_message.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rong_icon_message.png; sourceTree = "<group>"; };
+		85E4921828DB225100DF9975 /* rong_icon_more.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rong_icon_more.png; sourceTree = "<group>"; };
+		85E4921928DB225100DF9975 /* rong_icon_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rong_icon_right.png; sourceTree = "<group>"; };
 		C60EC8D527CCC5E4004D8E4F /* GPUImageOutputCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageOutputCamera.h; sourceTree = "<group>"; };
 		C60EC8D627CCC5E4004D8E4F /* GPUImageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageHandle.h; sourceTree = "<group>"; };
 		C60EC8D727CCC5E4004D8E4F /* GPUImageBeautyFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageBeautyFilter.h; sourceTree = "<group>"; };
@@ -346,6 +356,11 @@
 				C60EC9DB27CDD665004D8E4F /* message.png */,
 				C60EC9DC27CDD665004D8E4F /* ic_check_box@2x.png */,
 				C60EC9DD27CDD665004D8E4F /* audio_mix.png */,
+				85E4921628DB225100DF9975 /* rong_icon_info.png */,
+				85E4921728DB225100DF9975 /* rong_icon_message.png */,
+				85E4921828DB225100DF9975 /* rong_icon_more.png */,
+				85E4921928DB225100DF9975 /* rong_icon_right.png */,
+				85E4921528DB225100DF9975 /* rong_icon_voice.png */,
 			);
 			path = img;
 			sourceTree = "<group>";
@@ -456,6 +471,7 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 9CVMN4UZK4;
 						LastSwiftMigration = 1120;
+						ProvisioningStyle = Manual;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -511,6 +527,7 @@
 				C60EC9B827CDBD72004D8E4F /* back-icon-mask.png in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				C60EC9B627CDBD72004D8E4F /* back-icon@2x.png in Resources */,
+				85E4921B28DB225200DF9975 /* rong_icon_info.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				C60EC9E327CDD665004D8E4F /* ic_indeterminate_check_box.png in Resources */,
 				C6149E9027B6526100C7CD7B /* effect_0.mp3 in Resources */,
@@ -519,15 +536,19 @@
 				C60EC9B527CDBD72004D8E4F /* back-icon@3x.png in Resources */,
 				C60EC9DF27CDD665004D8E4F /* beauty.png in Resources */,
 				C60EC9E227CDD665004D8E4F /* layout.png in Resources */,
+				85E4921C28DB225200DF9975 /* rong_icon_message.png in Resources */,
 				C6149E9127B6526100C7CD7B /* effect_1.mp3 in Resources */,
+				85E4921D28DB225200DF9975 /* rong_icon_more.png in Resources */,
 				C60EC9E627CDD665004D8E4F /* delete.png in Resources */,
 				C60EC9AA27CDBD72004D8E4F /* main.jsbundle in Resources */,
 				C60EC9E827CDD665004D8E4F /* ic_check_box@3x.png in Resources */,
+				85E4921E28DB225200DF9975 /* rong_icon_right.png in Resources */,
 				C60EC9B427CDBD72004D8E4F /* package.json in Resources */,
 				C60EC9E027CDD665004D8E4F /* music.png in Resources */,
 				C60EC9E727CDD665004D8E4F /* cdn.png in Resources */,
 				C6149E9327B6526100C7CD7B /* music_0.mp3 in Resources */,
 				C60EC9B727CDBD72004D8E4F /* back-icon.png in Resources */,
+				85E4921A28DB225200DF9975 /* rong_icon_voice.png in Resources */,
 				C60EC9EC27CDD665004D8E4F /* audio_mix.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -610,6 +631,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 				"${PODS_ROOT}/RongCloudIM/RongCloudIM/RCConfig.plist",
+				"${PODS_ROOT}/RongCloudRTC/RongCloudRTC/RongRTCLib.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -617,6 +639,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCConfig.plist",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RongRTCLib.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TOCropViewControllerBundle.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -636,9 +659,9 @@
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudIM/Discussion/RongDiscussion.framework/RongDiscussion",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudIM/IMLib/RongIMLib.framework/RongIMLib",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudIM/IMLibCore/RongIMLibCore.framework/RongIMLibCore",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudIM/Location/RongLocation.framework/RongLocation",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudIM/PublicService/RongPublicService.framework/RongPublicService",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudRTC/RongRTCLib/RongRTCLib.framework/RongRTCLib",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RongCloudRTC/RongRTCPlayer/RongRTCPlayer.framework/RongRTCPlayer",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/rongcloud-react-native-im-wrapper/RongIMWrapper.framework/RongIMWrapper",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/rongcloud-react-native-rtc/RongRTCLibWrapper.framework/RongRTCLibWrapper",
 			);
@@ -649,9 +672,9 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongDiscussion.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongIMLib.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongIMLibCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongLocation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongPublicService.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongRTCLib.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongRTCPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongIMWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RongRTCLibWrapper.framework",
 			);
@@ -802,6 +825,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9CVMN4UZK4;
 				ENABLE_BITCODE = NO;
@@ -818,6 +843,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.rongcloud.rtc.rn.example;
 				PRODUCT_NAME = ReactNativeRtcExample;
+				PROVISIONING_PROFILE_SPECIFIER = RTC_RN_Example;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -830,6 +856,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9CVMN4UZK4;
 				ENABLE_BITCODE = NO;
@@ -846,6 +874,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.rongcloud.rtc.rn.example;
 				PRODUCT_NAME = ReactNativeRtcExample;
+				PROVISIONING_PROFILE_SPECIFIER = RTC_RN_Example;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

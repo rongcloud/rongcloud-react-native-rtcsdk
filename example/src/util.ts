@@ -1,5 +1,5 @@
 import {
-  RCRTCMediaType, RCRTCRemoteAudioStats, RCRTCRemoteVideoStats, RCRTCViewFitType
+  RCRTCMediaType, RCRTCRemoteAudioStats, RCRTCRemoteVideoStats, RCRTCRole, RCRTCViewFitType
 } from '@rongcloud/react-native-rtc'
 import { rtcEngine } from './screen/Connect';
 
@@ -103,6 +103,20 @@ export const init = () => {
       onRefresh();
     }
   })
+
+  rtcEngine?.setOnRemoteLiveRoleSwitchedListener((roomId: string, userId: string, role: RCRTCRole) => {
+    users.delete(userId);
+    if (onRefresh != null) {
+      onRefresh();
+    }
+  })
+  rtcEngine?.setOnRemoteLiveMixInnerCdnStreamPublishedListener(() => {
+    console.log('util - setOnRemoteLiveMixInnerCdnStreamPublishedListener')
+  })
+  rtcEngine?.setOnRemoteLiveMixInnerCdnStreamUnpublishedListener(() => {
+    console.log('util - setOnRemoteLiveMixInnerCdnStreamUnpublishedListener')
+  })
+
 }
 
 export const setOnRefreshListener = (refresh: Function) => {

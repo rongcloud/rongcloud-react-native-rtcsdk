@@ -11,19 +11,19 @@ export const screens = [
 
 export const fps = [
     {
-        value: RCRTCVideoFps.Fps10,
+        value: RCRTCVideoFps.FPS_10,
         label: '10FPS',
     },
     {
-        value: RCRTCVideoFps.Fps15,
+        value: RCRTCVideoFps.FPS_15,
         label: '15FPS',
     },
     {
-        value: RCRTCVideoFps.Fps25,
+        value: RCRTCVideoFps.FPS_24,
         label: '25FPS',
     },
     {
-        value: RCRTCVideoFps.Fps30,
+        value: RCRTCVideoFps.FPS_30,
         label: '30FPS',
     },
 ];

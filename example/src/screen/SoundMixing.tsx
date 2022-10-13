@@ -7,6 +7,7 @@ import CheckBox from "../component/CheckBox";
 import Slider from "@react-native-community/slider";
 import { RCRTCAudioMixingMode } from '@rongcloud/react-native-rtc';
 import * as FS from 'react-native-fs'
+import { rtcEngine } from "./Connect";
 
 interface SoundMixingScreenProps extends NativeStackScreenProps<any> {
 

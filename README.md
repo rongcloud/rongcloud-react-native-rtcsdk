@@ -33,20 +33,40 @@
 ## 初始化 IM SDK
 
 ```js
-IMLib.init(RongAppKey);
+// IM 初始化
+const options: RCIMIWEngineOptions = {
+  naviServer: navigate,
+  fileServer: file,
+};
+imEngine = RCIMIWEngine.create(key, options);
 ```
 
 ## 连接 IM
 
 ```js
-IMLib.connect(IMToken, (code, userId) {
+// 设置连接回调
+imEngine?.setOnConnectedListener((code: number, userId: string) => {
+  if (code === 0) {
+    console.log('IM 连接成功 userId:' + userId);
+  } else {
+    console.log('IM 连接失败,code: ' + code);
+  }
+});
+// 连接融云 IM 服务器
+imEngine?.connect(token, 30)
+.then((code: number) => {
+  if (code === 0) {
+    console.log('connect 接口调用成功');
+  } else {
+    console.log('connect 接口调用失败', code);
+  }
 });
 ```
 
 ## 创建 RTC 引擎
 
 ```js
-RCRTCEngine.create();
+rtcEngine = RCRTCEngine.create(setup)
 ```
 
 # 音视频模式接口说明
@@ -57,7 +77,7 @@ RCRTCEngine.create();
 
 ```js
 // 设置加入 RTC 房间事件监听
-RCRTCEngine.setOnRoomJoinedListener((code: number, message: string) => {
+rtcEngine?.setOnRoomJoinedListener((code: number, message: string) => {
   if (code === 0) {
     // 加入房间成功
   } else {
@@ -67,24 +87,24 @@ RCRTCEngine.setOnRoomJoinedListener((code: number, message: string) => {
 
 // 加入 RTC 房间
 let roomSetup = {
-      // 根据实际场景，选择音视频直播：AudioVideo 或纯音频直播：Audio
-      type: RCRTCMediaType.AudioVideo
-      role: RCRTCRole.MeetingMember
-    };
-RCRTCEngine.joinRoom('直播间 ID', roomSetup);
+  // 根据实际场景，选择音视频直播：AudioVideo 或纯音频直播：Audio
+  type: RCRTCMediaType.AudioVideo
+  role: RCRTCRole.MeetingMember
+};
+rtcEngine?.joinRoom('直播间 ID', roomSetup);
 ```
 
 ### 采集音频
 引擎默认开启音频采集
 
 ```js
-RCRTCEngine.enableMicrophone(true);
+rtcEngine?.enableMicrophone(true);
 ```
 
 ### 采集视频
 
 ```js
-RCRTCEngine.enableCamera(true);
+rtcEngine?.enableCamera(true);
 ```
 
 ### 渲染视频
@@ -119,7 +139,7 @@ RCReactNativeRtcView 内部包装的是原生提供的组件， 所以 RCRTCView
 
   ```js
   // 设置预览窗口,其中viewTag为上一步获取的viewTag
-  RCRTCEngine.setLocalView(viewTag).then(code=>{
+  rtcEngine?.setLocalView(viewTag).then(code=>{
     if (code === 0) {
       // 设置成功
     } else {
@@ -131,7 +151,7 @@ RCReactNativeRtcView 内部包装的是原生提供的组件， 所以 RCRTCView
 ### 发布资源
 
 ```js
-RCRTCEngine.publish(RCRTCMediaType.AudioVideo);
+rtcEngine?.publish(RCRTCMediaType.AudioVideo);
 ```
 
 ## 渲染远端用户
@@ -141,7 +161,7 @@ RCRTCEngine.publish(RCRTCMediaType.AudioVideo);
 `当用户加入的时候，不要做订阅渲染的处理`，因为此时该用户可能刚加入房间成功，但是尚未发布资源
 
 ```js
-RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
+rtcEngine?.setOnUserJoinedListener((roomId: string, userId: string) => {
   // userId 远端用户 ID
   // roomId 房间 ID
 });
@@ -150,7 +170,7 @@ RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
 ### 监听远端用户发布资源的回调
 
 ```js
-RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
+rtcEngine?.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
   // userId 远端用户 ID
   // roomId 房间 ID
   // type 远端用户发布的资源类型 RCRTCMediaType
@@ -160,7 +180,7 @@ RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: 
 ### 远端用户发布资源后，订阅远端用户资源
 
 ```js
-RCRTCEngine.subscribe(userId, type);
+rtcEngine?.subscribe(userId, type);
 ```
 
 ### 渲染远端用户资源
@@ -168,13 +188,13 @@ RCRTCEngine.subscribe(userId, type);
 ```js
 // 导入组件 和 添加 remoteView 组件，可参考 setLocalView 部分的示例
 // 设置预览窗口
-    RCRTCEngine.setRemoteView(userId, viewTag).then(code=>{
-      if (code === 0) {
-        // 设置成功
-      } else {
-        // 设置失败
-      }
-    });
+rtcEngine?.setRemoteView(userId, viewTag).then(code=>{
+  if (code === 0) {
+    // 设置成功
+  } else {
+    // 设置失败
+  }
+});
 ```
 
 # 直播模式接口说明
@@ -185,7 +205,7 @@ RCRTCEngine.subscribe(userId, type);
 
 ```js
 // 设置加入 RTC 房间事件监听
-RCRTCEngine.setOnRoomJoinedListener((code: number, message: string) => {
+rtcEngine?.setOnRoomJoinedListener((code: number, message: string) => {
   if (code === 0) {
     // 加入房间成功
   } else {
@@ -199,39 +219,39 @@ let roomSetup = {
     type: RCRTCMediaType.AudioVideo
     role: RCRTCRole.LiveBroadcaster
 };
-RCRTCEngine.joinRoom('直播间 ID', roomSetup);
+rtcEngine?.joinRoom('直播间 ID', roomSetup);
 ```
 
 ### 采集音频
 引擎默认开启音频采集
 
 ```js
-RCRTCEngine.enableMicrophone(true);
+rtcEngine?.enableMicrophone(true);
 ```
 
 ### 采集视频
 
 ```js
-RCRTCEngine.enableCamera(true);
+rtcEngine?.enableCamera(true);
 ```
 
 ### 渲染视频
 
-  ```js
-  // 设置预览窗口,其中viewTag为RCReactNativeRtcView获取的viewTag
-  RCRTCEngine.setLocalView(viewTag).then(code=>{
-    if (code === 0) {
-      // 设置成功
-    } else {
-      // 设置失败
-    }
-  });
-  ```
+```js
+// 设置预览窗口,其中viewTag为RCReactNativeRtcView获取的viewTag
+rtcEngine?.setLocalView(viewTag).then(code=>{
+  if (code === 0) {
+    // 设置成功
+  } else {
+    // 设置失败
+  }
+});
+```
 
 ### 发布资源
 
 ```js
-RCRTCEngine.publish(RCRTCMediaType.AudioVideo);
+rtcEngine?.publish(RCRTCMediaType.AudioVideo);
 ```
 
 ## 渲染远端主播
@@ -241,7 +261,7 @@ RCRTCEngine.publish(RCRTCMediaType.AudioVideo);
 `当主播加入的时候，不要做订阅渲染的处理`，因为此时该主播可能刚加入房间成功，但是尚未发布资源
 
 ```js
-RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
+rtcEngine?.setOnUserJoinedListener((roomId: string, userId: string) => {
   // userId 远端用户 ID
   // roomId 房间 ID
 });
@@ -250,7 +270,7 @@ RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
 ### 监听远端主播发布资源的回调
 
 ```js
-RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
+rtcEngine?.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
   // userId 远端用户 ID
   // roomId 房间 ID
   // type 远端用户发布的资源类型 RCRTCMediaType
@@ -260,14 +280,14 @@ RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: 
 ### 远端主播发布资源后，订阅远端主播资源
 
 ```js
-RCRTCEngine.subscribe(userId, type);
+rtcEngine?.subscribe(userId, type);
 ```
 
 ### 渲染远端主播资源
 
 ```js
 // 导入组件 和 添加 remoteView 组件，可参考 setLocalView 部分的示例
-RCRTCEngine.setRemoteView(userId, viewTag).then(code=>{
+rtcEngine?.setRemoteView(userId, viewTag).then(code=>{
   if (code === 0) {
     // 设置成功
   } else {
@@ -282,7 +302,7 @@ RCRTCEngine.setRemoteView(userId, viewTag).then(code=>{
 
 ```js
 // 设置加入 RTC 房间事件监听
-RCRTCEngine.setOnRoomJoinedListener((code: number, message: string) => {
+rtcEngine?.setOnRoomJoinedListener((code: number, message: string) => {
     if (code === 0) {
     // 创建/加入房间成功
     } else {
@@ -295,13 +315,13 @@ let setup = {
     type: RCRTCMediaType.AudioVideo,
     role: RCRTCRole.LiveAudience, // 观众
 };
-RCRTCEngine.joinRoom(roomId, setup);
+rtcEngine?.joinRoom(roomId, setup);
 ```
 
 ### 监听MCU资源发布回调
 
 ```js
-RCRTCEngine.setOnRemoteLiveMixPublishedListener((type: RCRTCMediaType) => {
+rtcEngine?.setOnRemoteLiveMixPublishedListener((type: RCRTCMediaType) => {
     // type 媒体类型
 });
 ```
@@ -309,7 +329,7 @@ RCRTCEngine.setOnRemoteLiveMixPublishedListener((type: RCRTCMediaType) => {
 ### MCU资源发布后，订阅MCU资源
 
 ```js
-RCRTCEngine.subscribeLiveMix(RCRTCMediaType.AudioVideo);
+rtcEngine?.subscribeLiveMix(RCRTCMediaType.AudioVideo);
 ```
 
 ### 渲染MCU资源
@@ -317,7 +337,7 @@ RCRTCEngine.subscribeLiveMix(RCRTCMediaType.AudioVideo);
 ```js
 /// 导入组件 和 添加 liveMixView 组件，可参考 setLocalView 部分的示例
 /// 设置预览窗口
-RCRTCEngine.setLiveMixView(viewTag).then(code=>{
+rtcEngine?.setLiveMixView(viewTag).then(code=>{
   if (code === 0) {
     // 设置成功
   } else {
@@ -332,7 +352,7 @@ RCRTCEngine.setLiveMixView(viewTag).then(code=>{
 
 ```js
 // 设置加入 RTC 房间事件监听
-RCRTCEngine.setOnRoomJoinedListener((code: number, message: string) => {
+rtcEngine?.setOnRoomJoinedListener((code: number, message: string) => {
     if (code === 0) {
     // 创建/加入房间成功
     } else {
@@ -345,7 +365,7 @@ let setup = {
     type: RCRTCMediaType.AudioVideo,
     role: RCRTCRole.LiveAudience, // 观众
 };
-RCRTCEngine.joinRoom(roomId, setup);
+rtcEngine?.joinRoom(roomId, setup);
 ```
 
 ### 监听远端主播加入的回调
@@ -353,7 +373,7 @@ RCRTCEngine.joinRoom(roomId, setup);
 `当主播加入的时候，不要做订阅渲染的处理`，因为此时该主播可能刚加入房间成功，但是尚未发布资源
 
 ```js
-RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
+rtcEngine?.setOnUserJoinedListener((roomId: string, userId: string) => {
   // userId 远端用户 ID
   // roomId 房间 ID
 });
@@ -362,7 +382,7 @@ RCRTCEngine.setOnUserJoinedListener((roomId: string, userId: string) => {
 ### 监听远端主播发布资源的回调
 
 ```js
-RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
+rtcEngine?.setOnRemotePublishedListener((roomId: string, userId: string, type: RCRTCMediaType) => {
   // userId 远端用户 ID
   // roomId 房间 ID
   // type 远端用户发布的资源类型 RCRTCMediaType
@@ -372,14 +392,14 @@ RCRTCEngine.setOnRemotePublishedListener((roomId: string, userId: string, type: 
 ### 远端主播发布资源后，订阅远端主播资源
 
 ```js
-RCRTCEngine.subscribe(userId, type);
+rtcEngine?.subscribe(userId, type);
 ```
 
 ### 渲染远端主播资源
 
 ```js
 // 导入组件 和 添加 remoteView 组件，可参考 setLocalView 部分的示例
-RCRTCEngine.setRemoteView(userId, viewTag).then(code=>{
+rtcEngine?.setRemoteView(userId, viewTag).then(code=>{
   if (code === 0) {
     // 设置成功
   } else {
@@ -393,6 +413,6 @@ RCRTCEngine.setRemoteView(userId, viewTag).then(code=>{
 ## 离开房间
 
 ```js
-RCRTCEngine.leaveRoom();
+rtcEngine?.leaveRoom();
 ```
 

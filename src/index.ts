@@ -1,23 +1,13 @@
-import RCRTCEngine from "./RCRTCEngine";
-import Logger from "./Logger";
-import { HostComponent, requireNativeComponent, ViewProps } from "react-native";
-
+import {HostComponent,
+    requireNativeComponent,
+    ViewProps} from "react-native";
 
 interface HostProps extends ViewProps {
     mirror?: boolean,
-    fitType?: RCRTCViewFitType
+        fitType?: RCRTCViewFitType
 }
 
 const RCReactNativeRtcView: HostComponent<HostProps> = requireNativeComponent('RCReactNativeRtcView');
-
-import type {
-    RCRTCLocalAudioStats,
-    RCRTCLocalVideoStats,
-    RCRTCNetworkStats,
-    RCRTCRemoteAudioStats,
-    RCRTCRemoteVideoStats,
-} from './RCRTCStatsEventsInterface';
-
 
 import {
     RCRTCAudioConfig,
@@ -32,10 +22,8 @@ import {
     RCRTCLiveMixLayoutMode,
     RCRTCLiveMixRenderMode,
     RCRTCMediaType,
-    RCRTCVideoFps,
     RCRTCVideoResolution,
     RCRTCViewFitType,
-    RCRTCRole,
     RCRTCNetworkType,
     RCRTCStreamType,
     RCRTCAudioSetup,
@@ -45,14 +33,15 @@ import {
     RCRTCAudioSampleRate,
     RCRTCAudioQuality,
     RCRTCAudioScenario,
-    RCRTCVideoCodecType
+    RCRTCVideoCodecType,
+    RCRTCLocalAudioStats,
+    RCRTCLocalVideoStats,
+    RCRTCNetworkStats,
+    RCRTCRemoteAudioStats,
+    RCRTCRemoteVideoStats
 } from './RCRTCDefines';
 
-
-
 export {
-    Logger,
-    RCRTCEngine,
     RCReactNativeRtcView,
     RCRTCLocalAudioStats,
     RCRTCLocalVideoStats,
@@ -71,10 +60,8 @@ export {
     RCRTCAudioSource,
     RCRTCAudioSampleRate,
     RCRTCMediaType,
-    RCRTCRole,
     RCRTCAudioQuality,
     RCRTCAudioScenario,
-    RCRTCVideoFps,
     RCRTCVideoResolution,
     RCRTCViewFitType,
     RCRTCCamera,
@@ -85,4 +72,20 @@ export {
     RCRTCNetworkType,
     RCRTCVideoCodecType,
     RCRTCStreamType
+}
+
+import {
+    logger
+} from './Logger';
+import {
+    RCRTCRole,
+    RCRTCVideoFps
+} from './RCRTCDefines';
+import {
+    RCRTCEngine
+} from './RCRTCEngine';
+export {logger,
+    RCRTCRole,
+    RCRTCVideoFps,
+    RCRTCEngine
 }

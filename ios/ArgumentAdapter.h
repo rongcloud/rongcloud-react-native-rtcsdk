@@ -26,13 +26,9 @@ RCRTCIWLiveMixRenderMode toLiveMixRenderMode(int mode);
 
 RCRTCIWVideoResolution toVideoResolution(int resolution);
 
-RCRTCIWVideoFps toVideoFps(int fps);
-
 RCRTCIWAudioMixingMode toAudioMixingMode(int mode);
 
 RCRTCIWAudioCodecType toAudioCodecType(int type);
-
-RCRTCIWRole toRole(int role);
 
 RCRTCIWAudioQuality toAudioQuality(int quality);
 
@@ -50,6 +46,8 @@ NSArray<RCRTCIWCustomLayout *> *toLiveMixCustomLayouts(NSArray<NSDictionary *> *
 
 NSDictionary *fromNetworkStats(RCRTCIWNetworkStats *stats);
 
+NSDictionary *fromNetworkProbeStats(RCRTCIWNetworkProbeStats *stats);
+
 NSDictionary *fromLocalAudioStats(RCRTCIWLocalAudioStats *stats);
 
 NSDictionary *fromLocalVideoStats(RCRTCIWLocalVideoStats *stats);
@@ -57,6 +55,15 @@ NSDictionary *fromLocalVideoStats(RCRTCIWLocalVideoStats *stats);
 NSDictionary *fromRemoteAudioStats(RCRTCIWRemoteAudioStats *stats);
 
 NSDictionary *fromRemoteVideoStats(RCRTCIWRemoteVideoStats *stats);
+
+RCRTCIWRole toRole(NSUInteger role);
+
+NSUInteger RoleToNum(RCRTCIWRole role);
+
+RCRTCIWVideoFps toVideoFps(NSUInteger fps);
+
+NSUInteger VideoFpsToNum(RCRTCIWVideoFps fps);
+
 
 #ifdef __cplusplus
 }

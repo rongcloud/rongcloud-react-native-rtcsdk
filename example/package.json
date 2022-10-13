@@ -11,12 +11,13 @@
   "dependencies": {
     "@react-native-clipboard/clipboard": "^1.8.5",
     "@react-native-community/async-storage": "^1.12.1",
-    "@react-native-community/slider": "^4.2.0",
+    "@react-native-community/slider": "4.3.1",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
-    "@rongcloud/react-native-im-wrapper": "^5.2.4-release.3",
+    "@rongcloud/react-native-im-wrapper": "5.2.5",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-drawer": "^2.5.1",
     "react-native-fs": "^2.18.0",
     "react-native-image-crop-picker": "^0.37.3",
     "react-native-overlayer": "^0.2.1",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/runtime": "^7.12.5",
+    "@types/react-native-drawer": "^2.5.5",
     "babel-plugin-module-resolver": "^4.0.0",
     "metro-react-native-babel-preset": "^0.64.0"
   }

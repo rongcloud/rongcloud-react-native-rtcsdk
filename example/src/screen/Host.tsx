@@ -17,6 +17,8 @@ import {
   Button,
   DeviceEventEmitter,
   ScrollView,
+  Switch,
+  GestureResponderEvent,
 } from 'react-native';
 
 import {
@@ -41,6 +43,7 @@ import {
   RCRTCErrorCode
 } from '@rongcloud/react-native-rtc'
 import { rtcEngine } from './Connect';
+import Drawer from 'react-native-drawer'
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -75,13 +78,14 @@ interface HostScreenStates {
   customVideoFile: string,
   customVideoFitType: RCRTCViewFitType,
   customVideoPublished: boolean,
+  enableRcCdn: boolean
 }
 
 
 const defaultVideoConfig = {
   minBitrate: 500,
   maxBitrate: 2200,
-  fps: RCRTCVideoFps.Fps25,
+  fps: RCRTCVideoFps.FPS_24,
   resolution: RCRTCVideoResolution.Resolution_720x1280,
 }
 
@@ -93,7 +97,7 @@ const defaultTinyVideoConfig = {
 const defaultCustomVideoConfig = {
   minBitrate: 500,
   maxBitrate: 2200,
-  fps: RCRTCVideoFps.Fps30,
+  fps: RCRTCVideoFps.FPS_30,
   resolution: RCRTCVideoResolution.Resolution_720x1280
 }
 
@@ -104,6 +108,8 @@ const defaultNetworkStats = {
   receiveBitrate: 0,
   rtt: 0
 }
+
+let drawer: Drawer;
 
 class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
   pop: RefObject<Pop>;
@@ -136,7 +142,8 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       customVideoConfig: defaultCustomVideoConfig,
       customVideoFile: 'null',
       customVideoFitType: RCRTCViewFitType.Center,
-      customVideoPublished: false
+      customVideoPublished: false,
+      enableRcCdn: false
     };
     this.pop = React.createRef<Pop>();
     this.localtag = null;
@@ -693,51 +700,28 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity
+            style={{ paddingVertical: 10, justifyContent: 'center' }}
             onPress={() => {
-              this.props.navigation.navigate('SubRoom', {
-                bandedSubRooms: this.state.bandedSubRooms,
-                joinedSubRooms: this.state.joinedSubRooms
+              rtcEngine?.setOnLiveRoleSwitchedListener((current: RCRTCRole, code: number, message: string) => {
+                if (code != 0) {
+                  RRCToast.show('切换为观众失败, code:', code, 'message:', message);
+                } else {
+                  if (this.props.route.params!.switchRoleCallback) {
+                    this.props.route.params!.switchRoleCallback(RCRTCRole.LiveAudience);
+                  }
+                  this.props.navigation.goBack()
+                }
               })
+              rtcEngine?.switchLiveRole(RCRTCRole.LiveAudience);
             }}>
-
-            <Image source={{ uri: 'sub_room' }} style={{ width: 25, height: 25 }}></Image>
+            <Text style={{alignSelf: 'center'}}>{'切换为观众'}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            disabled={!(this.state.audio || this.state.video)}
-            style={{ marginLeft: 10, backgroundColor: !(this.state.audio || this.state.video) ? 'grey' : undefined }}
+            style={{ paddingLeft: 10, paddingVertical: 10 }}
             onPress={() => {
-              this.props.navigation.navigate('CdnSetting', {})
+              drawer.open()
             }}>
-
-            <Image source={{ uri: 'cdn' }} style={{ width: 25, height: 25 }}></Image>
-          </TouchableOpacity>
-          <TouchableOpacity
-            disabled={!(this.state.audio || this.state.video)}
-            style={{ marginLeft: 10, backgroundColor: !(this.state.audio || this.state.video) ? 'grey' : undefined }}
-            onPress={() => {
-              let users = Array.from(Util.users.values()).map((value) => { return { id: value.id, tag: null } })
-              // users是订阅的id，userId是自己的id
-              this.props.navigation.navigate('Layout', {
-                users: users,
-                customTag: this.state.customVideoPublished ? this.state.customVideoTag : null,//发布自定义视频后才传tag
-                userId: this.props.route.params!.userId
-              })
-            }}>
-
-            <Image source={{ uri: 'layout' }} style={{ width: 25, height: 25 }}></Image>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{ marginLeft: 10 }}
-            onPress={() => {
-              this.props.navigation.navigate('Message', {
-                userId: this.props.route.params!.userId,
-                roomId: this.props.route.params!.roomId,
-                role: RCRTCRole.LiveBroadcaster
-              })
-            }}>
-
-            <Image source={{ uri: 'message' }} style={{ width: 25, height: 25 }}></Image>
+            <Image source={{ uri: 'rong_icon_more' }} style={{ width: 25, height: 25}}></Image>
           </TouchableOpacity>
         </View>
       ),
@@ -864,7 +848,7 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
                 </View>
               </View>
             }
-
+            
             {
               item.remoteAudioStats && item.audioSubscribed &&
               <View style={{ marginTop: 5, padding: 5 }}>
@@ -894,372 +878,485 @@ class HostScreen extends React.Component<HostScreenProps, HostScreenStates> {
     })
   }
 
-  render() {
+  drawerLineView = (text: string, imgUri: string, onPress?: ((event: GestureResponderEvent) => void) | undefined) => {
     return (
-      <ScrollView style={{ flex: 1 }} >
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ width: '50%', height: 180, backgroundColor: 'black', overflow: 'hidden' }}>
-            <RCReactNativeRtcView
-              fitType={this.state.fitType}
-              style={{ width: '100%', height: 180 }}
-              ref={ref => this.localtag = findNodeHandle(ref)}
-              mirror={this.state.mirror}
-            />
-            <View style={{ position: 'absolute', paddingLeft: 10, width: '100%', height: 180 }}>
-              <Text style={{ color: 'red', }}>{this.props.route.params!.userId}</Text>
-              <Picker
-                textStyle={{ color: 'red', textDecorationLine: 'underline' }}
-                items={Constants.viewFitType}
-                value={this.state.fitType}
-                onValueChange={(value) => {
-                  this.setState({ fitType: value })
-                }}
-              />
-            </View>
-          </View>
-          <View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <CheckBox
-                text={'采集音频'}
-                onValueChange={() => { this.enableMicrophone() }}
-                value={this.state.microphone} />
-              <CheckBox
-                style={{ marginLeft: 5 }}
-                text={'采集视频'}
-                onValueChange={() => { this.enableCamera() }}
-                value={this.state.camera} />
-            </View>
-            <View style={{ marginTop: 5, flexDirection: 'row', justifyContent: 'center' }}>
-              <CheckBox
-                text={'发布音频'}
-                onValueChange={() => { this.publishAudio(this.state.audio) }}
-                value={this.state.audio} />
-              <CheckBox
-                style={{ marginLeft: 5 }}
-                text={'发布视频'}
-                onValueChange={() => { this.publishVideo(this.state.video) }}
-                value={this.state.video} />
-            </View>
-            <View style={{ marginTop: 5, flexDirection: 'row', justifyContent: 'center' }}>
-              <CheckBox
-                text={'前置摄像'}
-                onValueChange={() => { this.switchCamera() }}
-                value={this.state.front} />
+      <TouchableOpacity 
+        style={styles.drawerLineView}
+        onPress={onPress}
+      >
+        <Text style={styles.drawerLineText}>{text}</Text>
+        <Image source={{ uri: imgUri }} style={styles.drawerLineImage}></Image>
+      </TouchableOpacity>
+    )
+  }
 
-              <CheckBox
-                style={{ marginLeft: 5 }}
-                text={'本地镜像'}
-                onValueChange={() => { this.setState({ mirror: !this.state.mirror }) }}
-                value={this.state.mirror} />
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}>
-              <Button title={this.state.speaker ? '扬声器' : '听筒'}
-                onPress={() => { this.enableSpeaker() }} />
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
-              <Picker
-                items={Constants.fps}
-                value={this.state.videoConfig.fps}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.videoConfig };
-                  videoConfig.fps = value
-                  this.setState({ videoConfig: videoConfig })
-                  rtcEngine?.setVideoConfig(videoConfig, false);
-                }}
-              />
-
-              <Picker
-                style={{ marginLeft: 10 }}
-                items={Constants.resolution}
-                value={this.state.videoConfig.resolution}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.videoConfig };
-                  videoConfig.resolution = value
-                  this.setState({ videoConfig: videoConfig })
-                  rtcEngine?.setVideoConfig(videoConfig, false);
-                }}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
-              <Text style={{ fontSize: 15 }}>码率下限:</Text>
-              <Picker
-                items={Constants.minVideoKbps}
-                value={this.state.videoConfig.minBitrate}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.videoConfig };
-                  videoConfig.minBitrate = value
-                  this.setState({ videoConfig: videoConfig })
-                  rtcEngine?.setVideoConfig(videoConfig, false);
-                }}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
-              <Text style={{ fontSize: 15 }}>码率上限:</Text>
-              <Picker
-                items={Constants.maxVideoKbps}
-                value={this.state.videoConfig.maxBitrate}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.videoConfig };
-                  videoConfig.maxBitrate = value
-                  this.setState({ videoConfig: videoConfig })
-                  rtcEngine?.setVideoConfig(videoConfig, false);
-                }}
-              />
-            </View>
-          </View>
-        </View>
-        {/* 自定义视频 */}
-        <View
-          style={{
-            flexDirection: 'row', borderWidth: 1, borderColor: 'lightblue'
-          }}>
-          <View style={{ width: '50%', height: 180, backgroundColor: 'yellow', overflow: 'hidden' }}>
-            <RCReactNativeRtcView
-              fitType={this.state.customVideoFitType}
-              style={{ width: '100%', height: 180 }}
-              ref={ref => this.customViewTag = findNodeHandle(ref)}
-            />
-            <View style={{ position: 'absolute', paddingLeft: 10, width: '100%', height: 180 }}>
-              <Text style={{ color: 'red', }}>{this.state.customVideoTag}</Text>
-              <Picker
-                textStyle={{ color: 'red', textDecorationLine: 'underline' }}
-                items={Constants.viewFitType}
-                value={this.state.customVideoFitType}
-                onValueChange={(value) => {
-                  this.setState({ customVideoFitType: value })
-                }}
-              />
-            </View>
-          </View>
-          <View style={{ flex: 1, marginLeft: 5 }}>
-            <Text>已选文件</Text>
-            <Text>{this.shortFileName(this.state.customVideoFile)}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={() => {
-                ImagePicker.openPicker({
-                  mediaType: "video",
-                  cropping: false,
-                  writeTempFile: false,
-                  waitAnimationEnd: false,
-                 
-                }).then((video) => {
-                  let file = video.sourceURL ? video.sourceURL : video.path
-                  console.log(file)
-                  this.setState({ customVideoFile: file })
-                });
-              }}>
-
-                <Text style={{ textDecorationLine: 'underline', color: 'blue' }}>选择文件</Text>
-              </TouchableOpacity>
-
-              <View style={{}}>
-                <Button title={this.state.customVideoPublished ? '取消发布' : '发布'} onPress={() => {
-                  if (this.state.customVideoPublished) {
-                    rtcEngine?.unpublishCustomStream(this.state.customVideoTag)
+  drawerContentView = () => {
+    return (
+      <ScrollView style={styles.drawerContentView}>
+        {this.drawerLineView('跨房间连麦', 'rong_icon_right',
+          ()=>{
+            this.props.navigation.navigate('SubRoom', {
+              bandedSubRooms: this.state.bandedSubRooms,
+              joinedSubRooms: this.state.joinedSubRooms
+            })
+          }
+        )}
+        {this.drawerLineView('第三方CDN', 'rong_icon_right',
+          () => {
+            this.props.navigation.navigate('CdnSetting', {})
+          }
+        )}
+        <View 
+          style={styles.drawerLineView}
+        >
+          <Text style={styles.drawerLineText}>{'融云内置CDN'}</Text>
+          <Switch
+                style={styles.drawerSwitch}
+                value={this.state.enableRcCdn}
+                disabled={!(this.state.audio || this.state.video)}
+                onValueChange={() => {
+                  if (!(this.state.audio || this.state.video)) {
+                    RRCToast.show('请先发布视频资源或音频资源');
+                    return
                   }
-                  else {
-                    let p = rtcEngine?.createCustomStreamFromFile(this.state.customVideoFile, this.state.customVideoTag, true, true);
-                    p.then(code => {
-                      if (code === RCRTCErrorCode.Success)
-                        return rtcEngine?.setCustomStreamVideoConfig(this.state.customVideoTag, this.state.customVideoConfig);
-                      else
-                        return -1
-                    }).then(code => {
-                      if (code === RCRTCErrorCode.Success)
-                        rtcEngine?.publishCustomStream(this.state.customVideoTag)
-                    })
-                  }
-                }} />
-              </View>
-            </View>
-
-            <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
-              <Picker
-                items={Constants.fps}
-                value={this.state.customVideoConfig.fps}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.customVideoConfig };
-                  videoConfig.fps = value
-                  this.setState({ customVideoConfig: videoConfig })
+                  rtcEngine?.setOnLiveMixInnerCdnStreamEnabledListener((enable:boolean, code: number, errMsg: string) => {
+                    if (code === 0) {
+                      this.setState({enableRcCdn: enable})
+                    } else {
+                      RRCToast.show(errMsg);
+                    }
+                  })
+                  rtcEngine?.enableLiveMixInnerCdnStream(!this.state.enableRcCdn);
                 }}
               />
-
-              <Picker
-                style={{ marginLeft: 10 }}
-                items={Constants.resolution}
-                value={this.state.customVideoConfig.resolution}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.customVideoConfig };
-                  videoConfig.resolution = value
-                  this.setState({ customVideoConfig: videoConfig })
-                }}
-              />
-            </View>
-
-            <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
-              <Text style={{ fontSize: 15 }}>码率下限:</Text>
-              <Picker
-                items={Constants.minVideoKbps}
-                value={this.state.customVideoConfig.minBitrate}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.customVideoConfig };
-                  videoConfig.minBitrate = value
-                  this.setState({ customVideoConfig: videoConfig })
-                }}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
-              <Text style={{ fontSize: 15 }}>码率上限:</Text>
-              <Picker
-                items={Constants.maxVideoKbps}
-                value={this.state.customVideoConfig.maxBitrate}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.customVideoConfig };
-                  videoConfig.maxBitrate = value
-                  this.setState({ customVideoConfig: videoConfig })
-                }}
-              />
-            </View>
-          </View>
         </View>
-
-        <View
-          style={{
-            flexDirection: 'row', margin: 5, padding: 5, borderWidth: 1, borderColor: 'lightblue', alignItems: 'center'
-          }}>
-          <Text style={{ fontSize: 15 }}>小流设置</Text>
-          <View style={{ alignItems: 'center', marginLeft: 5 }}>
-            <Picker
-              items={Constants.resolution}
-              value={this.state.tinyVideoConfig.resolution}
-              onValueChange={(value) => {
-                let videoConfig = { ...this.state.tinyVideoConfig };
-                videoConfig.resolution = value
-                this.setState({ tinyVideoConfig: videoConfig })
-                rtcEngine?.setVideoConfig(videoConfig, true);
-              }}
-            />
-
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <Text style={{ fontSize: 15 }}>下限:</Text>
-              <Picker
-                items={Constants.tinyMinVideoKbps}
-                value={this.state.tinyVideoConfig.minBitrate}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.tinyVideoConfig };
-                  videoConfig.minBitrate = value
-                  this.setState({ tinyVideoConfig: videoConfig })
-                  rtcEngine?.setVideoConfig(videoConfig, true);
-                }}
-              />
-
-              <Text style={{ fontSize: 15, marginLeft: 10 }}>上限:</Text>
-              <Picker
-                items={Constants.tinyMaxVideoKbps}
-                value={this.state.tinyVideoConfig.maxBitrate}
-                onValueChange={(value) => {
-                  let videoConfig = { ...this.state.tinyVideoConfig };
-                  videoConfig.maxBitrate = value
-                  this.setState({ tinyVideoConfig: videoConfig })
-                  rtcEngine?.setVideoConfig(videoConfig, true);
-                }}
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* 网络状态表格 */}
-        <View style={{ marginLeft: 5, marginRight: 5 }}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{ ...styles.formBorder }}>
-              <Text style={styles.formText}>网络类型:</Text>
-              <Text style={styles.formText}>{this.getNetworkType(this.state.networkStats.type)}</Text>
-            </View>
-            <View style={{ ...styles.formBorder, alignItems: 'flex-start', borderLeftWidth: 0 }}>
-              <Text style={styles.formText}>IP:{this.state.networkStats.ip}</Text>
-            </View>
-            <View style={{ ...styles.formBorder, borderLeftWidth: 0 }} />
-            <View style={{ ...styles.formBorder, borderLeftWidth: 0, }} />
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
-              <Text style={styles.formText}>上行</Text>
-              <Text style={styles.formText}>{this.state.networkStats.sendBitrate}</Text>
-            </View>
-            <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0, }}>
-              <Text style={styles.formText}>下行</Text>
-              <Text style={styles.formText}>{this.state.networkStats.receiveBitrate}</Text>
-            </View>
-            <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0, }}>
-              <Text style={styles.formText}>往返</Text>
-              <Text style={styles.formText}>{this.state.networkStats.rtt}</Text>
-            </View>
-            <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }} />
-          </View>
-          {
-            this.state.localAudioStats && this.state.audio &&
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>音频</Text>
-                <Text style={styles.formText}>{this.state.localAudioStats.bitrate}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }} />
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }} />
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>丢包率</Text>
-                <Text style={styles.formText}>{this.state.localAudioStats.packageLostRate}</Text>
-              </View>
-            </View>
+        {this.drawerLineView('合流设置', 'rong_icon_right',
+          () => {
+            if (!(this.state.audio || this.state.video)) {
+              RRCToast.show('请先发布视频资源或音频资源');
+              return
+            }
+            let users = Array.from(Util.users.values()).map((value) => { return { id: value.id, tag: null } })
+            // users是订阅的id，userId是自己的id
+            this.props.navigation.navigate('Layout', {
+              users: users,
+              customTag: this.state.customVideoPublished ? this.state.customVideoTag : null,//发布自定义视频后才传tag
+              userId: this.props.route.params!.userId
+            })
           }
-          {
-            this.state.localVideoStats && this.state.video &&
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>大流</Text>
-                <Text style={styles.formText}>{this.state.localVideoStats.bitrate}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>分辨率</Text>
-                <Text style={styles.formText}>{this.state.localVideoStats.width}*{this.state.localVideoStats.height}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>fps</Text>
-                <Text style={styles.formText}>{this.state.localVideoStats.fps}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>丢包率</Text>
-                <Text style={styles.formText}>{this.state.localVideoStats.packageLostRate}</Text>
-              </View>
-            </View>
+        )}
+        {this.drawerLineView('聊天室', 'rong_icon_right',
+          () => {
+            this.props.navigation.navigate('Message', {
+              userId: this.props.route.params!.userId,
+              roomId: this.props.route.params!.roomId,
+              role: RCRTCRole.LiveBroadcaster
+            })
           }
-          {
-            this.state.localTinyVideoStats && this.state.video &&
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>小流</Text>
-                <Text style={styles.formText}>{this.state.localTinyVideoStats.bitrate}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>分辨率</Text>
-                <Text style={styles.formText}>{this.state.localTinyVideoStats.width}*{this.state.localTinyVideoStats.height}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>fps</Text>
-                <Text style={styles.formText}>{this.state.localTinyVideoStats.fps}</Text>
-              </View>
-              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
-                <Text style={styles.formText}>丢包率</Text>
-                <Text style={styles.formText}>{this.state.localTinyVideoStats.packageLostRate}</Text>
-              </View>
-            </View>
+        )}
+        {this.drawerLineView('设置水印', 'rong_icon_right',
+          () => {
+            this.props.navigation.navigate('SetWatermark', {})
           }
-        </View>
-
-        {
-          this.renderItem()
-        }
-        <Pop ref={this.pop} />
+        )}
+        {this.drawerLineView('SEI功能配置', 'rong_icon_right',
+          () => {
+            this.props.navigation.navigate('SeiConfig', {})
+          }
+        )}
       </ScrollView>
+    );
+  }
+
+  render() {
+    const drawerStyles = {
+      drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
+      main: {paddingLeft: 3},
+    }
+    return (
+      <Drawer
+        ref={(ref: Drawer) => drawer = ref}
+        content={this.drawerContentView()}
+        side={'right'}
+        type={'overlay'}
+        openDrawerOffset={0.2}
+        panCloseMask={0.2}
+        closedDrawerOffset={-3}
+        styles={drawerStyles}
+        tapToClose={true}
+        tweenHandler={(ratio) => ({
+          main: { opacity:(2-ratio)/2 }
+        })}
+      >
+        <ScrollView style={{ flex: 1 }} >
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ width: '50%', height: 180, backgroundColor: 'black', overflow: 'hidden' }}>
+              <RCReactNativeRtcView
+                fitType={this.state.fitType}
+                style={{ width: '100%', height: 180 }}
+                ref={ref => this.localtag = findNodeHandle(ref)}
+                mirror={this.state.mirror}
+              />
+              <View style={{ position: 'absolute', paddingLeft: 10, width: '100%', height: 180 }}>
+                <Text style={{ color: 'red', }}>{this.props.route.params!.userId}</Text>
+                <Picker
+                  textStyle={{ color: 'red', textDecorationLine: 'underline' }}
+                  items={Constants.viewFitType}
+                  value={this.state.fitType}
+                  onValueChange={(value) => {
+                    this.setState({ fitType: value })
+                  }}
+                />
+              </View>
+            </View>
+            <View>
+              <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                <CheckBox
+                  text={'采集音频'}
+                  onValueChange={() => { this.enableMicrophone() }}
+                  value={this.state.microphone} />
+                {this.props.route.params?.mediaType === 0 &&
+                  <CheckBox
+                    style={{ marginLeft: 5 }}
+                    text={'采集视频'}
+                    onValueChange={() => { this.enableCamera() }}
+                    value={this.state.camera} />
+                }
+              </View>
+              <View style={{ marginTop: 5, flexDirection: 'row', justifyContent: 'center' }}>
+                <CheckBox
+                  text={'发布音频'}
+                  onValueChange={() => { this.publishAudio(this.state.audio) }}
+                  value={this.state.audio} />
+                {this.props.route.params?.mediaType === 0 &&
+                <CheckBox
+                  style={{ marginLeft: 5 }}
+                  text={'发布视频'}
+                  onValueChange={() => { this.publishVideo(this.state.video) }}
+                  value={this.state.video} />
+                }
+              </View>
+              <View style={{ marginTop: 5, flexDirection: 'row', justifyContent: 'center' }}>
+                <CheckBox
+                  text={'前置摄像'}
+                  onValueChange={() => { this.switchCamera() }}
+                  value={this.state.front} />
+
+                <CheckBox
+                  style={{ marginLeft: 5 }}
+                  text={'本地镜像'}
+                  onValueChange={() => { this.setState({ mirror: !this.state.mirror }) }}
+                  value={this.state.mirror} />
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}>
+                <Button title={this.state.speaker ? '扬声器' : '听筒'}
+                  onPress={() => { this.enableSpeaker() }} />
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
+                <Picker
+                  items={Constants.fps}
+                  value={this.state.videoConfig.fps}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.videoConfig };
+                    videoConfig.fps = value
+                    this.setState({ videoConfig: videoConfig })
+                    rtcEngine?.setVideoConfig(videoConfig, false);
+                  }}
+                />
+
+                <Picker
+                  style={{ marginLeft: 10 }}
+                  items={Constants.resolution}
+                  value={this.state.videoConfig.resolution}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.videoConfig };
+                    videoConfig.resolution = value
+                    this.setState({ videoConfig: videoConfig })
+                    rtcEngine?.setVideoConfig(videoConfig, false);
+                  }}
+                />
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
+                <Text style={{ fontSize: 15 }}>码率下限:</Text>
+                <Picker
+                  items={Constants.minVideoKbps}
+                  value={this.state.videoConfig.minBitrate}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.videoConfig };
+                    videoConfig.minBitrate = value
+                    this.setState({ videoConfig: videoConfig })
+                    rtcEngine?.setVideoConfig(videoConfig, false);
+                  }}
+                />
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
+                <Text style={{ fontSize: 15 }}>码率上限:</Text>
+                <Picker
+                  items={Constants.maxVideoKbps}
+                  value={this.state.videoConfig.maxBitrate}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.videoConfig };
+                    videoConfig.maxBitrate = value
+                    this.setState({ videoConfig: videoConfig })
+                    rtcEngine?.setVideoConfig(videoConfig, false);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+          {/* 自定义视频 */}
+          <View
+            style={{
+              flexDirection: 'row', borderWidth: 1, borderColor: 'lightblue'
+            }}>
+            <View style={{ width: '50%', height: 180, backgroundColor: 'yellow', overflow: 'hidden' }}>
+              <RCReactNativeRtcView
+                fitType={this.state.customVideoFitType}
+                style={{ width: '100%', height: 180 }}
+                ref={ref => this.customViewTag = findNodeHandle(ref)}
+              />
+              <View style={{ position: 'absolute', paddingLeft: 10, width: '100%', height: 180 }}>
+                <Text style={{ color: 'red', }}>{this.state.customVideoTag}</Text>
+                <Picker
+                  textStyle={{ color: 'red', textDecorationLine: 'underline' }}
+                  items={Constants.viewFitType}
+                  value={this.state.customVideoFitType}
+                  onValueChange={(value) => {
+                    this.setState({ customVideoFitType: value })
+                  }}
+                />
+              </View>
+            </View>
+            <View style={{ flex: 1, marginLeft: 5 }}>
+              <Text>已选文件</Text>
+              <Text>{this.shortFileName(this.state.customVideoFile)}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <TouchableOpacity onPress={() => {
+                  ImagePicker.openPicker({
+                    mediaType: "video",
+                    cropping: false,
+                    writeTempFile: false,
+                    waitAnimationEnd: false,
+
+                  }).then((video) => {
+                    let file = video.sourceURL ? video.sourceURL : video.path
+                    console.log(file)
+                    this.setState({ customVideoFile: file })
+                  });
+                }}>
+
+                  <Text style={{ textDecorationLine: 'underline', color: 'blue' }}>选择文件</Text>
+                </TouchableOpacity>
+
+                <View style={{}}>
+                  <Button title={this.state.customVideoPublished ? '取消发布' : '发布'} onPress={() => {
+                    if (this.state.customVideoPublished) {
+                      rtcEngine?.unpublishCustomStream(this.state.customVideoTag)
+                    }
+                    else {
+                      let p = rtcEngine?.createCustomStreamFromFile(this.state.customVideoFile, this.state.customVideoTag, true, true);
+                      p.then(code => {
+                        if (code === RCRTCErrorCode.Success)
+                          return rtcEngine?.setCustomStreamVideoConfig(this.state.customVideoTag, this.state.customVideoConfig);
+                        else
+                          return -1
+                      }).then(code => {
+                        if (code === RCRTCErrorCode.Success)
+                          rtcEngine?.publishCustomStream(this.state.customVideoTag)
+                      })
+                    }
+                  }} />
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
+                <Picker
+                  items={Constants.fps}
+                  value={this.state.customVideoConfig.fps}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.customVideoConfig };
+                    videoConfig.fps = value
+                    this.setState({ customVideoConfig: videoConfig })
+                  }}
+                />
+
+                <Picker
+                  style={{ marginLeft: 10 }}
+                  items={Constants.resolution}
+                  value={this.state.customVideoConfig.resolution}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.customVideoConfig };
+                    videoConfig.resolution = value
+                    this.setState({ customVideoConfig: videoConfig })
+                  }}
+                />
+              </View>
+
+              <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
+                <Text style={{ fontSize: 15 }}>码率下限:</Text>
+                <Picker
+                  items={Constants.minVideoKbps}
+                  value={this.state.customVideoConfig.minBitrate}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.customVideoConfig };
+                    videoConfig.minBitrate = value
+                    this.setState({ customVideoConfig: videoConfig })
+                  }}
+                />
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 5, marginLeft: 5 }}>
+                <Text style={{ fontSize: 15 }}>码率上限:</Text>
+                <Picker
+                  items={Constants.maxVideoKbps}
+                  value={this.state.customVideoConfig.maxBitrate}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.customVideoConfig };
+                    videoConfig.maxBitrate = value
+                    this.setState({ customVideoConfig: videoConfig })
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row', margin: 5, padding: 5, borderWidth: 1, borderColor: 'lightblue', alignItems: 'center'
+            }}>
+            <Text style={{ fontSize: 15 }}>小流设置</Text>
+            <View style={{ alignItems: 'center', marginLeft: 5 }}>
+              <Picker
+                items={Constants.resolution}
+                value={this.state.tinyVideoConfig.resolution}
+                onValueChange={(value) => {
+                  let videoConfig = { ...this.state.tinyVideoConfig };
+                  videoConfig.resolution = value
+                  this.setState({ tinyVideoConfig: videoConfig })
+                  rtcEngine?.setVideoConfig(videoConfig, true);
+                }}
+              />
+
+              <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                <Text style={{ fontSize: 15 }}>下限:</Text>
+                <Picker
+                  items={Constants.tinyMinVideoKbps}
+                  value={this.state.tinyVideoConfig.minBitrate}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.tinyVideoConfig };
+                    videoConfig.minBitrate = value
+                    this.setState({ tinyVideoConfig: videoConfig })
+                    rtcEngine?.setVideoConfig(videoConfig, true);
+                  }}
+                />
+
+                <Text style={{ fontSize: 15, marginLeft: 10 }}>上限:</Text>
+                <Picker
+                  items={Constants.tinyMaxVideoKbps}
+                  value={this.state.tinyVideoConfig.maxBitrate}
+                  onValueChange={(value) => {
+                    let videoConfig = { ...this.state.tinyVideoConfig };
+                    videoConfig.maxBitrate = value
+                    this.setState({ tinyVideoConfig: videoConfig })
+                    rtcEngine?.setVideoConfig(videoConfig, true);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* 网络状态表格 */}
+          <View style={{ marginLeft: 5, marginRight: 5 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ ...styles.formBorder }}>
+                <Text style={styles.formText}>网络类型:</Text>
+                <Text style={styles.formText}>{this.getNetworkType(this.state.networkStats.type)}</Text>
+              </View>
+              <View style={{ ...styles.formBorder, alignItems: 'flex-start', borderLeftWidth: 0 }}>
+                <Text style={styles.formText}>IP:{this.state.networkStats.ip}</Text>
+              </View>
+              <View style={{ ...styles.formBorder, borderLeftWidth: 0 }} />
+              <View style={{ ...styles.formBorder, borderLeftWidth: 0, }} />
+            </View>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
+                <Text style={styles.formText}>上行</Text>
+                <Text style={styles.formText}>{this.state.networkStats.sendBitrate}</Text>
+              </View>
+              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0, }}>
+                <Text style={styles.formText}>下行</Text>
+                <Text style={styles.formText}>{this.state.networkStats.receiveBitrate}</Text>
+              </View>
+              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0, }}>
+                <Text style={styles.formText}>往返</Text>
+                <Text style={styles.formText}>{this.state.networkStats.rtt}</Text>
+              </View>
+              <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }} />
+            </View>
+            {
+              this.state.localAudioStats && this.state.audio &&
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>音频</Text>
+                  <Text style={styles.formText}>{this.state.localAudioStats.bitrate}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }} />
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }} />
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>丢包率</Text>
+                  <Text style={styles.formText}>{this.state.localAudioStats.packageLostRate}</Text>
+                </View>
+              </View>
+            }
+            {
+              this.state.localVideoStats && this.state.video &&
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>大流</Text>
+                  <Text style={styles.formText}>{this.state.localVideoStats.bitrate}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>分辨率</Text>
+                  <Text style={styles.formText}>{this.state.localVideoStats.width}*{this.state.localVideoStats.height}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>fps</Text>
+                  <Text style={styles.formText}>{this.state.localVideoStats.fps}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>丢包率</Text>
+                  <Text style={styles.formText}>{this.state.localVideoStats.packageLostRate}</Text>
+                </View>
+              </View>
+            }
+            {
+              this.state.localTinyVideoStats && this.state.video &&
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ ...styles.formBorder, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>小流</Text>
+                  <Text style={styles.formText}>{this.state.localTinyVideoStats.bitrate}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>分辨率</Text>
+                  <Text style={styles.formText}>{this.state.localTinyVideoStats.width}*{this.state.localTinyVideoStats.height}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>fps</Text>
+                  <Text style={styles.formText}>{this.state.localTinyVideoStats.fps}</Text>
+                </View>
+                <View style={{ ...styles.formBorder, borderLeftWidth: 0, borderTopWidth: 0 }}>
+                  <Text style={styles.formText}>丢包率</Text>
+                  <Text style={styles.formText}>{this.state.localTinyVideoStats.packageLostRate}</Text>
+                </View>
+              </View>
+            }
+          </View>
+
+          {
+            this.renderItem()
+          }
+          <Pop ref={this.pop} />
+        </ScrollView>
+      </Drawer>
     );
   }
 }
@@ -1277,6 +1374,31 @@ const styles = StyleSheet.create({
 
   formText: {
     fontSize: 12
+  },
+  drawerContentView: {
+    flex: 1,
+    backgroundColor: '#FFFFFF'
+  },
+  drawerLineView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#D3D3D380',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginTop: 16
+  },
+  drwaTextSwitchView: {
+    flexDirection: 'row'
+  },
+  drawerLineText: {
+    alignSelf: 'center',
+  },
+  drawerSwitch: {
+    marginLeft: 16
+  },
+  drawerLineImage: {
+    width: 25,
+    height: 25
   }
 })
 

@@ -46,5 +46,6 @@ SingleInstanceH(Instance);
 - (NSInteger)setRemoteCustomAudioReceivedDelegate:(id<RCRTCIWAudioFrameDelegate> _Nullable)delegate
                                            userId:(NSString *)userId
                                               tag:(NSString *)tag;
+
 @end
   
